@@ -1,0 +1,9 @@
+<% if @error %>
+  alert("<%= @error %>");
+<% else %>
+  $('#new-llamada').modal('hide');
+  do_search(currentPage);
+  <% if @llamada.intension.crea_casos %>
+    load_new(<%= @llamada.id %>);
+  <% end %>
+<% end %>

@@ -1,0 +1,98 @@
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+<%= javascript_include_tag "l.control.geosearch" %>
+<%= javascript_include_tag "l.geosearch.provider.google" %>
+<%= javascript_include_tag "l.geosearch.provider.openstreetmap" %>
+<script src="https://unpkg.com/esri-leaflet@2.0.4"></script>
+<link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.1/dist/esri-leaflet-geocoder.css">
+<script src="https://unpkg.com/esri-leaflet-geocoder@2.2.1"></script>
+
+<%= link_to "#{new_crue_institucion_path}?parent_id=#{@institucion.id}", :class => "btn btn-primary btn-lg", :title => "Nueva institucion" do %>
+	Nueva Sede
+<% end %>
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+			<%= link_to 'Instituciones'.html_safe, crue_institucions_path, class:"" %>
+		</li>
+    <li class="breadcrumb-item active" aria-current="page">
+			<%= link_to @institucion.nombre, sedes_crue_institucion_path(@institucion.id), class:"" %>
+		</li>
+  </ol>
+</nav>
+
+<h1>Sedes de <%= @institucion.nombre %></h1>
+<%= form_tag("", method: "post",  :multipart => true, "data-ajax" => "false" ) do %>
+
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<h3 class="panel-title"></h3>
+	</div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table id="table-result" class="table table-bordered table-hover table-striped tablesorter">
+			  <thead>
+			    <tr>
+						<th data-sort="string">Roles</th>
+						<th data-sort="string">Nivel U</th>
+						<th data-sort="string">Nivel C</th>
+						<th data-sort="string">Atiende Salud Mental?</th>
+						<th data-sort="string">Codigo</th>
+						<th data-sort="string">Numero sede</th>
+						<th data-sort="string">Nombre</th>
+						<th data-sort="string">Direccion</th>
+						<th data-sort="string">Telefono</th>
+						<th data-sort="string">Email</th>
+						<th data-sort="string">Nit</th>
+						<th data-sort="string">Departamento</th>
+						<th data-sort="string">Municipio</th>
+						<th>Acción</th>
+			    </tr>
+			  </thead>
+			  <tbody id="table-result-body">
+					<% @institucion.sedes.order("created_at ASC").each do |institucion| -%>
+						<% municipio = institucion.municipio_alterno ? institucion.municipio_alterno : institucion.municipio -%>
+						<% departamento = municipio.departamento -%>
+						<tr class="<%= (institucion.activo) ? 'success' : 'danger' %>">
+							<td>
+								<% if institucion.latitude && institucion.longitude -%>
+									<i style="color:green" class="fa fa-2x fa-map-marker"></i>
+								<% end -%>
+								<%= institucion.roles_value %>
+							</td>
+							<td><%= institucion.nivel_value %></td>
+							<td><%= institucion.nivel_complejidad_value %></td>
+							<td><%= institucion.atiende_salud_mental ? "SI" : "NO" %></td>
+							<td><%= institucion.codigo %></td>
+							<td><%= institucion.numero_sede %></td>
+							<td><%= institucion.nombre.upcase if institucion.nombre %></td>
+							<td><%= institucion.direccion %></td>
+							<td><%= institucion.telefono %></td>
+							<td><%= institucion.email %></td>
+							<td><%= institucion.nit %></td>
+
+							<td><%= departamento.nombre if departamento %></td>
+							<td><%= municipio.nombre if municipio %></td>
+							<td>
+
+								<%= link_to edit_crue_institucion_path(institucion.id), :title => "Editar institucion" do %>
+									<i class="fa fa-2x fa-pencil-square-o"></i>
+							  <% end %>
+
+								<%= link_to crue_institucion_path(institucion.id), :method => :delete, :title => "Borrar institucion", :confirm => "Estas seguro? Se borraran todos los registros asociados a esta institucion" do %>
+									<i class="fa fa-2x fa-trash-o"></i>
+							  <% end %>
+
+							</td>
+
+						</tr>
+					<% end -%>
+			  </tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<% end %>

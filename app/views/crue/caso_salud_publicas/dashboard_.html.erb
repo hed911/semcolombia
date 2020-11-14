@@ -1,0 +1,933 @@
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+<%= javascript_include_tag "l.control.geosearch" %>
+<%= javascript_include_tag "l.geosearch.provider.google" %>
+<%= javascript_include_tag "l.geosearch.provider.openstreetmap" %>
+<%= javascript_include_tag "leaflet-routing-machine" %>
+<%= javascript_include_tag "leaflet.rotatedMarker" %>
+
+<script src="https://unpkg.com/esri-leaflet@2.0.4"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/esri-leaflet-geocoder/2.2.1/esri-leaflet-geocoder.css">
+<script src="https://cdn.jsdelivr.net/npm/esri-leaflet-geocoder@2.2.1/dist/esri-leaflet-geocoder-debug.min.js"></script>
+
+<style>
+  @mixin background-variant($name, $color) {
+    .bg-#{$name} {
+      background-color: #{$color} !important;
+
+      &,
+      > a {
+        color: color-yiq($color) !important;
+      }
+
+      &.btn {
+        &:hover {
+          border-color: darken($color, 10%);
+          color: darken(color-yiq($color), 7.5%);
+        }
+
+        &:not(:disabled):not(.disabled):active,
+        &:not(:disabled):not(.disabled).active,
+        &:active,
+        &.active {
+          background-color: darken($color, 10%) !important;
+          border-color: darken($color, 12.5%);
+          color: color-yiq(darken($color, 10%));
+        }
+      }
+    }
+  }
+
+  // Background Gradient Variant
+  @mixin background-gradient-variant($name, $color) {
+    .bg-gradient-#{$name} {
+      @include bg-gradient-variant('&', $color);
+      color: color-yiq($color);
+
+      &.btn {
+        &.disabled,
+        &:disabled,
+        &:not(:disabled):not(.disabled):active,
+        &:not(:disabled):not(.disabled).active,
+        .show > &.dropdown-toggle {
+          background-image: none !important;
+        }
+
+        &:hover {
+          @include bg-gradient-variant('&', darken($color, 7.5%));
+          border-color: darken($color, 10%);
+          color: darken(color-yiq($color), 7.5%);
+        }
+
+        &:not(:disabled):not(.disabled):active,
+        &:not(:disabled):not(.disabled).active,
+        &:active,
+        &.active {
+          @include bg-gradient-variant('&', darken($color, 10%));
+          border-color: darken($color, 12.5%);
+          color: color-yiq(darken($color, 10%));
+        }
+      }
+    }
+  }
+  .info-box {
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.125), 0 1px 3px rgba(0, 0, 0, 0.2);
+    border-radius: 0.25rem;
+    background: #ffffff;
+    display: -ms-flexbox;
+    display: flex;
+    margin-bottom: 1rem;
+    min-height: 80px;
+    padding: .5rem;
+    position: relative;
+  }
+
+  .info-box .progress {
+    background-color: rgba(0, 0, 0, 0.125);
+    height: 2px;
+    margin: 5px 0;
+  }
+
+  .info-box .progress .progress-bar {
+    background-color: #ffffff;
+  }
+
+  .info-box .info-box-icon {
+    border-radius: 0.25rem;
+    -ms-flex-align: center;
+    align-items: center;
+    display: -ms-flexbox;
+    display: flex;
+    font-size: 1.875rem;
+    -ms-flex-pack: center;
+    justify-content: center;
+    text-align: center;
+    width: 70px;
+  }
+
+  .info-box .info-box-icon > img {
+    max-width: 100%;
+  }
+
+  .info-box .info-box-content {
+    -ms-flex: 1;
+    flex: 1;
+    padding: 5px 10px;
+  }
+
+  .info-box .info-box-number {
+    display: block;
+    font-weight: 700;
+  }
+
+  .info-box .progress-description,
+  .info-box .info-box-text {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .info-box .info-box .bg-primary,
+  .info-box .info-box .bg-gradient-primary {
+    color: #ffffff;
+  }
+
+  .info-box .info-box .bg-primary .progress-bar,
+  .info-box .info-box .bg-gradient-primary .progress-bar {
+    background-color: #ffffff;
+  }
+
+  .info-box .info-box .bg-secondary,
+  .info-box .info-box .bg-gradient-secondary {
+    color: #ffffff;
+  }
+
+  .info-box .info-box .bg-secondary .progress-bar,
+  .info-box .info-box .bg-gradient-secondary .progress-bar {
+    background-color: #ffffff;
+  }
+
+  .info-box .info-box .bg-success,
+  .info-box .info-box .bg-gradient-success {
+    color: #ffffff;
+  }
+
+  .info-box .info-box .bg-success .progress-bar,
+  .info-box .info-box .bg-gradient-success .progress-bar {
+    background-color: #ffffff;
+  }
+
+  .info-box .info-box .bg-info,
+  .info-box .info-box .bg-gradient-info {
+    color: #ffffff;
+  }
+
+  .info-box .info-box .bg-info .progress-bar,
+  .info-box .info-box .bg-gradient-info .progress-bar {
+    background-color: #ffffff;
+  }
+
+  .info-box .info-box .bg-warning,
+  .info-box .info-box .bg-gradient-warning {
+    color: #1F2D3D;
+  }
+
+  .info-box .info-box .bg-warning .progress-bar,
+  .info-box .info-box .bg-gradient-warning .progress-bar {
+    background-color: #1F2D3D;
+  }
+
+  .info-box .info-box .bg-danger,
+  .info-box .info-box .bg-gradient-danger {
+    color: #ffffff;
+  }
+
+  .info-box .info-box .bg-danger .progress-bar,
+  .info-box .info-box .bg-gradient-danger .progress-bar {
+    background-color: #ffffff;
+  }
+
+  .info-box .info-box .bg-light,
+  .info-box .info-box .bg-gradient-light {
+    color: #1F2D3D;
+  }
+
+  .info-box .info-box .bg-light .progress-bar,
+  .info-box .info-box .bg-gradient-light .progress-bar {
+    background-color: #1F2D3D;
+  }
+
+  .info-box .info-box .bg-dark,
+  .info-box .info-box .bg-gradient-dark {
+    color: #ffffff;
+  }
+
+  .info-box .info-box .bg-dark .progress-bar,
+  .info-box .info-box .bg-gradient-dark .progress-bar {
+    background-color: #ffffff;
+  }
+
+  .info-box .info-box-more {
+    display: block;
+  }
+
+  .info-box .progress-description {
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    .col-xl-2 .info-box .progress-description,
+    .col-lg-2 .info-box .progress-description,
+    .col-md-2 .info-box .progress-description {
+      display: none;
+    }
+    .col-xl-3 .info-box .progress-description,
+    .col-lg-3 .info-box .progress-description,
+    .col-md-3 .info-box .progress-description {
+      display: none;
+    }
+  }
+
+  @media (min-width: 992px) {
+    .col-xl-2 .info-box .progress-description,
+    .col-lg-2 .info-box .progress-description,
+    .col-md-2 .info-box .progress-description {
+      font-size: 0.75rem;
+      display: block;
+    }
+    .col-xl-3 .info-box .progress-description,
+    .col-lg-3 .info-box .progress-description,
+    .col-md-3 .info-box .progress-description {
+      font-size: 0.75rem;
+      display: block;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .col-xl-2 .info-box .progress-description,
+    .col-lg-2 .info-box .progress-description,
+    .col-md-2 .info-box .progress-description {
+      font-size: 1rem;
+      display: block;
+    }
+    .col-xl-3 .info-box .progress-description,
+    .col-lg-3 .info-box .progress-description,
+    .col-md-3 .info-box .progress-description {
+      font-size: 1rem;
+      display: block;
+    }
+  }
+</style>
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark">Dashboard</h1>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+
+<section class="content">
+  <div class="container-fluid">
+    <!-- Info boxes -->
+    <div class="row">
+      <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box">
+          <span class="info-box-icon bg-info elevation-1"><i class="fas fa-users"></i></span>
+
+          <div class="info-box-content">
+            <span class="info-box-text">Casos totales</span>
+            <span class="info-box-number">
+              <%= @casos_totales %>
+              <small></small>
+            </span>
+          </div>
+          <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+      </div>
+      <!-- /.col -->
+      <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box mb-3">
+          <span class="info-box-icon bg-success elevation-1"><i class="fas fa-users"></i></span>
+
+          <div class="info-box-content">
+            <span class="info-box-text">Casos positivos</span>
+            <span class="info-box-number"><%= @casos_positivos %></span>
+          </div>
+          <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+      </div>
+      <!-- /.col -->
+
+      <!-- fix for small devices only -->
+      <div class="clearfix hidden-md-up"></div>
+
+      <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box mb-3">
+          <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-users"></i></span>
+
+          <div class="info-box-content">
+            <span class="info-box-text">Casos negativos</span>
+            <span class="info-box-number"><%= @casos_negativos %></span>
+          </div>
+          <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+      </div>
+      <!-- /.col -->
+      <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box mb-3">
+          <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+
+          <div class="info-box-content">
+            <span class="info-box-text">Casos por confirmar</span>
+            <span class="info-box-number"><%= @casos_por_confirmar %></span>
+          </div>
+          <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+      </div>
+      <!-- /.col -->
+    </div>
+    <div class="row">
+      <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box">
+          <span class="info-box-icon bg-info elevation-1"><i class="fas fa-vial"></i></span>
+
+          <div class="info-box-content">
+            <span class="info-box-text">Muestras totales</span>
+            <span class="info-box-number">
+              <%= @muestras_totales %>
+              <small></small>
+            </span>
+          </div>
+          <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+      </div>
+      <!-- /.col -->
+      <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box mb-3">
+          <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-vial"></i></span>
+
+          <div class="info-box-content">
+            <span class="info-box-text">Muestras tomadas hoy</span>
+            <span class="info-box-number"><%= @muestras_hoy %></span>
+          </div>
+          <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+      </div>
+      <!-- /.col -->
+
+      <!-- fix for small devices only -->
+      <div class="clearfix hidden-md-up"></div>
+
+      <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box mb-3">
+          <span class="info-box-icon bg-success elevation-1"><i class="fas fa-phone-alt"></i></span>
+
+          <div class="info-box-content">
+            <span class="info-box-text">Llamadas totales</span>
+            <span class="info-box-number"><%= @llamadas_totales %></span>
+          </div>
+          <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+      </div>
+      <!-- /.col -->
+      <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box mb-3">
+          <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-phone-alt"></i></span>
+
+          <div class="info-box-content">
+            <span class="info-box-text">Llamadas hoy</span>
+            <span class="info-box-number"><%= @llamadas_hoy %></span>
+          </div>
+          <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+      </div>
+      <!-- /.col -->
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box">
+          <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-microscope"></i></span>
+
+          <div class="info-box-content">
+            <span class="info-box-text">Laboratorios</span>
+            <span class="info-box-number">
+              <%= @cantidad_laboratorios %>
+              <small></small>
+            </span>
+          </div>
+          <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+      </div>
+      <!-- /.col -->
+      <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box mb-3">
+          <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-hospital"></i></span>
+
+          <div class="info-box-content">
+            <span class="info-box-text">IPSs</span>
+            <span class="info-box-number"><%= @cantidad_ips %></span>
+          </div>
+          <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+      </div>
+      <!-- /.col -->
+
+      <!-- fix for small devices only -->
+      <div class="clearfix hidden-md-up"></div>
+
+      <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box mb-3">
+          <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-building"></i></span>
+
+          <div class="info-box-content">
+            <span class="info-box-text">EPSs</span>
+            <span class="info-box-number"><%= @cantidad_eps %></span>
+          </div>
+          <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+      </div>
+
+      <!-- /.col -->
+    </div>
+  </div><!--/. container-fluid -->
+</section>
+
+<div style='width: 100%; height: 100%;'>
+  <div id="map" style='width: 100%; height: 800px;'></div>
+</div>
+
+<script>
+  var greenIcon = new L.Icon({
+    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+  var redIcon = new L.Icon({
+    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+  var yellowIcon = new L.Icon({
+    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+
+  var oldValueDireccion, oldValueDireccionAprobacion;
+  var centred = false;
+  var available_img_url = "<%= image_path('icono-evento.png') %>";
+  var markers_positivos = [];
+  var markers_negativos = [];
+  var markers_por_confirmar = [];
+
+  var mymap = L.map('map', {
+    fullscreenControl: true,
+    fullscreenControl: {
+        pseudoFullscreen: false
+    }
+    //layers: current_layers
+  }).setView([<%= "#{current_city_point[0]}, #{current_city_point[1]}" %>], 16);
+
+  var layer_positivos = L.layerGroup([]).addTo(mymap);
+  var layer_negativos = L.layerGroup([]).addTo(mymap);
+  var layer_por_confirmar = L.layerGroup([]).addTo(mymap);
+
+  var current_layers = [layer_positivos, layer_negativos, layer_por_confirmar];
+  var overlayMaps = {
+    "Positivos": layer_positivos,
+    "Negativos": layer_negativos,
+    "Por confirmar": layer_por_confirmar
+  };
+
+  L.control.layers(null, overlayMaps).addTo(mymap);
+  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: 'hedu911.22cnjci9', //'your.mapbox.project.id',
+    accessToken: 'pk.eyJ1IjoiaGVkdTkxMSIsImEiOiJjaXY5cTlwaWEwMGpoMnptODgzMjE4MDF3In0.lvUD1nWuzyTqt5KspZhHug'
+  }).addTo(mymap);
+	var mymap_interno = null;
+  var mymap_interno_aprobacion = null;
+	var googleGeocodeProvider = new L.GeoSearch.Provider.Google(),
+			 addressText = '';
+  var routing = L.Routing.control({
+    waypoints: [],
+    createMarker: function() { return null; },
+    show: false
+  }).addTo(mymap);
+  var geocodeService = L.esri.Geocoding.geocodeService();
+
+  function remove_markers_positivos()
+  {
+    layer_positivos.clearLayers();
+    for(var i = 0; i < markers_positivos.length; i++){
+      mymap.removeLayer(markers_positivos[i]);
+    }
+  }
+
+  function remove_markers_negativos()
+  {
+    layer_negativos.clearLayers();
+    for(var i = 0; i < markers_negativos.length; i++){
+      mymap.removeLayer(markers_negativos[i]);
+    }
+  }
+
+  function remove_markers_por_confirmar()
+  {
+    layer_por_confirmar.clearLayers();
+    for(var i = 0; i < markers_por_confirmar.length; i++){
+      mymap.removeLayer(markers_por_confirmar[i]);
+    }
+  }
+
+
+  function center_map(latitude, longitude)
+  {
+    mymap.setView(new L.LatLng(latitude, longitude));
+  }
+
+  function is_not_null(x) {
+    return x !== null;
+  }
+
+  function is_defined(x) {
+    var undefined;
+    return x !== undefined;
+  }
+
+  var registros = <%= @registros_positivos.html_safe %>;
+  for(var i = 0; i < registros.length; i++){
+    var marker = null;
+    var registro = registros[i];
+    marker = L.marker([registro.latitude, registro.longitude], {icon:greenIcon});
+    var popup_body = [
+      "<b>ID: </b>",
+      registro.id,
+      "</br>",
+      "<b># DOC: </b>",
+      registro.numero_documento,
+      "</br>",
+      "<b>NOMBRE: </b>",
+      registro.nombre_completo,
+      "</br>",
+      "<b>EDAD: </b>",
+      registro.edad_value,
+      "</br>",
+      "<b>DIRECCION: </b>",
+      registro.direccion,
+      "</br>",
+      "<b>TELEFONO: </b>",
+      registro.telefono,
+    ].join("");
+    marker.bindPopup(popup_body);
+    layer_positivos.addLayer(marker);
+    markers_positivos.push(marker);
+  }
+  registros = <%= @registros_negativos.html_safe %>;
+  for(var i = 0; i < registros.length; i++){
+    var marker = null;
+    var registro = registros[i];
+    marker = L.marker([registro.latitude, registro.longitude], {icon:redIcon});
+    var popup_body = [
+     "<b>ID: </b>",
+     registro.id,
+     "</br>",
+     "<b># DOC: </b>",
+     registro.numero_documento,
+     "</br>",
+     "<b>NOMBRE: </b>",
+     registro.nombre_completo,
+     "</br>",
+     "<b>EDAD: </b>",
+     registro.edad_value,
+     "</br>",
+     "<b>DIRECCION: </b>",
+     registro.direccion,
+     "</br>",
+     "<b>TELEFONO: </b>",
+     registro.telefono,
+    ].join("");
+    marker.bindPopup(popup_body);
+    layer_negativos.addLayer(marker);
+    markers_negativos.push(marker);
+  }
+  registros = <%= @registros_por_confirmar.html_safe %>;
+  for(var i = 0; i < registros.length; i++){
+    var marker = null;
+    var registro = registros[i];
+    marker = L.marker([registro.latitude, registro.longitude], {icon:yellowIcon});
+    var popup_body = [
+     "<b>ID: </b>",
+     registro.id,
+     "</br>",
+     "<b># DOC: </b>",
+     registro.numero_documento,
+     "</br>",
+     "<b>NOMBRE: </b>",
+     registro.nombre_completo,
+     "</br>",
+     "<b>EDAD: </b>",
+     registro.edad_value,
+     "</br>",
+     "<b>DIRECCION: </b>",
+     registro.direccion,
+     "</br>",
+     "<b>TELEFONO: </b>",
+     registro.telefono,
+    ].join("");
+    marker.bindPopup(popup_body);
+    layer_por_confirmar.addLayer(marker);
+    markers_por_confirmar.push(marker);
+  }
+
+	// PART 2 ----------------------------------------------------------------------------------------
+
+	function init_mapa_interno(){
+		mymap_interno = L.map('map_interno').setView([<%= "#{current_city_point[0]}, #{current_city_point[1]}" %>], 16);
+	  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+	    maxZoom: 18,
+	    id: 'hedu911.22cnjci9', //'your.mapbox.project.id',
+	    accessToken: 'pk.eyJ1IjoiaGVkdTkxMSIsImEiOiJjaXY5cTlwaWEwMGpoMnptODgzMjE4MDF3In0.lvUD1nWuzyTqt5KspZhHug'
+	  }).addTo(mymap_interno);
+
+	}
+
+  function init_mapa_interno_aprobacion(){
+		mymap_interno_aprobacion = L.map('mymap_interno_aprobacion').setView([<%= "#{current_city_point[0]}, #{current_city_point[1]}" %>], 16);
+	  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+	    maxZoom: 18,
+	    id: 'hedu911.22cnjci9', //'your.mapbox.project.id',
+	    accessToken: 'pk.eyJ1IjoiaGVkdTkxMSIsImEiOiJjaXY5cTlwaWEwMGpoMnptODgzMjE4MDF3In0.lvUD1nWuzyTqt5KspZhHug'
+	  }).addTo(mymap_interno_aprobacion);
+    var latitude = $('#latitude_aprobacion').val();
+    var longitude = $('#longitude_aprobacion').val();
+    point = new L.LatLng(latitude, longitude);
+    marker_interno_aprobacion = L.marker(point, {draggable:'true'}).addTo(mymap_interno_aprobacion);
+    set_drag_event_aprobacion();
+    mymap_interno_aprobacion.setView(point, 16);
+	}
+
+
+
+  function search_implementation(value, without_validation){
+    var val = value;
+		if (without_validation || val !== oldValueDireccion /*&& $('#barrio').val() != "" && $('#barrio').val() != null*/) {
+			oldValueDireccion = val;
+			search_address();
+		}
+  }
+
+	$('#add-evento').on('shown.bs.modal', function (e) {
+		setTimeout(function() {
+	    mymap_interno.invalidateSize();
+	  }, 10);
+	});
+
+  function search_address_v1(){
+    var current_uuid = last_uuid + "";
+		googleGeocodeProvider.GetLocations('<%= current_municipio.nil? ? MUNICIPIO_PROYECTO_NOMBRE.capitalize : current_municipio.nombre %> ' + $('#barrio').val() + ' ' + $('#direccion').val(), function ( data ) {
+      //console.log("EL ACTUAL ES:" + current_uuid + ", ULTIMO: " + last_uuid);
+      if(current_uuid != last_uuid){
+        //console.log("ups se descarto un punto");
+        return;
+      }
+			if(data.length > 0){
+				var latitude = data[0].Y;
+				var longitude = data[0].X;
+				if(marker_interno){
+					mymap_interno.removeLayer(marker_interno);
+				}
+				point = new L.LatLng(latitude, longitude);
+				marker_interno = L.marker(point, {draggable:'true'}).addTo(mymap_interno);
+				set_drag_event();
+				mymap_interno.setView(point, 16);
+				$('#latitude').val(latitude);
+				$('#longitude').val(longitude);
+			}
+		});
+	}
+
+
+  var last_uuid = null;
+
+	function search_address(){
+    last_uuid = new Date().getTime().toString();
+    $.post("/eventos_ambulatorios/geocode",
+      {
+        direccion:$('#direccion').val(),
+        uuid:last_uuid
+      },function(result){
+        result = JSON.parse(result);
+        var latitude = parseFloat(result.latitude);
+				var longitude = parseFloat(result.longitude);
+        //console.log("EL ULTIMO ES:" + last_uuid + ", OBTENIDO: " + result.uuid);
+        if(result.uuid != last_uuid)
+        {
+          //console.log("ups se descarto un punto");
+          return;
+        }
+        if(latitude == 0 || longitude == 0){
+          search_address_v1();
+          return
+        }
+
+				if(marker_interno){
+					mymap_interno.removeLayer(marker_interno);
+				}
+				point = new L.LatLng(latitude, longitude);
+				marker_interno = L.marker(point, {draggable:'true'}).addTo(mymap_interno);
+				set_drag_event();
+				mymap_interno.setView(point, 16);
+				$('#latitude').val(latitude);
+				$('#longitude').val(longitude);
+    }, "text").fail(function(response) {
+      search_address_v1();
+    });
+	}
+
+	function set_drag_event_v1(){
+		if(marker_interno){
+			marker_interno.on('dragend', function (e) {
+			  var latLng = e.target.getLatLng();
+				$('#latitude').val(latLng.lat);
+				$('#longitude').val(latLng.lng);
+        geocodeService.reverse().latlng(latLng).run(function(error, result) {
+          if(result.address.CountryCode == "COL" && result.address.City == "<%= MUNICIPIO_PROYECTO_NOMBRE.capitalize %>"){
+            if(!is_direccion_fixed()){
+              $('#direccion').val(result.address.Address);
+            }
+          }else{
+            alert("Direccion no valida, solo se aceptan direcciones dentro de la ciudad de <%= MUNICIPIO_PROYECTO_NOMBRE.capitalize %>.");
+            $('#direccion').val('');
+          }
+        });
+			});
+		}
+	}
+
+  function set_drag_event(){
+		if(marker_interno){
+			marker_interno.on('dragend', function (e) {
+			  var latLng = e.target.getLatLng();
+				$('#latitude').val(latLng.lat);
+				$('#longitude').val(latLng.lng);
+        $.post("/eventos_ambulatorios/reverse_geocode",
+		      {
+		        latitude:latLng.lat,
+						longitude:latLng.lng,
+		      },function(result){
+		        result = JSON.parse(result);
+						if(!is_direccion_fixed()){
+              $('#direccion').val(result.address1);
+            }
+		    }, "text");
+			});
+		}
+	}
+
+  function search_address_aprobacion(){
+		googleGeocodeProvider.GetLocations('<%= current_municipio.nil? ? MUNICIPIO_PROYECTO_NOMBRE.capitalize : current_municipio.nombre %> ' + $('#barrio_aprobacion').val() + ' ' + $('#direccion_aprobacion').val(), function ( data ) {
+			if(data.length > 0){
+				var latitude = data[0].Y;
+				var longitude = data[0].X;
+				if(marker_interno_aprobacion){
+					mymap_interno_aprobacion.removeLayer(marker_interno_aprobacion);
+				}
+				point = new L.LatLng(latitude, longitude);
+				marker_interno_aprobacion = L.marker(point, {draggable:'true'}).addTo(mymap_interno_aprobacion);
+				set_drag_event_aprobacion();
+				mymap_interno_aprobacion.setView(point, 16);
+				$('#latitude_aprobacion').val(latitude);
+				$('#longitude_aprobacion').val(longitude);
+			}
+		});
+	}
+
+	function set_drag_event_aprobacion(){
+		if(marker_interno_aprobacion){
+			marker_interno_aprobacion.on('dragend', function (e) {
+			  var latLng = e.target.getLatLng();
+				$('#latitude_aprobacion').val(latLng.lat);
+				$('#longitude_aprobacion').val(latLng.lng);
+        geocodeService.reverse().latlng(latLng).run(function(error, result) {
+          if(result.address.CountryCode == "COL" && result.address.City == "<%= MUNICIPIO_PROYECTO_NOMBRE.capitalize %>"){
+            if(!is_direccion_aprobacion_fixed()){
+              $('#direccion_aprobacion').val(result.address.Address);
+            }
+          }else{
+            alert("Direccion no valida, solo se aceptan direcciones dentro de la ciudad de <%= MUNICIPIO_PROYECTO_NOMBRE.capitalize %>.");
+            $('#direccion_aprobacion').val('');
+          }
+        });
+			});
+		}
+	}
+
+  function get_eventos_for_list(){
+    $.get("/eventos_ambulatorios/list",
+      {
+
+      },function(result){
+        $('#table-eventos-result-body').empty();
+				$('#table-eventos-result-body').append($.parseHTML( result ));
+        set_btn_seguimiento();
+    }, "text");
+  }
+
+  function set_btn_seguimiento(){
+    $('.btn-focus').html('<i class="fa fa-2x fa-map-marker" aria-hidden="true"></i> Seguir');
+    $('.btn-focus').css('color', 'black');
+    if(evento_focus_id != null){
+      var element = $('*[data-btn-focus-id="' + evento_focus_id + '"]');
+      if(element.length){
+        element.html('<i class="fa fa-2x fa-map-marker" aria-hidden="true"></i> Detener Seguimiento');
+        element.css('color', 'red');
+      }
+    }
+  }
+
+  function get_ambulancias_for_list(){
+    var hash_params = {};
+    var placa = $('#placa').val().toLowerCase();
+    var estado = $('#estado').val();
+    var url = "/ambulancias/list";
+    if((placa && placa.length > 0) || (estado && estado.length > 0) || ambulancia_focus_id)
+    {
+      url += "?";
+    }
+    if(placa && placa.length > 0)
+    {
+      hash_params['placa'] = placa;
+    }
+    if(estado && estado.length > 0)
+    {
+      hash_params['estado'] = estado;
+    }
+    if(ambulancia_focus_id)
+    {
+      hash_params['tracking_id'] = ambulancia_focus_id;
+    }
+    $.get(url+encode_query_data(hash_params),
+      {
+
+      },function(result){
+        $('.ambulancia-list-item').remove();
+        $('#lista-ambulancias').prepend($.parseHTML( result ));
+        $(".btn-ambulancia").click(function() {
+          var had_primary_class = $(this).hasClass('btn-primary');
+          $(".btn-ambulancia").removeClass("btn-success btn-primary");
+          $(".btn-ambulancia").addClass("btn-primary");
+          if(had_primary_class){
+            $(this).removeClass("btn-success btn-primary");
+            $(this).addClass("btn-success");
+            $(this).find('i').attr('class','fa fa-thumb-tack');
+          }else{
+            $(this).removeClass("btn-success btn-primary");
+            $(this).addClass("btn-primary");
+            $(this).find('i').attr('class','fa fa-map-marker');
+          }
+        });
+    }, "text");
+  }
+
+  function encode_query_data(data) {
+    let ret = [];
+    for (let d in data)
+    ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(data[d]));
+    return ret.join('&');
+  }
+
+  function focus_on_ambulancia(id){
+    ambulancia_focus_id = (ambulancia_focus_id == id) ? null : id;
+    evento_focus_id = null;
+  }
+
+  function focus_on_evento(id){
+    ambulancia_focus_id = null;
+    if(evento_focus_id == null){
+      evento_focus_id = id;
+    }else{
+      if(evento_focus_id != id){
+        evento_focus_id = id;
+      }else{
+        evento_focus_id = null;
+      }
+    }
+    set_btn_seguimiento();
+  }
+
+
+  refresh_data(); //Carga inicial de datos
+  setInterval(function() {
+    refresh_movable_data();
+  }, 40000);
+</script>

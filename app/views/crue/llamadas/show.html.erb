@@ -1,0 +1,112 @@
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL AGREGAR EAPB =-=-=-=-=-=-=-=-=-=-========== -->
+	<div class="modal fade" id="detalle-llamada" tabindex="-1" role="dialog" aria-labelledby="add-edit-Label" aria-hidden="true">
+	  <div class="modal-dialog modal-lg">
+	    <div class="modal-content">
+	      <div class="modal-header">
+					<h3 class='col-12 modal-title text-center'>
+		        Detalle llamada
+		        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+		          <span aria-hidden='true'>&times;</span>
+		        </button>
+		      </h3>
+	      </div>
+	      <div class="modal-body">
+	        <%= form_tag("#", method: "post", :remote => true, :multipart => true, "data-ajax" => "false" ) do %>
+
+	          <div class="row">
+
+							<div class="container card-group">
+			          <div class="card">
+			            <div class="card-body">
+			              <h5 class="card-title"></h5>
+			              <div>
+
+											<div class="form-group row">
+												<div class="col-sm-6">
+													<label for="tipo_documento">Tipo de documento</label>
+													<select required disabled id="tipo_documento" name="tipo_documento" class="form-control">
+														<option <%= "selected" if @llamada.tipo_documento == "CC" %> value="CC">Cédula de Ciudadania</option>
+														<option <%= "selected" if @llamada.tipo_documento == "RC" %> value="RC">Registro Civil</option>
+														<option <%= "selected" if @llamada.tipo_documento == "TI" %> value="TI">Tarjeta de Identidad</option>
+														<option <%= "selected" if @llamada.tipo_documento == "CE" %> value="CE">Cédula de Extranjeria</option>
+														<option <%= "selected" if @llamada.tipo_documento == "PA" %> value="PA">Pasaporte</option>
+														<option <%= "selected" if @llamada.tipo_documento == "NV" %> value="NV">Nacido Vivo</option>
+														<option <%= "selected" if @llamada.tipo_documento == "CD" %> value="CD">Carnet Diplomatico</option>
+														<option <%= "selected" if @llamada.tipo_documento == "SC" %> value="SC">Salvoconducto de Permanencia</option>
+														<option <%= "selected" if @llamada.tipo_documento == "PR" %> value="PR">Pasaporte de la ONU</option>
+														<option <%= "selected" if @llamada.tipo_documento == "AS" %> value="AS">Adulto sin Identificación</option>
+														<option <%= "selected" if @llamada.tipo_documento == "MS" %> value="MS">Menor sin Identificación</option>
+														<option <%= "selected" if @llamada.tipo_documento == "PE" %> value="PE">Permiso Especial</option>
+													</select>
+												</div>
+												<div class="col-sm-6">
+													<label for="numero_documento">Numero de documento</label>
+													<%= text_field_tag(:numero_documento, @llamada.numero_documento, :required => true, :class =>"form-control", disabled:true) %>
+												</div>
+											</div>
+											<div class="form-group row">
+												<div class="col-sm-6">
+													<label for="primer_nombre">Primer nombre</label>
+													<%= text_field_tag(:primer_nombre, @llamada.primer_nombre, :required => true, :class =>"form-control", disabled:true) %>
+												</div>
+												<div class="col-sm-6">
+													<label for="segundo_nombre">Segundo nombre</label>
+													<%= text_field_tag(:segundo_nombre, @llamada.segundo_nombre, :required => false, :class =>"form-control", disabled:true) %>
+												</div>
+											</div>
+											<div class="form-group row">
+												<div class="col-sm-6">
+													<label for="primer_apellido">Primer apellido</label>
+													<%= text_field_tag(:primer_apellido, @llamada.primer_apellido, :required => false, :class =>"form-control", disabled:true) %>
+												</div>
+												<div class="col-sm-6">
+													<label for="segundo_apellido">Segundo apellido</label>
+													<%= text_field_tag(:segundo_apellido, @llamada.segundo_apellido, :required => false, :class =>"form-control", disabled:true) %>
+												</div>
+											</div>
+											<div class="form-group">
+			                  <p class="control-label">Email</p>
+			                  <%= email_field_tag(:email, @llamada.email, :required => false, :class =>"form-control", disabled:true) %>
+			                </div>
+											<div class="form-group row">
+												<div class="col-sm-6">
+													<label for="telefono_fijo">Telefono fijo</label>
+													<%= text_field_tag(:telefono_fijo, @llamada.telefono_fijo, :required => false, :class =>"form-control", disabled:true) %>
+												</div>
+												<div class="col-sm-6">
+													<label for="celular">Celular</label>
+													<%= text_field_tag(:celular, @llamada.celular, :required => false, :class =>"form-control", disabled:true) %>
+												</div>
+											</div>
+											<div class="form-group row">
+												<div class="col-sm-6">
+													<label for="departamento_id">Departamento</label>
+													<%= select_tag "departamento_id", options_for_select(@departamentos.collect{ |departamento| [departamento.nombre, departamento.id] }, (@llamada.departamento.nil? ? nil : @llamada.departamento.id)), { include_blank:true, id:'departamentos_select', disabled:true, required:true, class:'form-control' } %>
+												</div>
+												<div class="col-sm-6">
+													<label for="celular">Municipio</label>
+													<%= select_tag "municipio_id", options_for_select(@municipios.collect{ |municipio| [municipio.nombre, municipio.id] }, (@llamada.municipio.nil? ? nil : @llamada.municipio.id)), { id:'municipios_select', disabled:true, required:true, class:'form-control'} %>
+												</div>
+											</div>
+											<div class="form-group">
+			                  <p class="control-label">Descripcion</p>
+			                  <%= text_area_tag(:descripcion, @llamada.descripcion, size: "30x4", class:'form-control', disabled:true) %>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Intencionalidad</p>
+			                  <%= select_tag :intension_id, options_for_select(@intensions.collect{ |intension| [intension.nombre, intension.id] }, (@llamada.intension.nil? ? nil : @llamada.intension.id)), { include_blank: "Escoja una opcion", id: 'intension_select', class:"form-control", required:true, disabled:true } %>
+			                </div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+	          </div>
+
+	        <% end %>
+
+	      </div>
+	    </div>
+	  </div>
+	</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== /MODAL AGREGAR EAPB ==========-=-=-=-=-=-=-=-=-=-= -->

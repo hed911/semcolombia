@@ -1,0 +1,210 @@
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL SEGUIMIENTOS =-=-=-=-=-=-=-=-=-=-========== -->
+<div class="modal fade" id="muestras" tabindex="-1" role="dialog" aria-labelledby="seguimientos" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class='col-12 modal-title text-center'>
+          Muestras caso <%= @caso.id %>
+          <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+            <span aria-hidden='true'>&times;</span>
+          </button>
+        </h3>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+
+          <div class="container card-group">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title"><%= @parent.nil? ? "Sin predecesor" : "Datos paciente nivel #{@parent.nivel + 1 if @parent.nivel}" %></h5>
+                <div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="numero_documento"># Documento</label>
+                      <%= text_field_tag(:numero_documento, (@parent.nil? ? nil : "#{@parent.tipo_documento}-#{@parent.numero_documento}"), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="nombre_completo">Nombre completo</label>
+                      <%= text_field_tag(:nombre_completo, (@parent.nil? ? nil : @parent.nombre_completo), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="numero_documento">Email</label>
+                      <%= text_field_tag(:email, (@parent.nil? ? nil : @parent.email), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="nombre_completo">Telefono</label>
+                      <%= text_field_tag(:telefono, (@parent.nil? ? nil : @parent.telefono), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Datos paciente nivel <%= @caso.nivel + 1 if @caso.nivel %></h5>
+                <div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="numero_documento"># Documento</label>
+                      <%= text_field_tag(:numero_documento, "#{@caso.tipo_documento}-#{@caso.numero_documento}", :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="nombre_completo">Nombre completo</label>
+                      <%= text_field_tag(:nombre_completo, @caso.nombre_completo, :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="numero_documento">Email</label>
+                      <%= text_field_tag(:email, @caso.email, :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="nombre_completo">Telefono</label>
+                      <%= text_field_tag(:telefono, @caso.telefono, :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="container card-group">
+
+          </div>
+        </div>
+
+        <% if @caso.muestras.any? -%>
+          <div class="table-responsive" style="overflow:auto;">
+        		<table id="table-result" class="table table-hover tablesorter">
+              <thead>
+                <tr>
+                  <th data-sort="string">Numero oficial caso</th>
+                  <th data-sort="string">Id</th>
+                  <th data-sort="string">Tipo</th>
+                  <th data-sort="string">Estado</th>
+                  <th data-sort="string">Nombre</th>
+                  <th data-sort="string">Edad</th>
+                  <th data-sort="string"># Documento</th>
+                  <th data-sort="string">EAPB</th>
+                  <th data-sort="string">IPS</th>
+                  <th data-sort="string">Servicio</th>
+                  <th data-sort="string">Laboratorio</th>
+                  <th data-sort="string">Fecha toma muestra</th>
+                  <th data-sort="string">Fecha recepcion</th>
+                  <th data-sort="string">Fecha envio</th>
+                  <th data-sort="string">Resultado</th>
+                  <th data-sort="string">Acción</th>
+                </tr>
+              </thead>
+
+              <tbody id="table-result-body">
+                <% count = 0 -%>
+                <% @caso.muestras.order('created_at DESC').each do |muestra| -%>
+                  <tr class="<%= muestra.table_value %>">
+                    <td class="text-right">
+                      <%= "#{@caso.numero_oficial}" %>
+                    </td>
+                    <td class="text-right">
+                      <%= "#{@caso.id}" %>
+                    </td>
+                    <td><%= muestra.tipo_value %></td>
+                    <td><%= muestra.estado_value %></td>
+                    <td><%= @caso.nombre_completo.upcase %></td>
+                    <td><%= @caso.edad_value %> <%= @caso.unidad_medida_value %></td>
+                    <td><%= @caso.tipo_documento %>-<%= @caso.numero_documento %></td>
+                    <td><%= @caso.entidad_prestadora.nombre if @caso.entidad_prestadora %></td>
+                    <td><%= muestra.institucion.nombre if muestra.institucion %></td>
+                    <td><%= @caso.servicio_value %></td>
+                    <td><%= muestra.laboratorio.nombre if muestra.laboratorio %></td>
+                    <td><%= muestra.fecha.strftime('%I:%M:%S%p %d-%m-%Y') if muestra.fecha %></td>
+                    <td><%= muestra.fecha_recepcion_interna.strftime('%I:%M:%S%p %d-%m-%Y') if muestra.fecha_recepcion_interna %></td>
+                    <td><%= muestra.fecha_despacho_interna.strftime('%I:%M:%S%p %d-%m-%Y') if muestra.fecha_despacho_interna %></td>
+                    <td><%= muestra.resultado_value %></td>
+                    <td>
+                      <% if !current_usuario.roles_array.include?(ROLES[5]) && current_usuario.roles_array.include?(ROLES[6]) -%>
+                        <a class="dropdown-item" href="#" onclick="load_edit_muestra(<%= @caso.id %>, <%= muestra.id %>);"><i class="fas fa-edit"></i> Editar</a>
+                        <%= link_to crue_caso_salud_publica_muestra_path(id:muestra.id, caso_salud_publica_id:@caso.id), :method => :delete, :remote => true, :class => "dropdown-item", style:"color:red;", :title => "Borrar", :data => { :confirm => 'Estas seguro? Este cambio no se puede revertir' } do %>
+                          <i class="fas fa-trash-alt"></i> Borrar
+                        <% end %>
+                      <% end %>
+                      <% if muestra.archivos.any? -%>
+                        <%= link_to archivo_path(muestra.archivos.first.uuid), :method => :get, :class => "btn btn-primary btn-lg", :title => "Descargar" do %>
+                          <i class="fas fa-file-download"></i> Descargar
+                        <% end %>
+                      <% elsif muestra.resultado == 2 || muestra.resultado == 3 %>
+                        <%= link_to generate_and_download_archivo_path(muestra.id), :method => :get, :class => "btn btn-warning btn-lg #{'disabled' if !PDF_ENABLED}", :title => "Descargar" do %>
+                          <i class="fas fa-file-download"></i> Descargar
+                        <% end %> 
+                      <% end %>
+                    </td>
+                  </tr>
+                  <% count += 1 -%>
+                <% end -%>
+              </tbody>
+        		</table>
+        	</div>
+          </br>
+          </br>
+          </br>
+          </br>
+          </br>
+          </br>
+        <% else -%>
+          <div class="jumbotron">
+            <h1>No hay datos</h1>
+            <p>Aun no se han agregado muestras asociadas a este paciente.
+            <p>Una vez se creen las muestras aqui apareceran en forma de tabla</p>
+          </div>
+        <% end -%>
+
+        <% if !current_usuario.roles_array.include?(ROLES[5]) && !current_usuario.roles_array.include?(ROLES[7]) -%>
+          <%= form_tag(crue_caso_salud_publica_muestras_path(@caso.id), method: "post", :multipart => true, "data-ajax" => "false", :remote => true, id:'crear_caso_form' ) do %>
+
+            <div class="container card-group">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Nuevo registro</h5>
+                  <div>
+                    <div class="form-group">
+                      <p class="control-label">Fecha toma de muestra</p>
+                      <%= date_field_tag(:fecha, nil, :required => true, :disabled => false, :class =>"form-control") %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Tipo</p>
+                      <select id="tipo" required class="form-control" name="tipo">
+                        <option value></option>
+                        <option value="1">ASPIRADO TRAQUEAL</option>
+                        <option value="2">LAVADO BRONCOALVEOLAR</option>
+                        <option value="3">HISOPADO NASOFARINGEO</option>
+                        <option value="4">ASPIRADO NASOFARINGEO</option>
+                        <option value="5">OTRO</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Otro</p>
+                      <%= text_field_tag(:otro_tipo, nil, :required => false, :disabled => false, :class =>"form-control") %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+
+              <div class="col-md-12">
+                <div class="text-center">
+                  <%= submit_tag "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".html_safe, :class => "btn btn-lg btn-primary" %>
+                </div>
+              </div>
+
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== MODAL SEGUIMIENTOS ==========-=-=-=-=-=-=-=-=-=-= -->

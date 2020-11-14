@@ -1,0 +1,294 @@
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+<%= javascript_include_tag "l.control.geosearch" %>
+<%= javascript_include_tag "l.geosearch.provider.google" %>
+<%= javascript_include_tag "l.geosearch.provider.openstreetmap" %>
+<%= javascript_include_tag "leaflet-routing-machine" %>
+<%= javascript_include_tag "leaflet.rotatedMarker" %>
+
+<div class="container-fluid">
+  <h1>Consulta registros <small>Salud Publica</small></h1>
+  <div class="row">
+    <%= form_tag("#",  :multipart => true, "data-ajax" => "false", class:"col-2" ) do %>
+      <div class="">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title"></h3>
+          </div>
+          <div class="panel-body">
+              <div>
+                <div class="option">
+                  <%= text_field_tag(:numero_oficial, nil, placeholder:"Num oficial", class:'form-control', style:"text-transform:uppercase") %>
+                </div>
+
+                <div class="option">
+                  <%= text_field_tag(:id, nil, placeholder:"ID", class:'form-control', style:"text-transform:uppercase") %>
+                </div>
+
+                <div class="option">
+                  <%= text_field_tag(:numero_documento_search, nil, placeholder:"Numero documento", class:'form-control', style:"text-transform:uppercase") %>
+                </div>
+
+                <div class="option">
+                  <%= text_field_tag(:primer_nombre, '', placeholder:"Primer nombre", class:'form-control', style:"text-transform:uppercase") %>
+                </div>
+
+                <div class="option">
+                  <%= text_field_tag(:primer_apellido, '', placeholder:"Primer apellido", class:'form-control', style:"text-transform:uppercase") %>
+                </div>
+
+                <div class="option">
+                  <%= select_tag :institucion_id, options_for_select(@instituciones.collect { |institucion|
+        				[institucion.nombre.titleize, institucion.id] }, ""), { id: 'institucion_id', class:'form-control', include_blank: 'IPS'} %>
+                </div>
+
+                <div class="option">
+                  <select id="sexo" class="form-control" name="sexo">
+                    <option value="">Sexo</option>
+        						<option value="1">M</option>
+        						<option value="2">F</option>
+        					</select>
+                </div>
+
+                <div class="option">
+                  <select id="estado" class="form-control" name="estado">
+                    <option value="">Estado</option>
+        						<option value="1">Vigente</option>
+        						<option value="2">Cerrado</option>
+        					</select>
+                </div>
+
+                <div class="option">
+                  <select id="estado_enfermedad" class="form-control" name="estado_enfermedad">
+                    <option value="">Resultado muestra</option>
+        						<option value="1">---</option>
+                    <option value="2">Negativo</option>
+        						<option value="3">Positivo</option>
+                    <option value="4">Recuperado</option>
+                    <option value="5">Reinfección</option>
+        					</select>
+                </div>
+
+                <div class="option">
+                  <select id="servicio" class="form-control" name="servicio">
+                    <option value="">Servicio</option>
+                    <option value="0">No tiene</option>
+        						<option value="1">Hospitalizacion</option>
+                    <option value="2">Urgencia</option>
+                    <option value="3">UCI plena</option>
+                    <option value="4">UCI intermedia</option>
+                    <option value="5">Ambulatorio</option>
+        					</select>
+                </div>
+
+                <div class="option">
+                  <select id="estado_seguimiento" class="form-control" name="estado_seguimiento">
+                    <option value="">Estado seguimiento</option>
+        						<option value="1">EN SEGUIMIENTO</option>
+        						<option value="2">REQUIERE HOSPITALIZACION</option>
+                    <option value="3">RESUELTO SATISFACTORIAMENTE</option>
+                    <option value="4">NO CUMPLE CON DEFINICION DE CASO</option>
+                    <option value="5">AISLAMIENTO EN CASA</option>
+                    <option value="6">INTERNACION</option>
+                    <option value="7">FALLECIDO</option>
+                    <option value="8">OBSERVACION</option>
+        					</select>
+                </div>
+
+                <div class="option">
+                  <select id="triage" class="form-control" name="triage">
+                    <option value="">Triage</option>
+        						<option value="1">Bajo</option>
+        						<option value="2">Medio</option>
+                    <option value="3">Alto</option>
+        					</select>
+                </div>
+
+                <div class="option">
+                  <select id="tipo_contagio" class="form-control" name="tipo_contagio">
+                    <option value="">Tipo contagio</option>
+                    <option value="1">Importado</option>
+                    <option value="2">Relacionado</option>
+                    <option value="3">En estudio</option>
+        					</select>
+                </div>
+
+                <div class="option">
+                  <input value="" name="start_date" id="start_date" class="form-control" type="date">
+                </div>
+
+                <div class="option">
+                  <input value="" name="end_date" id="end_date" class="form-control" type="date">
+                </div>
+
+                <div class="option">
+                  <%= text_field_tag(:per_page, '10', placeholder:"Resultados por pagina", class:'form-control') %>
+                </div>
+
+    						<div class="option">
+                  <button onclick="do_search(1);" type="button" class="btn btn-primary">Buscar</button>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    <% end -%>
+    <div class="col-10">
+      <div class="container-fluid">
+
+        <div class="table-responsive">
+          <table id="table-result" class="table table-hover tablesorter">
+            <thead>
+              <tr>
+                <th data-sort="string">Numero oficial caso</th>
+                <th data-sort="string">Id</th>
+                <th data-sort="string">Nombre</th>
+                <th data-sort="string">Nivel</th>
+                <th data-sort="string"># Contactos</th>
+                <th data-sort="string"># Muestras</th>
+                <th data-sort="string">Fecha reporte</th>
+                <th data-sort="string">Edad</th>
+                <th data-sort="string"># Documento</th>
+                <th data-sort="string">Sexo</th>
+                <th data-sort="string">EAPB</th>
+                <th data-sort="string">Servicio I</th>
+                <th data-sort="string">Servicio A</th>
+                <th data-sort="string">Origen</th>
+                <th data-sort="string">Creado por</th>
+                <th data-sort="string">Estado caso</th>
+                <th data-sort="string">Estado seguimiento</th>
+                <th data-sort="string">Estado paciente</th>
+                <th data-sort="string">Estado IEC</th>
+                <th data-sort="string"></th>
+              </tr>
+            </thead>
+      		  <tbody id="table-result-body">
+
+      		  </tbody>
+      		</table>
+        </div>
+      </div>
+
+      <div class="container">
+        <center>
+          <div style="text-align:center" id="page-selection"></div>
+        </center>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div id="container"></div>
+<div id="modal"></div>
+
+<script>
+  var pages_count = 0;
+	var firstTime = true;
+  var currentPage = 1;
+
+  function update_paginas() {
+  	$("#page-links").empty();
+  	for (var i = 1; i <= pages_count; i++)
+    {
+      var li = $("<button/>", {
+          class: 'btn page_link'
+      }).html(i);
+      li.appendTo('#page-links');
+    }
+
+    $('.page_link').on('click', function() {
+    	xxx = $(this).html();
+        load_page($(this).html());
+    });
+  }
+
+  function do_search(index) {
+    currentPage = index;
+		if(index == 1){
+			firstTime = true;
+		}else{
+			firstTime = false;
+		}
+  	show_loading_indicator();
+
+    numero_oficial_ = $('#numero_oficial').val();
+  	id_ = $('#id').val();
+    numero_documento_ = $('#numero_documento_search').val();
+    primer_nombre_ = $('#primer_nombre').val();
+    primer_apellido_ = $('#primer_apellido').val();
+    institucion_id_ = $('#institucion_id').val();
+    sexo_ = $('#sexo').val();
+    estado_ = $('#estado').val();
+    estado_enfermedad_ = $('#estado_enfermedad').val();
+    estado_seguimiento_ = $('#estado_seguimiento').val();
+    triage_ = $('#triage').val();
+    tipo_contagio_ = $('#tipo_contagio').val();
+    start_date_ = $('#start_date').val();
+    end_date_ = $('#end_date').val();
+    servicio_ = $('#servicio').val();
+    size_ = $('#per_page').val();
+
+    $.post("/entidad_prestadora/caso_salud_publicas/search",
+    	{
+				index: index,
+        numero_oficial: numero_oficial_,
+        id: id_,
+        numero_documento:numero_documento_,
+        primer_nombre:primer_nombre_,
+        primer_apellido:primer_apellido_,
+        institucion_id: institucion_id_,
+        sexo: sexo_,
+        estado: estado_,
+        estado_enfermedad: estado_enfermedad_,
+        estado_seguimiento: estado_seguimiento_,
+        triage: triage_,
+        tipo_contagio: tipo_contagio_,
+        start_date:start_date_,
+        end_date:end_date_,
+        servicio:servicio_,
+        size:size_
+    	},function(result){
+				hide_loading_indicator();
+				$('#table-result-body').empty();
+				$('#table-result-body').append($.parseHTML( result ));
+				var cantidadPaginas = $('#cantidad_paginas').val();
+				if(firstTime){
+					initPager(cantidadPaginas);
+				}
+		}, "text");
+  }
+
+	function initPager(count){
+
+		$('#page-selection').bootpag({
+			total: count,
+	    page: 1,
+      maxVisible: 10,
+      firstLastUse: true,
+      first: '←',
+      last: '→'
+		}).on("page", function(event, num){
+		    //$(".content").html("Page " + num); // or some ajax content loading...
+				do_search(num);
+		});
+
+	}
+
+  var original_class = document.getElementsByTagName('body')[0].className;
+
+  function show_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className += " loading";
+  }
+
+  function hide_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className = original_class;
+  }
+
+  do_search(1);
+
+  <%=  render partial: 'entidad_prestadora/caso_salud_publicas/logic.js', current_city_point: current_city_point, user_id: current_usuario.id %>
+</script>

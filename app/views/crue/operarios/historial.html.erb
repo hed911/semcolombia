@@ -1,0 +1,174 @@
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+<%= javascript_include_tag "l.control.geosearch" %>
+<%= javascript_include_tag "l.geosearch.provider.google" %>
+<%= javascript_include_tag "l.geosearch.provider.openstreetmap" %>
+<%= javascript_include_tag "leaflet-routing-machine" %>
+
+<%= javascript_include_tag "leaflet.markercluster" %>
+<%= stylesheet_link_tag "marker-cluster" %>
+
+<div class="container-fluid">
+  <h1>Historial Seguimiento</h1>
+  <div class="row">
+		<div class="col-md-2">
+      <div class="panel panel-verde">
+        <div class="panel-heading">
+          <h3 class="panel-title">Filtros</h3>
+        </div>
+        <div class="panel-body">
+            <div>
+              <div class="option">
+                <input id="cedula" class="form-control" name="cedula" type="text" placeholder="Cédula" type="text" />
+              </div>
+
+              <div class="option">
+                <input id="email" class="form-control" name="email" type="text" placeholder="Email" type="text" />
+              </div>
+
+              <div class="option">
+                <input id="start_date" class="form-control" name="start_date" type="text" placeholder="Fecha Inicio" type="text" onfocus="(this.type='datetime-local')" />
+              </div>
+
+              <div class="option">
+                <input id="end_date" class="form-control" name="end_date" type="text" placeholder="Fecha Fin" type="text" onfocus="(this.type='datetime-local')" />
+              </div>
+
+              <div class="option">
+                <button onclick="do_search();" type="button" class="btn btn-danger">Buscar</button>
+              </div>
+            </div>
+        </div>
+      </div>
+		</div>
+    <div class="col-md-10">
+      <div class="container-fluid">
+        <div style='width: 100%; height: 100%;'>
+          <div id="map" style='width: 100%; height: 800px;'></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<div id="modal"></div>
+
+<script type="text/javascript">
+  var original_class = document.getElementsByTagName('body')[0].className;
+  var icono_evento = L.icon({
+    iconUrl: "<%= image_path('icono-evento.png') %>",
+    iconSize:     [38, 54], // size of the icon
+    iconAnchor:   [19, 54], // point of the icon which will correspond to marker's location
+    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+  });
+
+  var polyline = null;
+  var points = [];
+  var centred = false;
+  var available_img_url = "<%= image_path('icono-evento.png') %>";
+  var markers = L.markerClusterGroup({
+
+  });
+  var mymap = L.map('map', {
+    fullscreenControl: true,
+    fullscreenControl: {
+        pseudoFullscreen: false
+    }
+  }).setView([<%= "10.9685400, -74.7813200" %>], 16);
+  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: 'hedu911.22cnjci9', //'your.mapbox.project.id',
+    accessToken: 'pk.eyJ1IjoiaGVkdTkxMSIsImEiOiJjaXY5cTlwaWEwMGpoMnptODgzMjE4MDF3In0.lvUD1nWuzyTqt5KspZhHug'
+  }).addTo(mymap);
+	var googleGeocodeProvider = new L.GeoSearch.Provider.Google(),
+			 addressText = '';
+  var routing = L.Routing.control({
+    waypoints: [],
+    createMarker: function() { return null; }
+  }).addTo(mymap);
+
+  function center_map(latitude, longitude)
+  {
+    mymap.setView(new L.LatLng(latitude, longitude), 17);
+  }
+
+  function is_not_null(x) {
+    return x !== null;
+  }
+
+  function is_defined(x) {
+    var undefined;
+    return x !== undefined;
+  }
+
+  function show_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className += " loading";
+  }
+
+  function hide_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className = original_class;
+  }
+
+  function remove_markers()
+  {
+    //for(var i = 0; i < markers.length; i++){
+    //  mymap.removeLayer(markers[i]);
+    //}
+    markers.clearLayers();
+  }
+
+  function do_search(){
+    if(  ($('#cedula').val() != '' || $('#email').val() != '') && $('#start_date').val() != '' && $('#end_date').val() != ''){
+      do_search_for_map();
+    }else{
+      alert("Debe llenar todos los valores para hacer la busqueda");
+    }
+  }
+
+  function do_search_for_map(){
+    show_loading_indicator();
+    cedula_ = $('#cedula').val();
+    email_ = $('#email').val();
+    start_date_ = $('#start_date').val();
+    end_date_ = $('#end_date').val();
+    $.post("/operarios/search_positions",
+      {
+        cedula:cedula_,
+        email:email_,
+        start_date:start_date_,
+        end_date:end_date_
+      },function(result){
+        hide_loading_indicator();
+        remove_markers();
+        if(polyline != null){
+          mymap.removeLayer(polyline);
+        }
+        if(result.length > 0) center_map(result[result.length - 1].latitude, result[result.length - 1].longitude);
+        for(var i = 0; i < result.length; i++){
+          points.push(new L.LatLng(result[i].latitude, result[i].longitude));
+          var marker = L.marker([result[i].latitude, result[i].longitude], {icon: icono_evento});
+          var popup_body = [
+            "<b>FECHA: </b>",
+            result[i].created_at_formatted
+          ].join("");
+          marker.bindPopup(popup_body);
+          markers.addLayer(marker);
+          mymap.addLayer(markers);
+        }
+        polyline = new L.Polyline(points, {
+          color: 'red',
+          weight: 3,
+          opacity: 0.5,
+          smoothFactor: 1
+        });
+        //polyline.addTo(mymap);
+      });
+  }
+</script>

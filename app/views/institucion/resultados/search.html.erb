@@ -1,0 +1,36 @@
+<% if @registros.any? -%>
+  <% @registros.each do |registro| -%>
+    <tr class='<%= registro['muestra_table_value'] %>'>
+      <td class="text-right">
+        <%= registro['caso_numero_oficial'] %>
+      </td>
+      <td class="text-right">
+        <%= registro['caso_id'] %>
+      </td>
+      <td><%= registro['caso_nombre_completo'] %></td>
+      <td><%= registro['caso_edad_value'].to_i %> <%= registro['unidad_medida_value'] %></td>
+      <td><%= registro['caso_tipo_documento'] %>-<%= registro['caso_numero_documento'] %></td>
+      <td><%= registro['entidad_prestadora_nombre'] %></td>
+      <td><%= registro['laboratorio_nombre'] %></td>
+      <td><%= registro['muestra_resultado_value'] %></td>
+      <td><%= registro['muestra_fecha'] %></td>
+      <td><%= registro['muestra_fecha_realizacion'] %></td>
+      <td>
+        <% if registro['archivo_uuid'] -%>
+          <%= link_to archivo_path(registro['archivo_uuid']), :method => :get, :class => "btn btn-primary", :title => "Descargar" do %>
+            <i class="fas fa-file-download"></i> Descargar
+          <% end %>
+        <% elsif registro['muestra_resultado'] == 2 || registro['muestra_resultado'] == 3 %>
+          <%= link_to generate_and_download_archivo_path(registro['muestra_id']), :method => :get, :class => "btn btn-warning btn-lg #{'disabled' if !PDF_ENABLED}", :title => "Descargar" do %>
+            <i class="fas fa-file-download"></i> Descargar
+          <% end %> 
+        <% end %>
+      </td>
+    </tr>
+  <% end -%>
+<% else -%>
+  <p>No se encontraron registros</p>
+<% end -%>
+
+<%= hidden_field_tag :cantidad_registros, @cantidad_registros %>
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

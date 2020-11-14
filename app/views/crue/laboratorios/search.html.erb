@@ -1,0 +1,25 @@
+<% count = 0 -%>
+<% @laboratorios.each do |laboratorio| -%>
+  <% count += 1 -%>
+  <tr class="">
+    <td><%= laboratorio.nombre if laboratorio.nombre %></td>
+    <td><%= laboratorio.direccion %></td>
+    <td><%= laboratorio.telefono %></td>
+    <td><%= laboratorio.nit %></td>
+    <td><%= laboratorio.coordinacion ? "SI" : "NO" %></td>
+    <td>
+      <%= link_to edit_crue_laboratorio_path(laboratorio.id), :class => "btn btn-xs btn-success", :title => "Editar laboratorio" do %>
+        <i class="fa fa-pencil-square-o"></i> Editar
+      <% end %>
+
+      <%= link_to crue_laboratorio_path(laboratorio.id), :class => "btn btn-xs btn-danger", method: :delete, title:"Borrar laboratorio", :data => {:confirm => 'Estas seguro? Este cambio no se puede revertir' } do %>
+        <i class="fa fa-trash-o"></i> Borrar
+      <% end %>
+
+      <%= link_to crue_laboratorio_lab_users_path(laboratorio.id), :class => "btn btn-xs btn-success", :title => "Usuarios" do %>
+        Usuarios(<%= laboratorio.usuarios.count %>)
+      <% end %>
+    </td>
+  </tr>
+<% end -%>
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

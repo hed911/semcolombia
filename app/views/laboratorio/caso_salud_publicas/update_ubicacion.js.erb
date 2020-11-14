@@ -1,0 +1,5 @@
+$('#edit-ubicacion').modal('hide');
+do_search(currentPage);
+<% if params[:close] != "true" -%>
+  show_contactos(<%= @caso.id %>);
+<% end -%>

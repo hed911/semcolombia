@@ -1,0 +1,52 @@
+<% @registros.each do |registro| -%>
+  <tr class='<%= registro['caso_table_value'] %>'>
+    <td class="text-right">
+      <%= registro['caso_numero_oficial'] %>
+    </td>
+    <td class="text-right">
+      <%= registro['caso_id'] %>
+    </td>
+    <td><%= registro['caso_nombre_completo'].upcase %></td>
+    <td><%= registro['caso_nivel'] %></td>
+    <td><%= registro['caso_cantidad_contactos'] %></td>
+    <td><%= registro['caso_cantidad_muestras'] %></td>
+    <td><%= registro['caso_created_at'] %></td>
+    <td><%= registro['caso_edad_value'] %> <%= registro['caso_unidad_medida_value'] %></td>
+    <td><%= registro['caso_tipo_documento'] %>-<%= registro['caso_numero_documento'] %></td>
+    <td><%= registro['caso_sexo_value'] %></td>
+    <td><%= registro['entidad_prestadora_nombre'] %></td>
+    <td><%= registro['caso_servicio_value'] %></td>
+    <td><%= registro['caso_servicio_crue_value'] %></td>
+    <td><%= registro['caso_origen_value'] %></td>
+    <td><%= registro['usuario_nombre_completo'] %></td>
+    <td><%= registro['caso_estado_value'] %></td>
+    <td><%= registro['caso_estado_seguimiento_value'] %></td>
+    <td><%= registro['caso_fallecido_value'] %></td>
+    <td><%= registro['caso_iec_realizado_value'] %></td>
+    <td>
+      <div class="btn-group dropleft">
+        <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Opciones
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#" onclick="show_detalle_caso(<%= registro['caso_id'] %>);"><i class="fas fa-info-circle"></i> Detalle</a>
+          <% if true -%>
+            <a class="dropdown-item" href="#" onclick="load_edit(<%= registro['caso_id'] %>);"><i class="fas fa-edit"></i> Editar</a>
+          <% end -%>
+          <a class="dropdown-item" href="#" onclick="show_edit_ubicacion(<%= registro['caso_id'] %>);"><i class="fas fa-map-marker-alt"></i> Editar ubicacion</a>
+          <a class="dropdown-item" href="#" onclick="show_contactos(<%= registro['caso_id'] %>);"><i class="fas fa-users"></i> Editar contactos</a>
+          <a class="dropdown-item" href="#" onclick="show_seguimientos(<%= registro['caso_id'] %>);"><i class="fas fa-list-ol"></i> Seguimiento</a>
+          <a class="dropdown-item" href="#" onclick="show_muestras(<%= registro['caso_id'] %>);"><i class="fas fa-vial"></i> Muestras</a>
+          <div class="dropdown-divider"></div>
+          <% if false %>
+            <%= link_to entidad_prestadora_caso_salud_publica_path(registro['caso_id']), :method => :delete, :remote => true, :class => "dropdown-item", style:"color:red;", :title => "Borrar", :data => { :confirm => 'Estas seguro? Este cambio no se puede revertir' } do %>
+               <i class="fas fa-trash-alt"></i> Borrar
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </td>
+  </tr>
+<% end -%>
+
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

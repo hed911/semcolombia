@@ -1,0 +1,37 @@
+<div class="text-center">
+  <h1><small>Logs API Sismuestra</small></h1>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="container-fluid">
+
+        <div class="card">
+          <div class="card-body">
+            Ultima fecha de actualización <b>(<%= @flag.last_process_finished_at.strftime('%Y/%m/%d %I:%M:%S%p') if @flag && @flag.last_process_finished_at %>)</b>
+          </div>
+        </div>
+        
+        <% if !@flag.last_failed_at.nil? && TimeDifference.between(@flag.last_failed_at, Time.now).in_days < 2 %>
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Ultima fecha de error <b style="color:red;">(<%= @flag.last_failed_at.strftime('%Y/%m/%d %I:%M:%S%p') if @flag && @flag.last_failed_at %>)</b></h5>
+              <p class="card-text"><small class="text-muted"><%= @flag.data %></small></p>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="card">
+          <div class="card-body">
+            <% if @flag && TimeDifference.between(@flag.last_pinged_at, Time.now).in_minutes > 10 %>
+              <span style="color:red;">Proceso detenido <i style="color:red;" class="fas fa-2x fa-times-circle"></i> </span> <b>(Espere unos minutos o contacte con un administrador si persiste el problema)</b>
+            <% else %>
+              Proceso en ejecucion <i style="color:green;" class="fas fa-2x fa-check-circle"></i>
+            <% end %>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

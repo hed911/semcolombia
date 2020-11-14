@@ -1,0 +1,146 @@
+<div id="loading-indicator" class="hidden-image row-fluid">
+   <div class="span12 text-center">
+		<div class="whirly-loader">
+		  Loading…
+		</div>
+	 </div>
+</div>
+
+<div class="container">
+  <h1><small>Resultados <%= params[:start_date] == params[:end_date] && params[:start_date] == Time.now.strftime('%Y-%m-%d') ? "hoy" : "" %> (<%= params[:tipo] == 'no_se_pudo' ? 'SE SOLICITA NUEVA MUESTRA'.capitalize : "#{params[:tipo].capitalize}s" %>)</small></h1>
+
+  <div class="row">
+    <div class="col-12" >
+      <div class="">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title"></h3>
+          </div>
+          <div class="panel-body">
+            <div>
+              <div class="form-group row">
+                <div class="col-sm-6">
+                  <label for="tipo_documento">Fecha inicial</label>
+                  <%= date_field_tag(:start_date, (params.has_key?(:start_date) ? params[:start_date] : nil), placeholder:"Fecha inicio", class:'form-control', style:"text-transform: uppercase; text-align: center;") %>
+                </div>
+                <div class="col-sm-6">
+                  <label for="numero_documento">Fecha final</label>
+                  <%= date_field_tag(:end_date, (params.has_key?(:end_date) ? params[:end_date] : nil), placeholder:"Fecha final", class:'form-control', style:"text-transform: uppercase; text-align: center;") %>
+                </div>
+              </div>
+              <div class="text-center">
+                <button onclick="refresh();" type="button" class="btn btn-primary">Buscar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+	<div class="table-responsive">
+		<table id="table-result" class="table table-hover tablesorter">
+      <thead>
+        <tr>
+          <th data-sort="string">Numero oficial caso</th>
+          <th data-sort="string">Id</th>
+          <th data-sort="string">Nombre</th>
+          <th data-sort="string">Edad</th>
+          <th data-sort="string"># Documento</th>
+          <th data-sort="string">EAPB</th>
+          <th data-sort="string">IPS</th>
+          <th data-sort="string">Laboratorio</th>
+          <th data-sort="string">Resultado muestra</th>
+          <th data-sort="string">Fecha toma muestra</th>
+          <th data-sort="string">Fecha resultado</th>
+          <th data-sort="string"></th>
+        </tr>
+			</thead>
+		  <tbody id="table-result-body">
+
+		  </tbody>
+		</table>
+	</div>
+
+  <div class="row">
+    <div class="col text-center">
+
+    </div>
+  </div>
+
+  <p id="page-selection"></p>
+
+	<div id="modal">
+	</div>
+
+
+<script type="text/javascript">
+
+  firstTime = true;
+  var currentPage = 1;
+  function do_search(index_) {
+    currentPage = index_;
+    $('#loading-indicator').show();
+    $.post("/laboratorio/resultados/search_hoy",
+      {
+        index: index_,
+        size:'10',
+        tipo:"<%= params[:tipo] %>",
+        start_date:$('#start_date').val(),
+        end_date:$('#end_date').val()
+      },function(result){
+        $('#loading-indicator').hide();
+        $('#table-result-body').empty();
+        $('#table-result-body').append($.parseHTML( result ));
+        var cantidadPaginas = $('#cantidad_paginas').val();
+        if(firstTime){
+          initPager(cantidadPaginas);
+          firstTime = false;
+        }
+    }, "text");
+  }
+
+  function initPager(count){
+
+		$('#page-selection').bootpag({
+			total: count,
+	    page: <%= params[:id] || "1" %>,
+      maxVisible: 10,
+      firstLastUse: true,
+      first: '←',
+      last: '→'
+		}).on("page", function(event, num){
+		    //$(".content").html("Page " + num); // or some ajax content loading...
+				do_search(num);
+		});
+
+	}
+
+  //setInterval(function() {
+    do_search(currentPage);
+  //}, 5000);
+
+  function show_detalle_caso(id){
+    $.get("/laboratorio/caso_salud_publicas/" + id,
+      {
+      },function(result){
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#detalle-caso").modal('show');
+    }, "text");
+  }
+
+
+  function refresh(){
+    if(($('#start_date').val() != "" && $('#end_date').val() == "") || ($('#start_date').val() == "" && $('#end_date').val() != "")){
+      alert("Debe ingresar ambas fechas para filtrar entre fechas, o dejar ambas en blanco");
+      return;
+    }
+    var url = "<%= "#{hoy_crue_resultado_path(1)}?tipo=#{params[:tipo]}" %>";
+    if($('#start_date').val() != "") url += "&start_date=" + $('#start_date').val();
+    if($('#end_date').val() != "") url += "&end_date=" + $('#end_date').val();
+    window.location.href = url ;
+  }
+
+</script>

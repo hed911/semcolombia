@@ -1,0 +1,19 @@
+---
+development:
+  cloud_name: sem-barranquisha
+  api_key: '669334989421817'
+  api_secret: 6DyRYR04sNMQAbuvFyB06rbYq-o
+  enhance_image_tag: true
+  static_image_support: false
+production:
+  cloud_name: sem-barranquisha
+  api_key: '669334989421817'
+  api_secret: 6DyRYR04sNMQAbuvFyB06rbYq-o
+  enhance_image_tag: true
+  static_image_support: true
+test:
+  cloud_name: sem-barranquisha
+  api_key: '669334989421817'
+  api_secret: 6DyRYR04sNMQAbuvFyB06rbYq-o
+  enhance_image_tag: true
+  static_image_support: false

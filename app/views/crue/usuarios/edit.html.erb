@@ -1,0 +1,156 @@
+<%= form_tag(crue_usuario_path, method: "patch",  :multipart => true, "data-ajax" => "false" ) do %>
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title"></h3>
+	</div>
+	<div class="panel-body">
+		<h1>Edicion Usuario</h1>
+
+		<ol class="breadcrumb">
+		  <li class="active"><%= link_to "Usuarios", crue_usuarios_path %></li>
+		</ol>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:primer_nombre, "Primer Nombre:") %>
+				</br>
+				<%= text_field_tag(:primer_nombre, @usuario.primer_nombre, :required => true) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:segundo_nombre, "Segundo Nombre:") %>
+				</br>
+				<%= text_field_tag(:segundo_nombre, @usuario.segundo_nombre) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:primer_apellido, "Primer Apellido:") %>
+				</br>
+				<%= text_field_tag(:primer_apellido, @usuario.primer_apellido, :required => true) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:segundo_apellido, "Segundo Apellido:") %>
+				</br>
+				<%= text_field_tag(:segundo_apellido, @usuario.segundo_apellido, :required => true) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:telefono, "Telefono:") %>
+				</br>
+				<%= text_field_tag(:telefono, @usuario.telefono) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:celular, "Celular:") %>
+				</br>
+				<%= text_field_tag(:celular, @usuario.celular) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:email, "Email:") %>
+				</br>
+				<%= email_field_tag(:email, @usuario.email, :required => true) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:identificacion, "Identificacion:") %>
+				</br>
+				<%= text_field_tag(:identificacion, @usuario.identificacion) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:cargo, "Cargo:") %>
+				</br>
+				<%= text_field_tag(:cargo, @usuario.cargo) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:fecha_vigencia, "Fecha de Vigencia:") %>
+				</br>
+				<%= date_field_tag(:fecha_vigencia, (@usuario.fecha_vigencia.strftime('%Y-%m-%d') if @usuario.fecha_vigencia) ) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:activo, "Activado:") %>
+				</br>
+				<%= check_box_tag 'activo', '1', @usuario.activo %>
+			</div>
+		</div>
+
+		<% if current_usuario.es_super_admin %>
+			<div class="form-group">
+				<label class="control-label">Departamento alterno</label>
+				<%= select_tag "departamento_id", options_for_select(@departamentos.collect{ |departamento| [departamento.nombre, departamento.id] }, (@departamento.nil? ? nil : @departamento.id)), { include_blank:true, id:'departamentos_select', disabled:false, required:true, class:'form-control' } %>
+			</div>
+
+			<div class="form-group">
+				<label class="control-label">Municipio alterno</label>
+				<%= select_tag "municipio_id", options_for_select(@municipios.collect{ |municipio| [municipio.nombre, municipio.id] }, (@municipio.nil? ? nil : @municipio.id)), { id:'municipios_select', disabled:false, required:true, class:'form-control'} %>
+			</div>
+		<% end %>
+
+		<div class="form-group">
+			<label class="control-label">Departamento</label>
+			<%= select_tag "departamento_alterno_id", options_for_select(@departamentos.collect{ |departamento| [departamento.nombre, departamento.id] }, (@usuario.departamento_alterno.nil? ? nil : @usuario.departamento_alterno.id)), { include_blank:true, id:'departamentos_alternos_select', disabled:false, required:false, class:'form-control' } %>
+		</div>
+
+		<div class="form-group">
+			<label class="control-label">Municipio</label>
+			<%= select_tag "municipio_alterno_id", options_for_select(@municipios_alternos.collect{ |municipio| [municipio.nombre, municipio.id] }, (@usuario.municipio_alterno.nil? ? nil : @usuario.municipio_alterno.id)), {include_blank:true, id:'municipios_alternos_select', disabled:false, required:false, class:'form-control'} %>
+		</div>
+
+		<h5>Roles asignados</h5>
+		<fieldset>
+			<% for rol in ROLES %>
+				<div style="<%= 'display:none;' unless rol[:enabled] %>">
+					<%= check_box_tag "roles[#{rol[:id]}]", "1", @usuario.roles_array.include?(rol) %>
+					<%= rol[:nombre] %>
+				</div>
+			<% end %>
+		</fieldset>
+
+		<%= submit_tag("Guardar Cambios") %>
+	</div>
+</div>
+<% end %>
+
+<script>
+<% if current_usuario.es_super_admin %>
+	$("#departamentos_select").on("change", function() {
+		return $.ajax({
+			url: "/departamentos/" + $('#departamentos_select option:selected').val() + "/get_municipios",
+			type: "GET",
+			dataType: "script"
+		});
+	});
+<% end %>
+$("#departamentos_alternos_select").on("change", function() {
+	return $.ajax({
+		url: "/departamentos/" + $('#departamentos_alternos_select option:selected').val() + "/get_municipios?component_id=municipios_alternos_select",
+		type: "GET",
+		dataType: "script"
+	});
+});
+
+</script>

@@ -1,0 +1,6 @@
+<% if @error %>
+  alert("<%= @error %>");
+<% else %>
+  $('#edit-llamada').modal('hide');
+  do_search(currentPage);
+<% end %>

@@ -1,0 +1,24 @@
+<% if @registros.any? -%>
+  <% @registros.each do |registro| -%>
+    <% next if registro['caso_id'].nil? -%>
+    <tr class='<%= registro['caso_table_value_enfermedad'] %>'>
+      <td class="text-right">
+        <%= "#{registro['caso_numero_oficial']}" %>
+      </td>
+      <td class="text-right">
+        <%= "#{registro['caso_id']}" %>
+      </td>
+      <td><%= registro['caso_nombre_completo'].upcase %></td>
+      <td><%= registro['caso_edad_value'].to_i %> <%= registro['caso_unidad_medida_value'] %></td>
+      <td><%= registro['caso_tipo_documento'] %>-<%= registro['caso_numero_documento'] %></td>
+      <td><%= registro['entidad_prestadora_nombre'] %></td>
+      <td><%= registro['institucion_nombre'] %></td>
+      <td><%= registro['muestra_fecha'] %></td>
+    </tr>
+  <% end -%>
+<% else -%>
+
+<% end -%>
+
+<%= hidden_field_tag :cantidad_registros, @cantidad_registros %>
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

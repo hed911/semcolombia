@@ -1,0 +1,148 @@
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL SEGUIMIENTOS =-=-=-=-=-=-=-=-=-=-========== -->
+<div class="modal fade" id="edit-crue" tabindex="-1" role="dialog" aria-labelledby="seguimientos" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class='col-12 modal-title text-center'>
+          Editar crue <%= @caso.id %>
+          <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+            <span aria-hidden='true'>&times;</span>
+          </button>
+        </h3>
+      </div>
+      <div class="modal-body">
+        <%= form_tag(update_crue_crue_caso_salud_publica_path(@caso.id), method: "put", remote:true, :multipart => true, "data-ajax" => "false" ) do %>
+          <div class="row">
+            <div class="container card-group">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title"></h5>
+                  <div>
+                    <div class="form-group">
+                      <label for="servicio">Servicio</label>
+                      <select id="servicio" name="servicio" class="form-control">
+                        <option value></option>
+                        <option <%= "selected" if @caso.servicio_crue == 1 %> value="1">GENERAL PEDÍATRICA</option>
+                        <option <%= "selected" if @caso.servicio_crue == 2 %> value="2">GENERAR ADULTOS</option>
+                        <option <%= "selected" if @caso.servicio_crue == 3 %> value="3">UCI 1/2 ADULTOS</option>
+                        <option <%= "selected" if @caso.servicio_crue == 4 %> value="4">UCI 1/2 NEONATAL</option>
+                        <option <%= "selected" if @caso.servicio_crue == 5 %> value="5">UCI 1/2 PEDIÁTRICO</option>
+                        <option <%= "selected" if @caso.servicio_crue == 6 %> value="6">UCI ADULTOS</option>
+                        <option <%= "selected" if @caso.servicio_crue == 7 %> value="7">UCI NEONATAL</option>
+                        <option <%= "selected" if @caso.servicio_crue == 8 %> value="8">UCI PEDIÁTRICO</option>
+                        <option <%= "selected" if @caso.servicio_crue == 9 %> value="9">EN CASA</option>
+                        <option <%= "selected" if @caso.servicio_crue == 10 %> value="10">FALLECIDO</option>
+                      </select>
+                    </div>
+                    <div class="covid_confirmed form-check">
+                      <label class="form-check-label">
+                        <input <%= "checked" if @caso.fallecido %> type="checkbox" class="form-check-input" value="1" name="fallecido"><span style="color:red;">El paciente se encuentra fallecido?</span>
+                      </label>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Fecha defuncion</p>
+                      <%= date_field_tag(:fecha_defuncion, (@caso.fecha_defuncion.strftime('%Y-%m-%d') if @caso.fecha_defuncion), class:"form-control" ) %>
+                    </div>
+                    <div class="covid_confirmed form-check">
+                      <label class="form-check-label">
+                        <input <%= "checked" if @caso.tiene_ventilador %> type="checkbox" class="form-check-input" value="1" name="tiene_ventilador"><span>Tiene ventilador?</span>
+                      </label>
+                      </br>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Numero oficial</p>
+                      <%= text_field_tag(:numero_oficial, @caso.numero_oficial, class:"form-control") %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Dirección</p>
+                      <%= text_field_tag(:direccion, @caso.direccion, class:"form-control") %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Departamento</p>
+                      <%= select_tag "departamento_id", options_for_select(@departamentos.collect{ |departamento| [departamento.nombre, departamento.id] }, (@caso.departamento_origen.nil? ? nil : @caso.departamento_origen.id)), { include_blank:true, id:'departamentos_select', disabled:false, required:true, class:'form-control' } %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Municipio</p>
+                      <%= select_tag "municipio_id", options_for_select(@municipios.collect{ |municipio| [municipio.nombre, municipio.id] }, (@caso.municipio_origen.nil? ? nil : @caso.municipio_origen.id)), { id:'municipios_select', disabled:false, required:true, class:'form-control'} %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <% if @caso.seguimiento_casos.where(crue:true).any? -%>
+              <div class="table-responsive" style="overflow:auto;">
+            		<table id="table-result" class="table table-hover tablesorter">
+                  <thead>
+                    <tr>
+                      <th data-sort="string">Observacion</th>
+                      <th data-sort="string">Fecha</th>
+                      <th data-sort="string">Usuario</th>
+                    </tr>
+                  </thead>
+
+                  <tbody id="table-result-body">
+                    <% count = 0 -%>
+                    <% @caso.seguimiento_casos.where(crue:true).order('created_at DESC').each do |seguimiento| -%>
+                      <tr class="<%= seguimiento.llamada_fallida ? 'table-danger' : '' %>">
+                        <td style="word-wrap: break-word;min-width: 400px;max-width: 400px;" data-toggle="tooltip" title="<%= seguimiento.contenido %>"><%= truncate seguimiento.contenido, length: 170, separator: /\w+/ %></td>
+                        <td><%= seguimiento.created_at_formatted %></td>
+                        <td><%= seguimiento.usuario.nombre_completo if seguimiento.usuario %></td>
+                      </tr>
+                    <% end -%>
+                  </tbody>
+            		</table>
+            	</div>
+              </br>
+              </br>
+              </br>
+              </br>
+              </br>
+              </br>
+            <% else -%>
+              <div class="jumbotron">
+                <h1>No hay datos</h1>
+                <p>Aun no se han agregado seguimientos.
+                <p>Una vez crees registros aqui apareceran en forma de tabla</p>
+              </div>
+            <% end -%>
+
+            <div class="container card-group">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Nuevo seguimiento</h5>
+                  <div>
+                    <div class="form-group">
+                      <p class="control-label">Observacion</p>
+                      <%= text_area_tag(:contenido, "", size: "30x4", style:"min-width: 100%") %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Estado</p>
+                      <select id="estado" class="form-control" name="estado">
+                        <option <%= "selected" if @caso.estado_seguimiento_crue.nil? %> value></option>
+                        <option <%= "selected" if @caso.estado_seguimiento_crue == 1 %> value="1">EN SEGUIMIENTO</option>
+                        <option <%= "selected" if @caso.estado_seguimiento_crue == 3 %> value="3">RESUELTO SATISFACTORIAMENTE</option>
+                        <option <%= "selected" if @caso.estado_seguimiento_crue == 4 %> value="4">NO CUMPLE CON DEFINICION DE CASO</option>
+                        <option <%= "selected" if @caso.estado_seguimiento_crue == 5 %> value="5">AISLAMIENTO EN CASA</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="text-center">
+                <%= submit_tag "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Guardar Cambios&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".html_safe, :class => "btn btn-lg btn-primary" %>
+              </div>
+            </div>
+
+          </div>
+
+        <% end %>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== MODAL SEGUIMIENTOS ==========-=-=-=-=-=-=-=-=-=-= -->

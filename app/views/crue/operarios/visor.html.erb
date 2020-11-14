@@ -1,0 +1,295 @@
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+<%= javascript_include_tag "l.control.geosearch" %>
+<%= javascript_include_tag "l.geosearch.provider.google" %>
+<%= javascript_include_tag "l.geosearch.provider.openstreetmap" %>
+<%= javascript_include_tag "leaflet-routing-machine" %>
+<%= javascript_include_tag "leaflet.rotatedMarker" %>
+
+<script src="https://unpkg.com/esri-leaflet@2.0.4"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/esri-leaflet-geocoder/2.2.1/esri-leaflet-geocoder.css">
+<script src="https://cdn.jsdelivr.net/npm/esri-leaflet-geocoder@2.2.1/dist/esri-leaflet-geocoder-debug.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.1.3/mustache.min.js"></script>
+
+<div class="container-fluid">
+  <h1>Visor Notificadores</h1>
+  <div class="row">
+		<div class="col-md-2">
+    	<div class="panel panel-verde">
+	      <div class="panel-heading">
+	        <h3 class="panel-title">Filtrar Notificadores</h3>
+	      </div>
+	      <div class="panel-body">
+	          <div>
+	            <div class="option">
+	              <%= text_field_tag(:cedula, nil, placeholder:"Cédula", class:'form-control', style:"text-transform:uppercase;") %>
+	            </div>
+
+              <div class="option">
+                <%= text_field_tag(:email, nil, placeholder:"Email", class:'form-control', style:"text-transform:uppercase;") %>
+              </div>
+	          </div>
+	      </div>
+	    </div>
+		</div>
+    <div class="col-md-10">
+      <div class="panel panel-verde">
+
+        <div class="row">
+          <div class="col-md-4">
+            <div class="row">
+              <div class="red-fonted text-center col-md-6">
+                <h2>
+                  <i class="fa fa-calendar-o" aria-hidden="true"></i>
+                  <%= Time.now.strftime('%e').to_i < 9 ? "0#{Time.now.strftime('%e').to_i}" : Time.now.strftime('%e') %>
+                </h2>
+                <p><%= Time.now.strftime '%A, %B %Y' %></p>
+              </div>
+              <div class="red-fonted bordered-verde-box text-center col-md-6">
+                <h2><i class="fa fa-clock-o" aria-hidden="true"></i> <%= Time.now.strftime '%l:%M' %></h2>
+                <p><%= Time.now.strftime '%S Seg, %p' %></p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+          </div>
+          <div class="col-md-4">
+
+          </div>
+        </div>
+
+        <hr class="separador-verde" />
+        <div class="panel-body">
+
+          <div class="container-fluid">
+            <div style='width: 100%; height: 100%;'>
+              <div id="map" style='width: 100%; height: 400px;'></div>
+            </div>
+            <div class="table-responsive">
+              <table id="table-result" class="table table-hover tablesorter">
+                <thead>
+                  <tr>
+                    <th data-sort="string">Id</th>
+                    <th data-sort="string">Nombre</th>
+                    <th data-sort="string">Email</th>
+    								<th data-sort="string">Cédula</th>
+                    <th data-sort="string">Ultima Actualizacion</th>
+                    <th data-sort="string">Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="table-usuarios-result-body">
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="modal"></div>
+
+
+<script type="text/javascript">
+
+  var first_time = true;
+  var usuario_focus_id = null;
+
+  var icono_operario = L.icon({
+    iconUrl: "<%= image_path('icono-operario.png') %>",
+    iconSize:     [38, 54], // size of the icon
+    iconAnchor:   [19, 54], // point of the icon which will correspond to marker's location
+    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+  });
+
+  var layer_usuarios = L.layerGroup([]);
+  var centred = false;
+  var available_img_url = "<%= image_path('icono-evento.png') %>";
+  var markers_usuarios = [];
+  var polyline = null;
+  var mymap = L.map('map', {
+    fullscreenControl: true,
+    fullscreenControl: {
+        pseudoFullscreen: false
+    },
+    layers: [layer_usuarios]
+  }).setView([<%= "10.9685400, -74.7813200" %>], 16);
+  var overlayMaps = {
+    "Usuarios": layer_usuarios
+  };
+  L.control.layers(null, overlayMaps).addTo(mymap);
+  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: 'hedu911.22cnjci9', //'your.mapbox.project.id',
+    accessToken: 'pk.eyJ1IjoiaGVkdTkxMSIsImEiOiJjaXY5cTlwaWEwMGpoMnptODgzMjE4MDF3In0.lvUD1nWuzyTqt5KspZhHug'
+  }).addTo(mymap);
+	var mymap_interno = null;
+	var googleGeocodeProvider = new L.GeoSearch.Provider.Google(),
+			 addressText = '';
+  var routing = L.Routing.control({
+    waypoints: [],
+    createMarker: function() { return null; },
+    show: false
+  }).addTo(mymap);
+  var geocodeService = L.esri.Geocoding.geocodeService();
+  function remove_markers_usuarios()
+  {
+    layer_usuarios.clearLayers();
+    for(var i = 0; i < markers_usuarios.length; i++){
+      mymap.removeLayer(markers_usuarios[i]);
+    }
+  }
+
+  function center_map(latitude, longitude)
+  {
+    mymap.setView(new L.LatLng(latitude, longitude));
+  }
+
+  function is_not_null(x) {
+    return x !== null;
+  }
+
+  function is_defined(x) {
+    var undefined;
+    return x !== undefined;
+  }
+
+  function get_usuarios_for_map() {
+    var hash_params = {};
+    var cedula = $('#cedula').val().toLowerCase();
+    var email = $('#email').val().toLowerCase();
+    var url = "/crue/operarios/actuales.json";
+    if((cedula && cedula.length > 0) || (email && email.length > 0))
+    {
+      url += "?";
+    }
+    if(cedula && cedula.length > 0)
+    {
+      hash_params['cedula'] = cedula;
+    }
+    if(email && email.length > 0)
+    {
+      hash_params['email'] = email;
+    }
+    $('#loading-indicator').show();
+    $.get(url + encode_query_data(hash_params),
+      {
+      },function(result){
+        var elements = new Array();
+        remove_markers_usuarios();
+        for(var i = 0; i < result.length; i++){
+          var marker = null;
+          var popup_body = null;
+          marker = L.marker([result[i].latitude, result[i].longitude], {custom_id:result[i].id, icon: icono_operario});//.addTo(mymap);
+          marker.on('click', function(e) {focus_on_usuario(this.options.custom_id);})
+          popup_body = [
+            "<b>NOMBRE:</b>",
+            result[i].nombre,
+            "</br>",
+            "<b>EMAIL:</b>",
+            result[i].email,
+            "</br>",
+            "<b>ULTIMA FECHA/HORA:</b>",
+            result[i].ultima_ubicacion,
+          ].join("");
+          marker.bindPopup(popup_body);
+          layer_usuarios.addLayer(marker);
+          markers_usuarios.push(marker);
+          if(usuario_focus_id != null && result[i].id == usuario_focus_id){
+            center_map(result[i].latitude, result[i].longitude);
+          }
+        }
+      });
+  }
+
+  function get_usuarios_for_list(){
+    var hash_params = {};
+    var cedula = $('#cedula').val().toLowerCase();
+    var email = $('#email').val().toLowerCase();
+    var url = "/crue/operarios/list";
+    if((cedula && cedula.length > 0) || (email && email.length > 0))
+    {
+      url += "?";
+    }
+    if(cedula && cedula.length > 0)
+    {
+      hash_params['cedula'] = cedula;
+    }
+    if(email && email.length > 0)
+    {
+      hash_params['email'] = email;
+    }
+    $.get(url + encode_query_data(hash_params),
+      {
+
+      },function(result){
+        $('#table-usuarios-result-body').empty();
+				$('#table-usuarios-result-body').append($.parseHTML( result ));
+        set_btn_seguimiento();
+    }, "text");
+  }
+
+  function set_btn_seguimiento(){
+    $('.btn-focus').html('<i class="fa fa-2x fa-map-marker" aria-hidden="true"></i> Seguir');
+    $('.btn-focus').css('color', 'black');
+    if(usuario_focus_id != null){
+      var element = $('*[data-btn-focus-id="' + usuario_focus_id + '"]');
+      if(element.length){
+        element.html('<i class="fa fa-2x fa-map-marker" aria-hidden="true"></i> Detener Seguimiento');
+        element.css('color', 'red');
+      }
+    }
+  }
+
+  function encode_query_data(data) {
+    let ret = [];
+    for (let d in data)
+    ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(data[d]));
+    return ret.join('&');
+  }
+
+  function focus_on_usuario(id){
+    if(usuario_focus_id == null){
+      usuario_focus_id = id;
+    }else{
+      if(usuario_focus_id != id){
+        usuario_focus_id = id;
+      }else{
+        usuario_focus_id = null;
+      }
+    }
+    set_btn_seguimiento();
+  }
+
+  var original_class = document.getElementsByTagName('body')[0].className;
+  function show_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className += " loading";
+  }
+
+  function hide_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className = original_class;
+  }
+
+  $('#cedula #email').on('change textInput input', function () {
+    get_usuarios_for_map();
+    get_usuarios_for_list();
+	});
+
+  get_usuarios_for_map();
+  get_usuarios_for_list();
+  var channel = pusher.subscribe('broadcast');
+  channel.bind('data_updated', function(data) {
+    get_usuarios_for_map();
+    get_usuarios_for_list();
+  });
+
+</script>

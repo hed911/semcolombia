@@ -1,0 +1,15 @@
+<% count = 0 -%>
+<% @instituciones.each do |institucion| -%>
+  <tr>
+    <td><%= institucion.codigo %></td>
+    <td><%= institucion.numero_sede %></td>
+    <td><%= institucion.nivel_value %></td>
+    <td><%= institucion.distancia %> Kms</td>
+    <td><%= institucion.nombre.upcase if institucion.nombre %></td>
+    <td><%= institucion.direccion %></td>
+    <td><%= institucion.telefono %></td>
+    <td><%= institucion.email %></td>
+    <td><%= institucion.nit %></td>
+    <td></td>
+  </tr>
+<% end -%>

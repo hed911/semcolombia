@@ -1,0 +1,121 @@
+<%= form_tag(empresa_ambulancias_path, method: "post",  :multipart => true, "data-ajax" => "false" ) do %>
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title"></h3>
+	</div>
+	<div class="panel-body">
+		<h1>Creacion Empresa de Ambulancia</h1>
+
+		<ol class="breadcrumb">
+		  <li class="active"><%= link_to "Empresas de Ambulancia", empresa_ambulancias_path %></li>
+		</ol>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:codigo_habilitacion, "Codigo Habilitacion:") %>
+				</br>
+				<%= text_field_tag(:codigo_habilitacion, nil, required:true, class:'form-control') %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:nombre, "Nombre:") %>
+				</br>
+				<%= text_field_tag(:nombre, nil, required:true, class:'form-control') %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:nit, "Nit:") %>
+				</br>
+				<%= text_field_tag(:nit, nil, required:true, class:'form-control') %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:direccion, "Direccion:") %>
+				</br>
+				<%= text_field_tag(:direccion, nil, required:true, class:'form-control') %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:telefono, "Telefono:") %>
+				</br>
+				<%= text_field_tag(:telefono, nil, required:true, class:'form-control') %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:email_gerente, "Email Gerente:") %>
+				</br>
+				<%= text_field_tag(:email_gerente, nil, required:true, class:'form-control') %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:nombre_gerente, "Nombre Gerente:") %>
+				</br>
+				<%= text_field_tag(:nombre_gerente, nil, required:true, class:'form-control') %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:fecha_radicacion, "Fecha Radicacion:") %>
+				</br>
+				<%= date_field_tag(:fecha_radicacion, nil, required:true, class:'form-control') %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:email_notificacion_uno, "Email Notificacion 1:") %>
+				</br>
+				<%= text_field_tag(:email_notificacion_uno, nil, required:false, class:'form-control') %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:telefono_notificacion_uno, "Telefono Notificacion 1:") %>
+				</br>
+				<%= text_field_tag(:telefono_notificacion_uno, nil, required:false, class:'form-control') %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:email_notificacion_dos, "Email Notificacion 2:") %>
+				</br>
+				<%= text_field_tag(:email_notificacion_dos, nil, required:false, class:'form-control') %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:telefono_notificacion_dos, "Telefono Notificacion 2:") %>
+				</br>
+				<%= text_field_tag(:telefono_notificacion_dos, nil, required:false, class:'form-control') %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:secad_id, "SECAD ID:") %>
+				</br>
+				<%= text_field_tag(:secad_id, nil, required:false, class:'form-control') %>
+			</div>
+		</div>
+
+		<%= submit_tag("Crear") %>
+	</div>
+</div>
+
+<% end %>

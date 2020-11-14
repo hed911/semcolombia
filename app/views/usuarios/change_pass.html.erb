@@ -1,0 +1,31 @@
+<%= form_tag(do_change_pass_municipio_usuario_path(:municipio_id => @municipio.id, :id => @usuario.id), method: "patch",  :multipart => true, "data-ajax" => "false" ) do %>
+<div class="container">
+	<h1>Cambiar Contraseña <small><%= @usuario.primer_nombre %></small></h1>
+
+	<ol class="breadcrumb">
+	  <li class="active"><%= link_to "Usuarios", municipio_usuarios_path(@municipio.id) %></li>
+	</ol>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:password, "Contraseña:") %>
+			<div class="input">
+				<%= password_field_tag(:password, nil, :required => true) %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:password_again, "Repita su Contraseña:") %>
+			<div class="input">
+				<%= password_field_tag(:password_again, nil, :required => true) %>
+			</div>
+		</div>
+	</fieldset>
+
+	<%= submit_tag("Guardar Cambios") %>
+
+</div>
+
+<% end %>

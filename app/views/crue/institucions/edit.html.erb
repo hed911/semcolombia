@@ -1,0 +1,517 @@
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+<%= javascript_include_tag "l.control.geosearch" %>
+<%= javascript_include_tag "l.geosearch.provider.google" %>
+<%= javascript_include_tag "l.geosearch.provider.openstreetmap" %>
+<script src="https://unpkg.com/esri-leaflet@2.0.4"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/esri-leaflet-geocoder/2.2.1/esri-leaflet-geocoder.css">
+<script src="https://cdn.jsdelivr.net/npm/esri-leaflet-geocoder@2.2.1/dist/esri-leaflet-geocoder-debug.min.js"></script>
+
+<%= form_tag(crue_institucion_path, method: "patch",  :multipart => true, "data-ajax" => "false" ) do %>
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title"></h3>
+	</div>
+	<div class="panel-body">
+		<h1>Edicion IPS</h1>
+
+		<ol class="breadcrumb">
+		  <li class="active"><%= link_to "IPS's", crue_institucions_path %></li>
+		</ol>
+
+
+
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:codigo, "Codigo:") %>
+				</br>
+				<%= text_field_tag(:codigo, @institucion.codigo, required:false, class:"form-control") %>
+			</div>
+
+			<div class="col-lg-6">
+				<%= label_tag(:numero_sede, "Numero Sede:") %>
+				</br>
+				<%= text_field_tag(:numero_sede, @institucion.numero_sede, required:false, class:"form-control") %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:nombre, "Nombre:") %>
+				</br>
+				<%= text_field_tag(:nombre, @institucion.nombre, required:true, class:"form-control") %>
+			</div>
+
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+					<%= label_tag(:direccion, "Direccion:") %>
+					</br>
+					<div class="input-group">
+						<%= text_field_tag(:direccion, @institucion.direccion, required:true, class:"form-control") %>
+						<span onclick="toggle_fixed_direccion();" class="input-group-addon">
+							<i id="icon_direccion" class="fa fa-lock" aria-hidden="true"></i>
+						</span>
+					</div>
+			</div>
+			<div class="col-md-6">
+				<div style='width: 100%; height: 400px;'>
+					<div id="map_interno" style='width: 100%; height: 400px;'></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:latitude, "Latitude:") %>
+				</br>
+				<%= text_field_tag(:latitude, @institucion.latitude, class:"form-control", required:true) %>
+			</div>
+
+			<div class="col-lg-6">
+				<%= label_tag(:longitude, "Longitude:") %>
+				</br>
+				<%= text_field_tag(:longitude, @institucion.longitude, class:"form-control", required:true) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:telefono, "Telefono:") %>
+				</br>
+				<%= text_field_tag(:telefono, @institucion.telefono, required:false, class:"form-control") %>
+			</div>
+
+			<div class="col-lg-6">
+				<%= label_tag(:email, "Email:") %>
+				</br>
+				<%= text_field_tag(:email, @institucion.email, required:false, class:"form-control") %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:nit, "Nit:") %>
+				</br>
+				<%= text_field_tag(:nit, @institucion.nit, required:false, class:"form-control") %>
+			</div>
+
+			<div class="col-lg-6">
+				<%= label_tag(:dv, "Dv:") %>
+				</br>
+				<%= text_field_tag(:dv, @institucion.dv, required:false, class:"form-control") %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:clase_persona, "Clase persona:") %>
+				</br>
+				<%= text_field_tag(:clase_persona, @institucion.clase_persona, required:false, class:"form-control") %>
+			</div>
+
+			<div class="col-lg-6">
+				<%= label_tag(:naju_nombre, "Naju nombre:") %>
+				</br>
+				<%= text_field_tag(:naju_nombre, @institucion.naju_nombre, required:false, class:"form-control") %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:grse_nombre, "Grse nombre:") %>
+				</br>
+				<%= text_field_tag(:grse_nombre, @institucion.grse_nombre, required:false, class:"form-control") %>
+			</div>
+
+			<div class="col-lg-6">
+				<%= label_tag(:serv_nombre, "Serv nombre:") %>
+				</br>
+				<%= text_field_tag(:serv_nombre, @institucion.serv_nombre, required:false, class:"form-control") %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:nivel, "Nivel de Urgencia:") %>
+				<select id="nivel" name="nivel" class="form-control">
+					<option <%= 'selected' if @institucion.nivel == 0 %> value="0">No Tiene</option>
+					<option <%= 'selected' if @institucion.nivel == 1 %> value="1">Bajo</option>
+					<option <%= 'selected' if @institucion.nivel == 2 %> value="2">Medio</option>
+					<option <%= 'selected' if @institucion.nivel == 3 %> value="3">Alto</option>
+				</select>
+			</div>
+
+			<div class="col-lg-6">
+				<%= label_tag(:nivel_complejidad, "Nivel de Complejidad:") %>
+				<select id="nivel_complejidad" name="nivel_complejidad" class="form-control">
+					<option <%= 'selected' if @institucion.nivel_complejidad == 1 %> value="1">I</option>
+					<option <%= 'selected' if @institucion.nivel_complejidad == 2 %> value="2">II</option>
+					<option <%= 'selected' if @institucion.nivel_complejidad == 3 %> value="3">III</option>
+					<option <%= 'selected' if @institucion.nivel_complejidad == 4 %> value="4">IV</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-12">
+				<%= label_tag(:caracter, "Caracter:") %>
+				</br>
+				<%= text_field_tag(:caracter, @institucion.caracter, required:false, class:"form-control") %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:ambulatorio, "Ambulatorio:") %>
+				</br>
+				<%= check_box_tag :ambulatorio, '1', @institucion.ambulatorio, class:"form-control" %>
+			</div>
+
+			<div class="col-lg-3">
+				<%= label_tag(:hospitalario, "Hospitalario:") %>
+				</br>
+				<%= check_box_tag :hospitalario, '1', @institucion.hospitalario, class:"form-control" %>
+			</div>
+
+			<div class="col-lg-3">
+				<%= label_tag(:unidad_movil, "Unidad movil:") %>
+				</br>
+				<%= check_box_tag :unidad_movil, '1', @institucion.unidad_movil, class:"form-control" %>
+			</div>
+
+			<div class="col-lg-3">
+				<%= label_tag(:domiciliario, "Domiciliario:") %>
+				</br>
+				<%= check_box_tag :domiciliario, '1', @institucion.domiciliario, class:"form-control" %>
+			</div>
+
+			<div class="col-lg-3">
+				<%= label_tag(:atiende_salud_mental, "Salud Mental:") %>
+				</br>
+				<%= check_box_tag :atiende_salud_mental, '1', @institucion.atiende_salud_mental, class:"form-control" %>
+			</div>
+
+		</div>
+
+		<div class="row">
+
+
+			<div class="col-lg-3">
+				<%= label_tag(:otras_extramural, "Otras extramural:") %>
+				</br>
+				<%= check_box_tag :otras_extramural, '1', @institucion.otras_extramural, class:"form-control" %>
+			</div>
+
+			<div class="col-lg-3">
+				<%= label_tag(:centro_referencia, "Centro referencia:") %>
+				</br>
+				<%= check_box_tag :centro_referencia, '1', @institucion.centro_referencia, class:"form-control" %>
+			</div>
+
+			<div class="col-lg-3">
+				<%= label_tag(:institucion_remisora, "Institucion emisora:") %>
+				</br>
+				<%= check_box_tag :institucion_remisora, '1', @institucion.institucion_remisora, class:"form-control" %>
+			</div>
+
+			<div class="col-lg-3">
+				<%= label_tag(:activo, "Activo:") %>
+				</br>
+				<%= check_box_tag :activo, '1', @institucion.activo, class:"form-control" %>
+			</div>
+
+		</div>
+
+
+		<div class="row">
+
+			<div class="col-lg-6">
+				<%= label_tag(:numero_distintivo, "Numero distintivo:") %>
+				</br>
+				<%= check_box_tag :numero_distintivo, '1', @institucion.numero_distintivo, class:"form-control" %>
+			</div>
+
+			<div class="col-lg-6">
+				<%= label_tag(:numero_sede_principal, "Numero sede principal:") %>
+				</br>
+				<%= check_box_tag :numero_sede_principal, '1', @institucion.numero_sede_principal, class:"form-control" %>
+			</div>
+		</div>
+
+		<div class="row">
+
+			<div class="col-lg-6">
+				<%= label_tag(:fecha_apertura, "Fecha apertura:") %>
+				</br>
+				<%= date_field_tag(:fecha_apertura, (@institucion.fecha_apertura.strftime('%Y-%m-%d') if @institucion.fecha_apertura), class:"form-control") %>
+			</div>
+
+			<div class="col-lg-6">
+				<%= label_tag(:fecha_cierre, "Fecha cierre:") %>
+				</br>
+				<%= date_field_tag(:fecha_cierre, (@institucion.fecha_cierre.strftime('%Y-%m-%d') if @institucion.fecha_cierre), class:"form-control") %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:roles_asignados, "Roles asignados:") %>
+				</br>
+				<% for rol in ROLES_INSTITUCIONES %>
+					<div style="<%= 'display:none;' unless rol[:enabled] %>">
+						<%= check_box_tag "roles[#{rol[:id]}]", "1", @institucion.roles_array.include?(rol) %>
+						<%= rol[:nombre] %>
+					</div>
+				<% end %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:email_contacto_uno, "Email Contacto(1):") %>
+				</br>
+				<%= text_field_tag(:email_contacto_uno, @institucion.email_contacto_uno, required:false, class:"form-control") %>
+			</div>
+
+			<div class="col-lg-3">
+				<%= label_tag(:telefono_contacto_uno, "Telefono Contacto(1):") %>
+				</br>
+				<%= text_field_tag(:telefono_contacto_uno, @institucion.telefono_contacto_uno, required:false, class:"form-control") %>
+			</div>
+
+			<div class="col-lg-3">
+				<%= label_tag(:email_contacto_dos, "Email Contacto(2):") %>
+				</br>
+				<%= text_field_tag(:email_contacto_dos, @institucion.email_contacto_dos, required:false, class:"form-control") %>
+			</div>
+
+			<div class="col-lg-3">
+				<%= label_tag(:telefono_contacto_dos, "Telefono Contacto(2):") %>
+				</br>
+				<%= text_field_tag(:telefono_contacto_dos, @institucion.telefono_contacto_dos, required:false, class:"form-control") %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:email_contacto_tres, "Email Contacto(3):") %>
+				</br>
+				<%= text_field_tag(:email_contacto_tres, @institucion.email_contacto_tres, required:false, class:"form-control") %>
+			</div>
+
+			<div class="col-lg-3">
+				<%= label_tag(:telefono_contacto_tres, "Telefono Contacto(3):") %>
+				</br>
+				<%= text_field_tag(:telefono_contacto_tres, @institucion.telefono_contacto_tres, required:false, class:"form-control") %>
+			</div>
+
+			<div class="col-lg-3">
+				<%= label_tag(:email_contacto_cuatro, "Email Contacto(4):") %>
+				</br>
+				<%= text_field_tag(:email_contacto_cuatro, @institucion.email_contacto_cuatro, required:false, class:"form-control") %>
+			</div>
+
+			<div class="col-lg-3">
+				<%= label_tag(:telefono_contacto_cuatro, "Telefono Contacto(4):") %>
+				</br>
+				<%= text_field_tag(:telefono_contacto_cuatro, @institucion.telefono_contacto_cuatro, required:false, class:"form-control") %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:email_contacto_cinco, "Email Contacto(5):") %>
+				</br>
+				<%= text_field_tag(:email_contacto_cinco, @institucion.email_contacto_cinco, required:false, class:"form-control") %>
+			</div>
+
+			<div class="col-lg-3">
+				<%= label_tag(:telefono_contacto_cinco, "Telefono Contacto(5):") %>
+				</br>
+				<%= text_field_tag(:telefono_contacto_cinco, @institucion.telefono_contacto_cinco, required:false, class:"form-control") %>
+			</div>
+
+			<div class="col-lg-3">
+				<%= label_tag(:email_contacto_seis, "Email Contacto(6):") %>
+				</br>
+				<%= text_field_tag(:email_contacto_seis, @institucion.email_contacto_seis, required:false, class:"form-control") %>
+			</div>
+
+			<div class="col-lg-3">
+				<%= label_tag(:telefono_contacto_seis, "Telefono Contacto(6):") %>
+				</br>
+				<%= text_field_tag(:telefono_contacto_seis, @institucion.telefono_contacto_seis, required:false, class:"form-control") %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:departamento_id, "Departamento Alterno:") %>
+				</br>
+				<%= select_tag :departamento_id, options_for_select(@departamentos.collect{ |departamento| [departamento.nombre, departamento.id] }, (@institucion.municipio_alterno && @institucion.municipio_alterno.departamento ? @institucion.municipio_alterno.departamento.id : nil)), { include_blank:true, id:'departamentos_select', disabled:false, required:true, class:'form-control' } %>
+			</div>
+			<div class="col-lg-6">
+				<%= label_tag(:municipio_id, "Municipio Alterno:") %>
+				</br>
+				<%= select_tag :municipio_id, options_for_select(@municipios.collect{ |municipio| [municipio.nombre, municipio.id] }, (@institucion.municipio_alterno ? @institucion.municipio_alterno.id : nil)), { id:'municipios_select', disabled:false, required:true, class:'form-control'} %>
+			</div>
+		</div>
+
+		<%= submit_tag("Guardar Cambios") %>
+	</div>
+</div>
+<% end %>
+
+<script>
+	var oldValueDireccion;
+	var mymap_interno = null;
+	var marker_interno = null;
+	var googleGeocodeProvider = new L.GeoSearch.Provider.Google(),
+			 addressText = '';
+  var geocodeService = L.esri.Geocoding.geocodeService();
+	function init_mapa_interno(){
+		mymap_interno = L.map('map_interno').setView([<%= "#{current_city_point[0]}, #{current_city_point[1]}" %>], 16);
+		L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+			maxZoom: 18,
+			id: 'hedu911.22cnjci9', //'your.mapbox.project.id',
+			accessToken: 'pk.eyJ1IjoiaGVkdTkxMSIsImEiOiJjaXY5cTlwaWEwMGpoMnptODgzMjE4MDF3In0.lvUD1nWuzyTqt5KspZhHug'
+		}).addTo(mymap_interno);
+		var original_latitude = <%= @institucion.latitude || 'null' %>;
+		var original_longitude = <%= @institucion.longitude || 'null' %>;
+		if(original_latitude && original_longitude){
+			point = new L.LatLng(original_latitude, original_longitude);
+			marker_interno = L.marker(point, {draggable:'true'}).addTo(mymap_interno);
+			set_drag_event();
+			mymap_interno.setView(point, 16);
+		}
+	}
+
+	$('#add-institucion').on('shown.bs.modal', function (e) {
+		setTimeout(function() {
+	    mymap_interno.invalidateSize();
+	  }, 10);
+	});
+
+	$('#direccion').on('change textInput input', function () {
+		var val = this.value;
+		if (val !== oldValueDireccion) {
+			oldValueDireccion = val;
+			search_address();
+		}
+	});
+
+	function search_address_v1(){
+		if(is_direccion_fixed()) return;
+		googleGeocodeProvider.GetLocations('<%= current_municipio.nil? ? MUNICIPIO_PROYECTO_NOMBRE.capitalize : current_municipio.nombre %> ' + $('#direccion').val(), function ( data ) {
+			if(data.length > 0){
+				var latitude = data[0].Y;
+				var longitude = data[0].X;
+				if(marker_interno){
+					mymap_interno.removeLayer(marker_interno);
+				}
+				point = new L.LatLng(latitude, longitude);
+				marker_interno = L.marker(point, {draggable:'true'}).addTo(mymap_interno);
+				set_drag_event();
+				mymap_interno.setView(point, 16);
+				$('#latitude').val(latitude);
+				$('#longitude').val(longitude);
+			}
+		});
+	}
+
+	function search_address(){
+		if(is_direccion_fixed()) return;
+    $.post("/crue/eventos_ambulatorios/geocode",
+      {
+        direccion:$('#direccion').val(),
+      },function(result){
+        result = JSON.parse(result);
+        var latitude = parseFloat(result.latitude);
+				var longitude = parseFloat(result.longitude);
+				if(latitude == 0 || longitude == 0){
+          search_address_v1();
+          return
+        }
+				if(marker_interno){
+					mymap_interno.removeLayer(marker_interno);
+				}
+				point = new L.LatLng(latitude, longitude);
+				marker_interno = L.marker(point, {draggable:'true'}).addTo(mymap_interno);
+				set_drag_event();
+				mymap_interno.setView(point, 16);
+				$('#latitude').val(latitude);
+				$('#longitude').val(longitude);
+    }, "text");
+	}
+
+	function set_drag_event_v1(){
+		if(marker_interno){
+			marker_interno.on('dragend', function (e) {
+			  var latLng = e.target.getLatLng();
+				$('#latitude').val(latLng.lat);
+				$('#longitude').val(latLng.lng);
+        geocodeService.reverse().latlng(latLng).run(function(error, result) {
+          if(result.address.CountryCode == "COL" && result.address.City == "<%= MUNICIPIO_PROYECTO_NOMBRE.capitalize %>"){
+            if(!is_direccion_fixed()){
+              $('#direccion').val(result.address.Address);
+            }
+          }else{
+            alert("Direccion no valida, solo se aceptan direcciones dentro de la ciudad de <%= MUNICIPIO_PROYECTO_NOMBRE.capitalize %>.");
+            $('#direccion').val('');
+          }
+        });
+			});
+		}
+	}
+
+	function set_drag_event(){
+		if(marker_interno){
+			marker_interno.on('dragend', function (e) {
+			  var latLng = e.target.getLatLng();
+				$('#latitude').val(latLng.lat);
+				$('#longitude').val(latLng.lng);
+				$.post("/crue/eventos_ambulatorios/reverse_geocode",
+		      {
+		        latitude:latLng.lat,
+						longitude:latLng.lng,
+		      },function(result){
+		        result = JSON.parse(result);
+						if(!is_direccion_fixed()){
+              $('#direccion').val(result.address1);
+            }
+		    }, "text");
+			});
+		}
+	}
+
+	function toggle_fixed_direccion(){
+    var class_name = $('#icon_direccion').attr('class');
+    if(class_name == 'fa fa-lock'){
+      $('#icon_direccion').removeClass();
+      $('#icon_direccion').addClass('fa fa-unlock-alt');
+    }else{
+      $('#icon_direccion').removeClass();
+      $('#icon_direccion').addClass('fa fa-lock');
+    }
+  }
+
+	function is_direccion_fixed(){
+    return $('#icon_direccion').attr('class') == 'fa fa-lock';
+  }
+
+	init_mapa_interno();
+
+	$("#departamentos_select").on("change", function() {
+		return $.ajax({
+			url: "/departamentos/" + $('#departamentos_select option:selected').val() + "/get_municipios",
+			type: "GET",
+			dataType: "script"
+		});
+	});
+</script>

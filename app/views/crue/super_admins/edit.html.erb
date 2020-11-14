@@ -1,0 +1,104 @@
+<%= form_tag(crue_super_admin_path, method: "patch",  :multipart => true, "data-ajax" => "false" ) do %>
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title"></h3>
+	</div>
+	<div class="panel-body">
+		<h1>Edicion Usuario</h1>
+
+		<ol class="breadcrumb">
+		  <li class="active"><%= link_to "Usuarios", crue_super_admins_path %></li>
+		</ol>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:primer_nombre, "Primer Nombre:") %>
+				</br>
+				<%= text_field_tag(:primer_nombre, @super_admin.primer_nombre, :required => true) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:segundo_nombre, "Segundo Nombre:") %>
+				</br>
+				<%= text_field_tag(:segundo_nombre, @super_admin.segundo_nombre) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:primer_apellido, "Primer Apellido:") %>
+				</br>
+				<%= text_field_tag(:primer_apellido, @super_admin.primer_apellido, :required => true) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:segundo_apellido, "Segundo Apellido:") %>
+				</br>
+				<%= text_field_tag(:segundo_apellido, @super_admin.segundo_apellido, :required => true) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:telefono, "Telefono:") %>
+				</br>
+				<%= text_field_tag(:telefono, @super_admin.telefono) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:celular, "Celular:") %>
+				</br>
+				<%= text_field_tag(:celular, @super_admin.celular) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:email, "Email:") %>
+				</br>
+				<%= email_field_tag(:email, @super_admin.email, :required => true) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:identificacion, "Identificacion:") %>
+				</br>
+				<%= text_field_tag(:identificacion, @super_admin.identificacion) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:cargo, "Cargo:") %>
+				</br>
+				<%= text_field_tag(:cargo, @super_admin.cargo) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:fecha_vigencia, "Fecha de Vigencia:") %>
+				</br>
+				<%= date_field_tag(:fecha_vigencia, (@super_admin.fecha_vigencia.strftime('%Y-%m-%d') if @super_admin.fecha_vigencia) ) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:activo, "Activado:") %>
+				</br>
+				<%= check_box_tag 'activo', '1', @super_admin.activo %>
+			</div>
+		</div>
+
+		<%= submit_tag("Guardar Cambios") %>
+	</div>
+</div>
+<% end %>

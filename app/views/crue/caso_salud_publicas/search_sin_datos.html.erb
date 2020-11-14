@@ -1,0 +1,20 @@
+<% @registros.each do |registro| -%>
+  <tr class='<%= registro['caso_table_value'] %>'>
+    <td class="text-right">
+      <%= registro['caso_id'] %>
+    </td>
+    <td><%= registro['caso_tipo_documento'] %>-<%= registro['caso_numero_documento'] %></td>
+    <td><%= registro['caso_created_at'] %></td>
+    <td><%= registro['muestra_resultado_value'] %></td>
+    <td>
+      <a class="btn btn-primary btn-lg" href="#" onclick="load_edit(<%= registro['caso_id'] %>);"><i class="fas fa-edit"></i> Editar</a>
+      <% if registro['archivo_uuid'] -%>
+        <%= link_to archivo_path(registro['archivo_uuid']), :method => :get, :class => "btn btn-primary btn-lg", :title => "Descargar" do %>
+          <i class="fas fa-file-download"></i> Descargar
+        <% end %>
+      <% end %>
+    </td>
+  </tr>
+<% end -%>
+
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

@@ -1,0 +1,70 @@
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL SEGUIMIENTOS =-=-=-=-=-=-=-=-=-=-========== -->
+<div class="modal fade" id="cerrar-muestra" tabindex="-1" role="dialog" aria-labelledby="seguimientos" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class='col-12 modal-title text-center'>
+          Resultado muestra caso <%= @caso.id %>
+          <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+            <span aria-hidden='true'>&times;</span>
+          </button>
+        </h3>
+      </div>
+      <div class="modal-body">
+        <%= form_tag(do_cerrar_laboratorio_caso_salud_publica_muestra_path(caso_salud_publica_id:@caso.id, id:@muestra.id), method: "put", remote:true, :multipart => true, "data-ajax" => "false" ) do %>
+          <div class="row">
+
+
+            <div class="container card-group">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title"></h5>
+                  <div>
+                    <div class="form-group">
+                      <p class="control-label">Codigo</p>
+                      <%= text_field_tag(:codigo, nil, class:'form-control', required:true) %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Prueba</p>
+                      <select id="prueba" name="prueba" required class="form-control">
+                        <option value></option>
+                        <option selected value="1">RT-PCR para SARS CoV-2 (COVID-19)</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Resultado</p>
+                      <select id="resultado" name="resultado" required class="form-control">
+                        <option value></option>
+                        <option value="2">Positivo</option>
+                        <option value="3">Negativo</option>
+                        <option value="4">SE SOLICITA NUEVA MUESTRA</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Observaciones</p>
+                      <%= text_area_tag(:observaciones, nil, size: "30x4", class:'form-control') %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Soporte PDF</p>
+                      <%= file_field_tag(:archivo, accept: 'application/pdf', required:true, class:'form-control') %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="text-center">
+                <%= submit_tag "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Guardar Cambios&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".html_safe, :class => "btn btn-lg btn-primary" %>
+              </div>
+            </div>
+
+          </div>
+
+        <% end %>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== MODAL SEGUIMIENTOS ==========-=-=-=-=-=-=-=-=-=-= -->

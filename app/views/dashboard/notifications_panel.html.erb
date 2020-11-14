@@ -1,0 +1,19 @@
+<a onclick="mark_as_read();" class="nav-link dropdown-toggle" href="#" id="navbarDropdownRecursos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  Notificaciones <span id="notifications_count" class="badge badge-<%= @notificaciones.where(estado:1).any? ? 'danger' : 'light' %>"><%= @notificaciones.where(estado:1).count %></span>
+</a>
+<div class="dropdown-menu" aria-labelledby="navbarDropdownRecursos">
+  <% @notificaciones.take(5).each do |notificacion| -%>
+    <a href="#">
+      <div class="card <%= notificacion.estado == 1 ? 'text-white bg-info' : '' %> mb-6" style="width:200px;">
+        <div style="padding:8px;" class="card-body">
+          <h6 style="margin:0;" class="card-title"><%= notificacion.descripcion %></h6>
+          <p style="margin:0;" class="card-text">
+            <i class="fas fa-clock"></i>
+            <%= time_ago_in_words(notificacion.created_at).capitalize %>
+          </p>
+        </div>
+      </div>
+    </a>
+  <% end -%>
+  <%= link_to 'Ver todos'.html_safe, notificacion_emergentes_path, class:"dropdown-item" %>
+</div>

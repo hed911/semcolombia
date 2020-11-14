@@ -1,0 +1,69 @@
+<% if @registros.any? -%>
+  <% @registros.each do |registro| -%>
+    <% next if registro['caso_id'].nil? -%>
+    <tr class='<%= registro['muestra_table_value'] %>'>
+      <td class="text-right">
+        <%= registro['caso_numero_oficial'] %>
+      </td>
+      <td class="text-right">
+        <% if registro['muestra_fecha_recepcion_interna_laboratorio_asignado'] %>
+          <i style="color:green;" class="fas fa-check"></i>
+        <% end %>
+        <%= registro['caso_id'] %>
+      </td>
+      <td><%= registro['muestra_tipo_value'] %></td>
+      <td><%= registro['muestra_estado_value'] %></td>
+      <td><%= registro['caso_nombre_completo'].upcase %></td>
+      <td><%= registro['caso_edad_value'].to_i %> <%= registro['caso_unidad_medida_value'] %></td>
+      <td><%= registro['caso_tipo_documento'] %>-<%= registro['caso_numero_documento'] %></td>
+      <td><%= registro['entidad_prestadora_nombre'] %></td>
+      <td><%= registro['institucion_nombre'] %></td>
+      <td><%= registro['caso_servicio_value'] %></td>
+      <td><%= registro['laboratorio_nombre'] %></td>
+      <td><%= registro['muestra_fecha'] %></td>
+      <td><%= registro['muestra_fecha_recepcion_interna'] %></td>
+      <td><%= registro['muestra_fecha_despacho_interna'] %></td>
+      <td><%= registro['muestra_resultado_value'] %></td>
+      <td>
+        <div class="btn-group dropleft">
+          <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Opciones
+          </button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="#" onclick="show_detalle_caso(<%= registro['caso_id'] %>);"><i class="fas fa-info-circle"></i> Detalle caso</a>
+            <a class="dropdown-item" href="#" onclick="show_detalle_muestra(<%= registro['caso_id'] %>, <%= registro['muestra_id'] %>);"><i class="fas fa-info-circle"></i> Detalle muestra</a>
+            <% if registro['muestra_resultado'] == 4 && current_usuario.laboratorio && !current_usuario.laboratorio.coordinacion -%>
+              <a class="dropdown-item" href="#" onclick="show_editar_muestra(<%= registro['caso_id'] %>, <%= registro['muestra_id'] %>);"><i class="fas fa-edit"></i> Editar muestra</a>
+            <% end -%>
+            <% if @hide_buttons.nil? -%>
+              <% if registro['muestra_estado'] == 1 -%>
+                <a class="dropdown-item" href="#" onclick="show_recibir_muestra(<%= registro['muestra_id'] %>);"><i class="fas fa-file-invoice"></i> Recibir muestra</a>
+              <% elsif registro['muestra_estado'] == 2 -%>
+                <a class="dropdown-item" href="#" onclick="show_despachar_muestra(<%= registro['muestra_id'] %>);"><i class="fas fa-truck"></i> Despachar muestra</a>
+              <% end -%>
+            <% end -%>
+            <% if current_usuario.laboratorio && !current_usuario.laboratorio.coordinacion && registro['muestra_fecha_recepcion_interna_laboratorio_asignado'].nil? -%>
+              <%= link_to do_recibir_asignado_laboratorio_test_path(registro['muestra_id']), :method => :put, :remote => true, :class => "dropdown-item", :title => "Marcar como recibido" do %>
+                <i class="fas fa-check"></i> Marcar como recibido
+              <% end %>
+            <% end -%>
+            <% if registro['archivo_uuid'] -%>
+              <%= link_to archivo_path(registro['archivo_uuid']), :method => :get, :class => "dropdown-item", :title => "Descargar" do %>
+                <i class="fas fa-file-download"></i> Descargar
+              <% end %>
+            <% elsif registro['muestra_resultado'] == 2 || registro['muestra_resultado'] == 3 %>
+              <%= link_to generate_and_download_archivo_path(registro['muestra_id']), :method => :get, :class => "btn btn-warning btn-lg #{'disabled' if !PDF_ENABLED}", :title => "Descargar" do %>
+                <i class="fas fa-file-download"></i> Descargar
+              <% end %> 
+            <% end %>
+          </div>
+        </div>
+      </td>
+    </tr>
+  <% end -%>
+<% else -%>
+
+<% end -%>
+
+<%= hidden_field_tag :cantidad_registros, @cantidad_registros %>
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

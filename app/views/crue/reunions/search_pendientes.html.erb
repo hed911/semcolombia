@@ -1,0 +1,34 @@
+<% if @reunions.any? -%>
+  <% @reunions.each do |reunion| -%>
+    <tr class=''>
+      <td><%= reunion.usuario.nombre_completo if reunion.usuario %></td>
+      <td><%= reunion.titulo %></td>
+      <td><%= reunion.descripcion %></td>
+      <td><%= reunion.fecha.strftime('%Y-%m-%d %H:%M:%S') if reunion.fecha %></td>
+      <td><%= reunion.created_at.strftime('%Y-%m-%d %H:%M:%S') if reunion.created_at %></td>
+      <td>
+        <% if true#TimeDifference.between(reunion.fecha, Time.now).in_hours <= 4 -%>
+          <%= link_to crue_caso_salud_publica_reunion_path(caso_salud_publica_id:0, id:reunion.opentok_host_token), :method => :get, target:"_blank", :title => "Link HOST", :data => { } do %>
+            link medico
+          <% end %>
+        <% end -%>
+      </td>
+      <td>
+        <% if true#TimeDifference.between(reunion.fecha, Time.now).in_hours <= 4 -%>
+          <%= link_to crue_caso_salud_publica_reunion_path(caso_salud_publica_id:0, id:reunion.opentok_participant_token), :method => :get, target:"_blank", :title => "Link HOST", :data => { } do %>
+            link paciente
+          <% end %>
+        <% end -%>
+      </td>
+      <td><%= reunion.zoom_password %></td>
+      <td>
+
+      </td>
+    </tr>
+  <% end -%>
+<% else -%>
+
+<% end -%>
+
+<%= hidden_field_tag :cantidad_registros, @cantidad_registros %>
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

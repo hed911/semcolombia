@@ -1,0 +1,410 @@
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL AGREGAR EAPB =-=-=-=-=-=-=-=-=-=-========== -->
+	<div class="modal fade" id="detalle-caso" tabindex="-1" role="dialog" aria-labelledby="add-edit-Label" aria-hidden="true">
+	  <div class="modal-dialog modal-xl">
+	    <div class="modal-content">
+	      <div class="modal-header">
+					<h3 class='col-12 modal-title text-center'>
+		        Detalle registro Salud Publica
+		        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+		          <span aria-hidden='true'>&times;</span>
+		        </button>
+		      </h3>
+	      </div>
+	      <div class="modal-body">
+	        <%= form_tag("#", method: "put", :remote => true, :multipart => true, "data-ajax" => "false" ) do %>
+	          <div class="row">
+							<div class="container card-group">
+			          <div class="card">
+			            <div class="card-body">
+			              <h5 class="card-title"></h5>
+			              <div>
+											<div class="form-group row">
+		                    <div class="col-sm-6">
+	                        <label for="tipo_documento">Tipo de documento</label>
+													<select disabled required id="tipo_documento" name="tipo_documento" class="form-control">
+														<option <%= "selected" if @caso.tipo_documento == "CC" %> value="CC">Cédula de Ciudadania</option>
+														<option <%= "selected" if @caso.tipo_documento == "RC" %> value="RC">Registro Civil</option>
+														<option <%= "selected" if @caso.tipo_documento == "TI" %> value="TI">Tarjeta de Identidad</option>
+														<option <%= "selected" if @caso.tipo_documento == "CE" %> value="CE">Cédula de Extranjeria</option>
+														<option <%= "selected" if @caso.tipo_documento == "PA" %> value="PA">Pasaporte</option>
+														<option <%= "selected" if @caso.tipo_documento == "NV" %> value="NV">Nacido Vivo</option>
+														<option <%= "selected" if @caso.tipo_documento == "CD" %> value="CD">Carnet Diplomatico</option>
+														<option <%= "selected" if @caso.tipo_documento == "SC" %> value="SC">Salvoconducto de Permanencia</option>
+														<option <%= "selected" if @caso.tipo_documento == "PR" %> value="PR">Pasaporte de la ONU</option>
+														<option <%= "selected" if @caso.tipo_documento == "AS" %> value="AS">Adulto sin Identificación</option>
+														<option <%= "selected" if @caso.tipo_documento == "MS" %> value="MS">Menor sin Identificación</option>
+														<option <%= "selected" if @caso.tipo_documento == "PE" %> value="PE">Permiso Especial</option>
+													</select>
+		                    </div>
+		                    <div class="col-sm-6">
+	                        <label for="numero_documento">Numero de documento</label>
+	                        <%= text_field_tag(:numero_documento, @caso.numero_documento, :disabled => true, :required => true, :class =>"form-control") %>
+		                    </div>
+			                </div>
+											<div id="ya_existe" class="d-none form-group">
+												<div class="jumbotron">
+												  <h1 class="display-4">Advertencia</h1>
+												  <p class="lead">Ya existe un caso registrado con el mismo numero de documento</p>
+												</div>
+			                </div>
+											<div class="form-group row">
+		                    <div class="col-sm-6">
+	                        <label for="primer_nombre">Primer nombre</label>
+	                        <%= text_field_tag(:primer_nombre, @caso.primer_nombre, :disabled => true, :required => true, :class =>"form-control") %>
+		                    </div>
+												<div class="col-sm-6">
+	                        <label for="segundo_nombre">Segundo nombre</label>
+	                        <%= text_field_tag(:segundo_nombre, @caso.segundo_nombre, :disabled => true, :required => false, :class =>"form-control") %>
+		                    </div>
+			                </div>
+											<div class="form-group row">
+												<div class="col-sm-6">
+	                        <label for="primer_apellido">Primer apellido</label>
+	                        <%= text_field_tag(:primer_apellido, @caso.primer_apellido, :disabled => true, :required => false, :class =>"form-control") %>
+		                    </div>
+		                    <div class="col-sm-6">
+	                        <label for="segundo_apellido">Segundo apellido</label>
+	                        <%= text_field_tag(:segundo_apellido, @caso.segundo_apellido, :disabled => true, :required => false, :class =>"form-control") %>
+		                    </div>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Fecha nacimiento</p>
+			                  <%= date_field_tag(:fecha_nacimiento, (@caso.fecha_nacimiento.nil? ? nil : @caso.fecha_nacimiento.strftime('%Y-%m-%d')), :disabled => true, class:"form-control") %>
+			                </div>
+											<div class="form-group row">
+												<div class="col-sm-6">
+	                        <label for="segundo_apellido">Edad</label>
+	                        <%= number_field_tag(:edad, @caso.edad, :required => false, :disabled => true, :class =>"form-control") %>
+		                    </div>
+												<div class="col-sm-6">
+	                        <label for="unidad_medida">Unidad de medida</label>
+													<select id="unidad_medida" name="unidad_medida" disabled class="form-control">
+				                    <option <%= "selected" if @caso.unidad_medida == 1 %> value="1">Años</option>
+				                    <option <%= "selected" if @caso.unidad_medida == 2 %> value="2">Meses</option>
+				                    <option <%= "selected" if @caso.unidad_medida == 3 %> value="3">Dias</option>
+				                  </select>
+		                    </div>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Conglomerado</p>
+			                  <%= text_field_tag(:conglomerado, @caso.conglomerado, :disabled => true, class:"form-control") %>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Email</p>
+			                  <%= email_field_tag(:email, @caso.email, :disabled => true, class:"form-control") %>
+			                </div>
+											<div class="form-group row">
+		                    <div class="col-sm-6">
+	                        <label for="sexo">Sexo</label>
+													<select id="sexo" disabled name="sexo" class="form-control">
+				                    <option value></option>
+				                    <option <%= "selected" if @caso.sexo == 1 %> value="1">Masculino</option>
+				                    <option <%= "selected" if @caso.sexo == 2 %> value="2">Femenino</option>
+				                  </select>
+		                    </div>
+		                    <div class="col-sm-6">
+	                        <label for="tipo_sanguineo">Tipo sanguineo</label>
+													<select id="tipo_sanguineo" disabled name="tipo_sanguineo" class="form-control">
+				                    <option value></option>
+				                    <option <%= "selected" if @caso.tipo_sanguineo == "o-" %> value="o-">O-</option>
+				                    <option <%= "selected" if @caso.tipo_sanguineo == "o+" %> value="o+">O+</option>
+														<option <%= "selected" if @caso.tipo_sanguineo == "a-" %> value="a-">A-</option>
+														<option <%= "selected" if @caso.tipo_sanguineo == "a+" %> value="a+">A+</option>
+														<option <%= "selected" if @caso.tipo_sanguineo == "b-" %> value="b-">B-</option>
+														<option <%= "selected" if @caso.tipo_sanguineo == "b+" %> value="b+">B+</option>
+														<option <%= "selected" if @caso.tipo_sanguineo == "ab-" %> value="ab-">AB-</option>
+														<option <%= "selected" if @caso.tipo_sanguineo == "ab+" %> value="ab+">AB+</option>
+				                  </select>
+		                    </div>
+			                </div>
+											<div class="form-group row">
+		                    <div class="col-sm-6">
+	                        <label for="entidad_prestadora_select">EAPB</label>
+	                        <%= select_tag :entidad_prestadora_id, options_for_select(@entidades_prestadoras.collect{ |entidad_prestadora| ["#{entidad_prestadora.nombre}", entidad_prestadora.id] }, (@caso.entidad_prestadora.nil? ? nil : @caso.entidad_prestadora.id)), {required:false, include_blank:true, id: 'entidad_prestadora_select', :disabled => true, class:'form-control'} %>
+		                    </div>
+		                    <div class="col-sm-6">
+													<label for="regimen">Regimen</label>
+													<select id="regimen" disabled name="regimen" class="form-control">
+				                    <option value></option>
+				                    <option <%= "selected" if @caso.regimen == 1 %> value="1">Subsidiado</option>
+				                    <option <%= "selected" if @caso.regimen == 2 %> value="2">Contributivo</option>
+														<option <%= "selected" if @caso.regimen == 3 %> value="3">Especial</option>
+				                  </select>
+		                    </div>
+			                </div>
+											<div class="form-group row">
+		                    <div class="col-sm-6">
+	                        <label for="codigo_evento_select">Codigo evento</label>
+													<select id="codigo_evento" disabled name="codigo_evento" class="form-control">
+														<option value></option>
+														<option <%= "selected" if @caso.codigo_evento == 345 %> value="345">345</option>
+														<option <%= "selected" if @caso.codigo_evento == 346 %> value="346">346</option>
+														<option <%= "selected" if @caso.codigo_evento == 348 %> value="348">348</option>
+													</select>
+		                    </div>
+		                    <div class="col-sm-6">
+													<div class="form-group">
+														<p class="control-label">Clasificación</p>
+														<select id="clasificacion" disabled name="clasificacion" required class="form-control">
+															<option value></option>
+															<option <%= "selected" if @caso.clasificacion == 1 %> value="1">Contacto de positivo </option>
+															<option <%= "selected" if @caso.clasificacion == 2 %> value="2">Contacto de fallecido </option>
+															<option <%= "selected" if @caso.clasificacion == 3 %> value="3">Rumores</option>
+															<option <%= "selected" if @caso.clasificacion == 4 %> value="4">Búsqueda activa comunitaria</option>
+															<option <%= "selected" if @caso.clasificacion == 5 %> value="5">Búsqueda activa institucional </option>
+															<option <%= "selected" if @caso.clasificacion == 6 %> value="6">Caso Sintomático</option>
+														</select>
+													</div>
+		                    </div>
+			                </div>
+											<div class="form-group">
+												<label for="tipo_contagio_select">Tipo contagio</label>
+												<select id="tipo_contagio" name="tipo_contagio" disabled class="form-control">
+													<option value></option>
+													<option <%= "selected" if @caso.tipo_contagio == 1 %> value="1">Importado</option>
+													<option <%= "selected" if @caso.tipo_contagio == 2 %> value="2">Relacionado</option>
+													<option <%= "selected" if @caso.tipo_contagio == 3 %> value="3">En estudio</option>
+												</select>
+			                </div>
+											<div class="form-group">
+												<label for="aseguradora_select">IPS</label>
+												<%= select_tag :institucion_id, options_for_select(@instituciones.collect{ |institucion| [institucion.nombre, institucion.id] }, (@institucion ? @institucion.id : (@caso.institucion.nil? ? nil : @caso.institucion.id))), {required:false, include_blank:true, id: 'institucion_select', :disabled => true, class:'form-control'} %>
+			                </div>
+											<div class="form-group">
+												<label for="servicio">Servicio</label>
+												<select id="servicio" disabled required name="servicio" class="form-control">
+													<option value></option>
+													<option <%= "selected" if @caso.servicio == 1 %> value="1">Hospitalizacion</option>
+													<option <%= "selected" if @caso.servicio == 2 %> value="2">Urgencia</option>
+													<option <%= "selected" if @caso.servicio == 3 %> value="3">UCI plena</option>
+													<option <%= "selected" if @caso.servicio == 4 %> value="4">UCI intermedia</option>
+													<option <%= "selected" if @caso.servicio == 0 %> value="0">No tiene</option>
+													<option <%= "selected" if @caso.servicio == 5 %> value="5">Ambulatorio</option>
+												</select>
+			                </div>
+			              </div>
+			            </div>
+			          </div>
+
+								<div class="card">
+			            <div class="card-body">
+			              <h5 class="card-title"></h5>
+			              <div>
+											<div class="form-group">
+			                  <p class="control-label">Nacionalidad</p>
+			                  <%= select_tag :country_id, options_for_select(@countries.collect{ |country| [country.nombre, country.id] }, (@caso.country.nil? ? nil : @caso.country.id)), {include_blank:true, id: 'country_select', :disabled => true, class:'form-control'} %>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Direccion</p>
+			                  <%= text_field_tag(:direccion, @caso.direccion, :required => false, :disabled => true, :class =>"form-control") %>
+			                </div>
+
+											<div class="form-group">
+			                  <p class="control-label">Departamento</p>
+			                  <%= select_tag "departamento_id", options_for_select(@departamentos.collect{ |departamento| [departamento.nombre, departamento.id] }, (@caso.departamento_origen.nil? ? nil : @caso.departamento_origen.id)), { include_blank:true, id:'departamentos_select', disabled:true, required:true, class:'form-control' } %>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Municipio</p>
+			                  <%= select_tag "municipio_id", options_for_select(@municipios.collect{ |municipio| [municipio.nombre, municipio.id] }, (@caso.municipio_origen.nil? ? nil : @caso.municipio_origen.id)), { id:'municipios_select', disabled:true, required:true, class:'form-control'} %>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Barrio</p>
+			                  <%= select_tag "barrio_id", options_for_select(@barrios.collect{ |barrio| [barrio.nombre, barrio.id] }, (@caso.barrio.nil? ? nil : @caso.barrio.id)), {include_blank:true, id:'barrios_select', disabled:true, required:false, class:'form-control'} %>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Telefono</p>
+			                  <%= text_field_tag(:telefono, @caso.telefono, :disabled => true, :required => false, :class =>"form-control") %>
+			                </div>
+										</div>
+									</div>
+								</div>
+
+							</div>
+
+
+							<div class="container card-group">
+			          <div class="card">
+			            <div class="card-body">
+			              <h5 class="card-title">Contacto de emergencia</h5>
+			              <div>
+											<div class="form-group row">
+		                    <div class="col-sm-6">
+	                        <label for="primer_nombre_contacto_uno">Primer nombre</label>
+	                        <%= text_field_tag(:primer_nombre_contacto_uno, @caso.primer_nombre_contacto_uno, :disabled => true, :required => false, :class =>"form-control") %>
+		                    </div>
+												<div class="col-sm-6">
+	                        <label for="primer_nombre_contacto_uno">Segundo nombre</label>
+	                        <%= text_field_tag(:segundo_nombre_contacto_uno, @caso.segundo_nombre_contacto_uno, :disabled => true, :required => false, :class =>"form-control") %>
+		                    </div>
+
+			                </div>
+											<div class="form-group row">
+												<div class="col-sm-6">
+	                        <label for="primer_apellido_contacto_uno">Primer apellido</label>
+	                        <%= text_field_tag(:primer_apellido_contacto_uno, @caso.primer_apellido_contacto_uno, :disabled => true, :required => false, :class =>"form-control") %>
+		                    </div>
+		                    <div class="col-sm-6">
+	                        <label for="primer_apellido_contacto_uno">Segundo apellido</label>
+	                        <%= text_field_tag(:segundo_apellido_contacto_uno, @caso.segundo_apellido_contacto_uno, :disabled => true, :required => false, :class =>"form-control") %>
+		                    </div>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Pais</p>
+			                  <%= select_tag :country_id_contacto_uno, options_for_select(@countries.collect{ |country| [country.nombre, country.id] }, (@caso.country_contacto_uno.nil? ? nil : @caso.country_contacto_uno.id)), {include_blank:true, id: 'country_contacto_uno_select', :disabled => true, class:'form-control'} %>
+			                </div>
+											<div class="form-group row">
+		                    <div class="col-sm-6">
+	                        <label for="departamentos_contacto_uno_select">Departamento</label>
+	                        <%= select_tag "departamento_id_contacto_uno", options_for_select(@departamentos.collect{ |departamento| [departamento.nombre, departamento.id] }, (@caso.departamento_contacto_uno.nil? ? nil : @caso.departamento_contacto_uno.id)), { include_blank:true, id:'departamentos_contacto_uno_select', disabled:true, required:false, class:'form-control' } %>
+		                    </div>
+		                    <div class="col-sm-6">
+	                        <label for="municipios_contacto_uno_select">Municipio</label>
+	                        <%= select_tag "municipio_id_contacto_uno", options_for_select(@municipios_contacto_uno.collect{ |municipio| [municipio.nombre, municipio.id] }, (@caso.municipio_contacto_uno.nil? ? nil : @caso.municipio_contacto_uno.id)), { id:'municipios_contacto_uno_select', disabled:true, required:false, class:'form-control'} %>
+		                    </div>
+			                </div>
+											<div class="form-group row">
+		                    <div class="col-sm-6">
+	                        <label for="direccion_contacto_uno">Direccion</label>
+	                        <%= text_field_tag(:direccion_contacto_uno, @caso.direccion_contacto_uno, :required => false, :disabled => true, :class =>"form-control") %>
+		                    </div>
+		                    <div class="col-sm-6">
+	                        <label for="telefono_contacto_uno">Telefono</label>
+	                        <%= text_field_tag(:telefono_contacto_uno, @caso.telefono_contacto_uno, :required => false, :disabled => true, :class =>"form-control") %>
+		                    </div>
+			                </div>
+			              </div>
+			            </div>
+			          </div>
+
+								<div class="card">
+									<div class="card-body">
+										<h5 class="card-title">ANTECEDENTES DE RIESGOS Y EXPOSICION</h5>
+										<div>
+											<div class="covid_confirmed form-check">
+												<label class="form-check-label">
+													<input <%= "checked" if @caso.sintoma_covid_fiebre %> type="checkbox" disabled class="form-check-input" value="1" name="sintoma_covid_fiebre">Fiebre
+												</label>
+											</div>
+											<div class="covid_confirmed form-check">
+												<label class="form-check-label">
+													<input <%= "checked" if @caso.sintoma_covid_tos %> type="checkbox" disabled class="form-check-input" value="1" name="sintoma_covid_tos">Tos
+												</label>
+											</div>
+											<div class="covid_confirmed form-check">
+												<label class="form-check-label">
+													<input <%= "checked" if @caso.sintoma_covid_dificultad_respiratoria %> type="checkbox" disabled class="form-check-input" value="1" name="sintoma_covid_dificultad_respiratoria">Dificultad respiratoria
+												</label>
+											</div>
+											<div class="covid_confirmed form-check">
+												<label class="form-check-label">
+													<input <%= "checked" if @caso.sintoma_covid_secrecion_nasal %> type="checkbox" disabled class="form-check-input" value="1" name="sintoma_covid_secrecion_nasal">Secrecion nasal
+												</label>
+											</div>
+											<div class="covid_confirmed form-check">
+												<label class="form-check-label">
+													<input <%= "checked" if @caso.sintoma_covid_malestar_general %> type="checkbox" disabled class="form-check-input" value="1" name="sintoma_covid_malestar_general">Malestar general
+												</label>
+											</div>
+											<div class="covid_confirmed form-check">
+												<label class="form-check-label">
+													<input <%= "checked" if @caso.sintoma_covid_dolor_muscular %> type="checkbox" disabled class="form-check-input" value="1" name="sintoma_covid_dolor_muscular">Dolor muscular
+												</label>
+											</div>
+											<div class="covid_confirmed form-check">
+												<label class="form-check-label">
+													<input <%= "checked" if @caso.sintoma_covid_diarrea %> type="checkbox" disabled class="form-check-input" value="1" name="sintoma_covid_diarrea">Diarrea
+												</label>
+											</div>
+											<div class="covid_confirmed form-check">
+												<label class="form-check-label">
+													<input <%= "checked" if @caso.sintoma_covid_dolor_abdominal %> type="checkbox" disabled class="form-check-input" value="1" name="sintoma_covid_dolor_abdominal">Dolor abdominal
+												</label>
+											</div>
+											<div class="covid_confirmed form-check">
+												<label class="form-check-label">
+													<input <%= "checked" if @caso.sintoma_covid_dolor_toraxico %> type="checkbox" disabled class="form-check-input" value="1" name="sintoma_covid_dolor_toraxico">Dolor toraxico
+												</label>
+											</div>
+											<div class="covid_confirmed form-check">
+												<label class="form-check-label">
+													<input <%= "checked" if @caso.sintoma_covid_vomito %> type="checkbox" disabled class="form-check-input" value="1" name="sintoma_covid_vomito">Vomito
+												</label>
+											</div>
+
+											<div class="covid_confirmed form-check">
+												<label class="form-check-label">
+													<input <%= "checked" if @caso.relacionamiento_con_infectados %> type="checkbox" disabled class="form-check-input" value="1" name="relacionamiento_con_infectados">Tuvo contacto estrecho en los últimos 14 dias con un caso probable o confirmado con infección respiratoria aguda grave por virus nuevo?
+												</label>
+											</div>
+											<div class="covid_confirmed form-check">
+												<label class="form-check-label">
+													<input <%= "checked" if @caso.ha_estado_fuera_del_pais %> type="checkbox" disabled class="form-check-input" value="1" name="ha_estado_fuera_del_pais">Ha visitado algun pais externo en los ultimos 14 dias
+												</label>
+											</div>
+											<div class="covid_confirmed form-check">
+												<label class="form-check-label">
+													<input <%= "checked" if @caso.es_trabajador_de_salud %> type="checkbox" disabled class="form-check-input" value="1" name="es_trabajador_de_salud">Es trabajador de la salud o ámbito hospitalario que halla tenido contacto estrecho con un caso probable o confirmado por virus nuevo?
+												</label>
+											</div>
+											<div class="covid_confirmed form-check">
+												<label class="form-check-label">
+													<input <%= "checked" if @caso.fallecido %> type="checkbox" disabled class="form-check-input" value="1" name="fallecido"><span style="color:red;">El paciente se encuentra fallecido?</span>
+												</label>
+											</div>
+											<div class="covid_confirmed form-group row">
+		                    <div class="col-sm-6">
+	                        <label for="country_uno_select">Pais visitado #1</label>
+	                        <%= select_tag :country_uno_id, options_for_select(@countries.collect{ |country| [country.nombre, country.id] }, (@caso.country_uno.nil? ? nil : @caso.country_uno.id)), {include_blank:true, id: 'country_uno_select', :disabled => true, class:'form-control'} %>
+		                    </div>
+												<div class="col-sm-6">
+													<label for="ciudad_uno_select">Ciudad #1</label>
+	                        <%= text_field_tag(:ciudad_uno, @caso.ciudad_uno, :disabled => true, :required => false, :class =>"form-control") %>
+		                    </div>
+			                </div>
+											<div class="covid_confirmed form-group row">
+		                    <div class="col-sm-6">
+													<label for="fecha_ingreso">Fecha ingreso #1</label>
+	                        <%= date_field_tag(:fecha_ingreso_uno, (@caso.fecha_ingreso_uno.nil? ? nil : @caso.fecha_ingreso_uno.strftime('%Y-%m-%d')), :required => false, :disabled => true, :class =>"form-control") %>
+		                    </div>
+												<div class="col-sm-6">
+													<label for="fecha_ingreso">Fecha salida #1</label>
+	                        <%= date_field_tag(:fecha_salida_uno, (@caso.fecha_salida_uno.nil? ? nil : @caso.fecha_salida_uno.strftime('%Y-%m-%d')), :required => false, :disabled => true, :class =>"form-control") %>
+		                    </div>
+			                </div>
+											<div class="covid_confirmed form-group row">
+												<div class="col-sm-6">
+	                        <label for="country_dos_select">Pais visitado #2</label>
+	                        <%= select_tag :country_dos_id, options_for_select(@countries.collect{ |country| [country.nombre, country.id] }, (@caso.country_dos.nil? ? nil : @caso.country_dos.id)), {include_blank:true, id: 'country_dos_select', :disabled => true, class:'form-control'} %>
+		                    </div>
+		                    <div class="col-sm-6">
+													<label for="ciudad_dos_select">Ciudad #2</label>
+				                  <%= text_field_tag(:ciudad_dos, @caso.ciudad_dos, :required => false, :disabled => true, :class =>"form-control") %>
+		                    </div>
+			                </div>
+											<div class="covid_confirmed form-group row">
+												<div class="col-sm-6">
+													<label for="ciudad_dos_select">Fecha ingreso #2</label>
+				                  <%= date_field_tag(:fecha_ingreso_dos, (@caso.fecha_ingreso_dos.nil? ? nil : @caso.fecha_ingreso_dos.strftime('%Y-%m-%d')), :required => false, :disabled => true, :class =>"form-control") %>
+		                    </div>
+		                    <div class="col-sm-6">
+													<label for="ciudad_dos_select">Fecha salida #2</label>
+				                  <%= date_field_tag(:fecha_salida_dos, (@caso.fecha_salida_dos.nil? ? nil : @caso.fecha_salida_dos.strftime('%Y-%m-%d')), :required => false, :disabled => true, :class =>"form-control") %>
+		                    </div>
+			                </div>
+
+										</div>
+									</div>
+								</div>
+
+							</div>
+
+
+	          </div>
+
+	        <% end %>
+
+	      </div>
+	    </div>
+	  </div>
+	</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== /MODAL AGREGAR EAPB ==========-=-=-=-=-=-=-=-=-=-= -->

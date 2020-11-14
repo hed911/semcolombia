@@ -1,0 +1,142 @@
+<h1>Consulta Urgencias (<small><%= @start_date_object.strftime('%b %e') %></small> - <small><%= @end_date_object.strftime('%b %e') %></small>)</h1>
+</br>
+
+<div class="row">
+	<div class="col-md-12">
+		<div id="graph" style="height: 250px;"></div>
+	</div>
+</div>
+
+<%= form_tag(do_consulta_historial_urgencias_path, method: "post",  :multipart => true, "data-ajax" => "false" ) do %>
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title">Filtros</h3>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-lg-3">
+					<%= label_tag(:start_date, "Fecha Inicio:") %>
+					</br>
+					<%= date_field(:start_date, nil, :value => @start_date_object.strftime('%Y-%m-%d')) %>
+				</div>
+
+				<div class="col-lg-3">
+					<%= label_tag(:end_date, "Fecha Fin:") %>
+					</br>
+					<%= date_field(:end_date, nil, :value => @end_date_object.strftime('%Y-%m-%d')) %>
+				</div>
+			</div>
+		</div>
+	</div>
+	<%= submit_tag("Buscar", class: "btn btn-danger btn-sm") %>
+<% end %>
+  </br>
+  </br>
+	<div class="table-responsive">
+		<table id="table-result" class="auto table table-bordered table-hover table-striped tablesorter">
+		  <thead>
+
+				<tr style="text-align:center;">
+					<th class="success" colspan="1" data-sort="int">Info</th>
+					<th class="danger" colspan="8" data-sort="string">Datos</th>
+				</tr>
+
+		    <tr>
+		      <th data-sort="string">IPS</th>
+		      <th data-sort="string">HERIDOS ARMA DE FUEGO</th>
+					<th data-sort="string">HERIDOS ARMA BLANCA</th>
+		      <th data-sort="string">HERIDOS ARMA CONTUNDENTE</th>
+		      <th data-sort="int">HERIDOS EN ACCIDENTE DE TRANSITO</th>
+		      <th data-sort="string">URGENCIAS TOTALES ATENDIDAS</th>
+		      <th data-sort="string">PACIENTES EN OBSERVACION</th>
+		      <th data-sort="string">CIRUGIAS DE URGENCIA</th>
+		    </tr>
+		  </thead>
+		  <tbody id="table-result-body">
+				<% @historiales.each do |historial| -%>
+					<% if historial != @historiales.last -%>
+					  <tr>
+							<td><%= historial[:institucion].nombre %></td>
+							<td><%= historial[:registro][:heridos_arma_fuego] %></td>
+							<td><%= historial[:registro][:heridos_arma_blanca] %></td>
+							<td><%= historial[:registro][:heridos_arma_contundente] %></td>
+							<td><%= historial[:registro][:heridos_accidente_transito] %></td>
+							<td><%= historial[:registro][:urgencias_totales_atendidas] %></td>
+							<td><%= historial[:registro][:pacientes_observacion] %></td>
+							<td><%= historial[:registro][:cirugias_urgencias] %></td>
+					  </tr>
+					<% end -%>
+				<% end -%>
+				<% historial = @historiales.last -%>
+				<tr class="success">
+					<td></td>
+					<td><%= historial[:registro][:heridos_arma_fuego] %></td>
+					<td><%= historial[:registro][:heridos_arma_blanca] %></td>
+					<td><%= historial[:registro][:heridos_arma_contundente] %></td>
+					<td><%= historial[:registro][:heridos_accidente_transito] %></td>
+					<td><%= historial[:registro][:urgencias_totales_atendidas] %></td>
+					<td><%= historial[:registro][:pacientes_observacion] %></td>
+					<td><%= historial[:registro][:cirugias_urgencias] %></td>
+				</tr>
+		  </tbody>
+		</table>
+	</div>
+
+<div id="modal-container">
+
+</div>
+
+<script>
+	Morris.Bar({
+		element: 'graph',
+		data: <%= @json_historiales.html_safe.to_s %>,
+		xkey: 'tag',
+		ykeys: ['value'],
+		labels: ['Cantidad'],
+		barRatio: 0.4,
+		xLabelAngle: 10,
+		hideHover: 'auto'
+	});
+
+	function loadActualizarUrgenciaModal(id){
+    $.get("/historial_urgencias/" + id + "/edit",
+    	{
+
+    	},function(result){
+				$('#loading-indicator').hide();
+				$('#modal-container').empty();
+				$('#modal-container').append($.parseHTML( result ));
+        $('#modal-edit').modal('show');
+				enableValidations();
+		}, "text");
+	}
+
+
+  $('.bind-keyup-event').keyup(function () {
+    $(this).addClass('input-touched');
+  });
+
+
+	function enableValidations(){
+	  var heridos_arma_fuego = new LiveValidation( "heridos_arma_fuego", { validMessage: " ", wait: 500 } );
+	  heridos_arma_fuego.add(Validate.Numericality, { minimum: 0, maximum: 500, onlyInteger: true });
+
+	  var heridos_arma_blanca = new LiveValidation( "heridos_arma_blanca", { validMessage: " ", wait: 500 } );
+	  heridos_arma_blanca.add(Validate.Numericality, { minimum: 0, maximum: 500, onlyInteger: true });
+
+		var heridos_arma_contundente = new LiveValidation( "heridos_arma_contundente", { validMessage: " ", wait: 500 } );
+	  heridos_arma_contundente.add(Validate.Numericality, { minimum: 0, maximum: 500, onlyInteger: true });
+
+	  var heridos_accidente_transito = new LiveValidation( "heridos_accidente_transito", { validMessage: " ", wait: 500 } );
+	  heridos_accidente_transito.add(Validate.Numericality, { minimum: 0, maximum: 500, onlyInteger: true });
+
+		var urgencias_totales_atendidas = new LiveValidation( "urgencias_totales_atendidas", { validMessage: " ", wait: 500 } );
+	  urgencias_totales_atendidas.add(Validate.Numericality, { minimum: 0, maximum: 500, onlyInteger: true });
+
+		var pacientes_observacion = new LiveValidation( "pacientes_observacion", { validMessage: " ", wait: 500 } );
+	  pacientes_observacion.add(Validate.Numericality, { minimum: 0, maximum: 500, onlyInteger: true });
+
+		var cirugias_urgencias = new LiveValidation( "cirugias_urgencias", { validMessage: " ", wait: 500 } );
+	  cirugias_urgencias.add(Validate.Numericality, { minimum: 0, maximum: 500, onlyInteger: true });
+	}
+</script>

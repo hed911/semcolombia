@@ -1,0 +1,72 @@
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL SEGUIMIENTOS =-=-=-=-=-=-=-=-=-=-========== -->
+<div class="modal fade" id="resolver" tabindex="-1" role="dialog" aria-labelledby="seguimientos" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class='col-12 modal-title text-center'>
+          Resolver conflicto muestras
+          <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+            <span aria-hidden='true'>&times;</span>
+          </button>
+        </h3>
+      </div>
+      <div class="modal-body">
+        <%= form_tag(do_resolver_crue_cargue_masivo_pdf_path(@registro.id), method: "put", :multipart => true, "data-ajax" => "false" ) do %>
+          <div class="row">
+            <div class="container card-group">
+              <div class="card">
+                <div class="card-body">
+                  <% if @registro.archivo -%>
+                    <%= link_to archivo_path(@registro.archivo.uuid), :method => :get, :class => "btn btn-primary", :title => "Descargar" do %>
+                      <i class="fas fa-file-download"></i> Descargar archivo
+                    <% end %>
+                  <% end %>
+                  </br>
+                  <h5 class="card-title">Escoja la muestra a la que se le adjuntará el archivo</h5>
+                  <div>
+                    <div class="table-responsive">
+                      <table id="table-result" class="table table-hover tablesorter">
+                        <thead id="table_header_container" class="">
+                          <tr>
+                            <th data-sort="string">Fecha toma de muestra</th>
+                            <th data-sort="string">Resultado</th>
+                            <th data-sort="string">Tipo</th>
+                            <th data-sort="string">Laboratorio</th>
+                            <th data-sort="string">Accion</th>
+                          </tr>
+                        </thead>
+                  		  <tbody id="table-result-body">
+                          <% @muestras.each do |muestra| -%>
+                						<tr class="">
+                							<td><%= muestra.fecha.strftime('%Y-%m-%d') if muestra.fecha %></td>
+                					    <td><%= muestra.resultado_value %></td>
+                              <td><%= muestra.tipo_value %></td>
+                              <td><%= muestra.laboratorio.nombre if muestra.laboratorio %></td>
+                							<td>
+                								<%= radio_button_tag :muestra_id, muestra.id, @muestras.first == muestra, class:"form-control" %>
+                							</td>
+                						</tr>
+                					<% end -%>
+                  		  </tbody>
+                  		</table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="text-center">
+                <%= submit_tag "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Confirmar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".html_safe, :class => "btn btn-lg btn-primary" %>
+              </div>
+            </div>
+
+          </div>
+
+        <% end %>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== MODAL SEGUIMIENTOS ==========-=-=-=-=-=-=-=-=-=-= -->

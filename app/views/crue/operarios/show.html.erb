@@ -1,0 +1,48 @@
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL SEGUIMIENTOS =-=-=-=-=-=-=-=-=-=-========== -->
+<div class="modal fade" id="detalle-operario" tabindex="-1" role="dialog" aria-labelledby="seguimientos" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title text-center" id="add-product-Label">Historial Casos</h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="table-responsive" style="overflow:auto;">
+      		<table id="table-result" class="table table-hover tablesorter">
+            <thead>
+              <tr>
+                <th data-sort="string">ID</th>
+                <th data-sort="string">Puesto Atencion</th>
+                <th data-sort="string">Tipo de Asistente</th>
+                <th data-sort="string">Numero Documento</th>
+                <th data-sort="string">Nombre Paciente</th>
+                <th data-sort="string">Edad</th>
+                <th data-sort="string">Nacionalidad</th>
+              </tr>
+            </thead>
+
+            <tbody id="table-result-body">
+              <% @operario.caso_deportivos.order('created_at DESC').each do |caso| -%>
+                <tr>
+                  <td class="text-right">
+                    <%= caso.id %>
+                  </td>
+                  <td><%= caso.puesto_atencion %></td>
+                  <td><%= caso.tipo_asistente_value %></td>
+                  <td><%= caso.tipo_documento %>-<%= caso.numero_documento %></td>
+                  <td><%= caso.nombre_paciente ? caso.nombre_paciente.titleize : nil %></td>
+                  <td class="text-right"><%= caso.edad %></td>
+                  <td><%= caso.nacionalidad %></td>
+                </tr>
+              <% end -%>
+            </tbody>
+      		</table>
+      	</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== MODAL DETALLE FACTURA ==========-=-=-=-=-=-=-=-=-=-= -->

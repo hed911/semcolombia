@@ -1,0 +1,11 @@
+$('#institucion_receptora_select').empty();
+$('#institucion_receptora_select').append( $('<option value label=""></option>'));
+<% if @instituciones_red.any? %>
+  $('#institucion_receptora_select').append($('<optgroup id="mi_red_receptora" label="Mi red"></optgroup>'));
+  <% @instituciones_red.each do |institucion| %>
+    $('#mi_red_receptora').append($('<option value="<%= institucion.id %>"><%= "#{institucion.nombre} (#{institucion.direccion})" %></option>'));
+  <% end %>
+<% end %>
+<% @instituciones.each do |institucion| %>
+  $('#institucion_receptora_select').append($('<option value="<%= institucion.id %>"><%= "#{institucion.nombre} (#{institucion.direccion})" %></option>'));
+<% end %>

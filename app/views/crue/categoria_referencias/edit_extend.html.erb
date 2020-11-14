@@ -1,0 +1,14 @@
+<h1>Servicios disponibles <%= @institucion.nombre %></h1>
+<%= form_tag(update_extend_crue_categoria_referencia_path(@institucion.id), method: "put",  :multipart => true, "data-ajax" => "false" ) do %>
+  <%= hidden_field_tag :entidad_prestadora_id, @entidad_prestadora.id  %>
+  <% @categorias.each do |categoria| -%>
+    <div class="row">
+      <div class="col-lg-3">
+        <%= label_tag("#{categoria.id}", categoria.nombre) %>
+        </br>
+        <%= check_box_tag "categorias[#{categoria.id}]", 'true', @institucion.categoria_referencias.include?(categoria) %>
+      </div>
+    </div>
+  <% end -%>
+  <%= submit_tag "Actualizar", :name => 'export_data' %>
+<% end %>

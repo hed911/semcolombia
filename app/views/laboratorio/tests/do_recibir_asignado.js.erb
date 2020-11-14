@@ -1,0 +1,6 @@
+<% if @error %>
+  alert("<%= @error %>");
+<% else %>
+  $('#despachar-muestra').modal('hide');
+  do_search(currentPage);
+<% end %>

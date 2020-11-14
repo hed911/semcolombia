@@ -1,0 +1,7 @@
+Las aplicaciones sem-barranquilla y sem-barranquilla-hospital tienen
+-Base de datos production(EN FUNCIONAMIENTO ACTUAL): Funciona en el dominio sem-barranquilla.herokuapp.com y localmente corriendo la app en produccion
+-Base de datos de pruebas(Local): Solo funciona corriendolo en una maquina local
+
+Existen dos URL's para la API
+- sem-barranquilla-api.herokuapp.com(DESARROLLO)
+- sem-barranquilla-test-api.herokuapp.com(PRODUCCION)

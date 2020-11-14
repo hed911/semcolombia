@@ -1,0 +1,59 @@
+
+
+<style>
+  html{
+    background: url(<%= image_path('barranquilla.png') %>) no-repeat center center fixed;
+
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+  html, body {height: 100%;margin: 0px;padding: 0px;}
+  #container{width: 75%;height: 60%;margin: auto;}
+  #texto, #alcaldia{color: #FFF;border-radius: 5px;}
+  #texto{background-color: rgba(0,0,0,0.2);}
+  #alcaldia{/*background-color: rgba(0,0,255,0.4);*/}
+  #alcaldia>img{margin-left: 20px;}
+  #user{float: right;}
+  #crue{float: left;}
+  @media screen and (max-width: 500px) {
+    #user>a>img, #crue>a>img{width: 100%;}
+    #alcaldia>img{margin-left: 20px; width:50%}
+  }
+</style>
+
+<div id="alcaldia">
+  <%= image_tag "alcaldia.png", :width =>"150", :height => "150" %>
+</div>
+<div id="container">
+  <div id="texto">
+    <center>
+      <p>
+        <b>
+          <h1>Bienvenido al Sistema</h1>
+        </b>
+      </p>
+      <p>
+        <b>
+        <h1>C.R.U.E <%= MUNICIPIO_PROYECTO_NOMBRE.capitalize %></h1>
+        </b>
+      </p>
+      <p>
+        <%= image_tag "logo-alcaldia-char.png", :width =>"137", :height => "208" %>
+      </p>
+    </center>
+  </div>
+  <br>
+  <br>
+  <div id="crue">
+    <%= link_to new_usuario_session_path, :title => "Usuario Crue" do %>
+      <%= image_tag "usercrue.png", :width =>"200" %>
+    <% end %>
+  </div>
+  <div id="user">
+    <%= link_to DOMINIO_PROYECTO_CRUE, :title => "Usuario Crue" do %>
+      <%= image_tag 'userinst.png', :width =>"200" %>
+    <% end %>
+  </div>
+</div>

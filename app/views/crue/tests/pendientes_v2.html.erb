@@ -1,0 +1,139 @@
+<div class="container">
+  <h1><small>Muestras pendientes V2</small></h1>
+  <p><small>Muestras que han sido marcadas como recibidas pero aun no han sido despachadas</small></p>
+  <div class="row">
+    <div class="col-12" >
+      <div class="">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title"></h3>
+          </div>
+          <div class="panel-body">
+            <div>
+              <div class="option">
+                <%= text_field_tag(:numero_documento_search, nil, placeholder:"Numero documento", class:'form-control', style:"text-transform: uppercase; text-align: center;") %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="container-fluid">
+
+        <div class="table-responsive">
+          <table id="table-result" class="table table-hover tablesorter">
+            <thead id="table_header_container" class="invisible">
+              <tr>
+                <th data-sort="string">Numero oficial caso</th>
+                <th data-sort="string">Id</th>
+                <th data-sort="string">Tipo</th>
+                <th data-sort="string">Estado</th>
+                <th data-sort="string">Nombre</th>
+                <th data-sort="string">Edad</th>
+                <th data-sort="string"># Documento</th>
+                <th data-sort="string">EAPB</th>
+                <th data-sort="string">IPS</th>
+                <th data-sort="string">Servicio</th>
+                <th data-sort="string">Laboratorio</th>
+                <th data-sort="string">Fecha toma muestra</th>
+                <th data-sort="string">Fecha recepcion</th>
+                <th data-sort="string">Fecha envio</th>
+                <th data-sort="string">Resultado</th>
+                <th data-sort="string">Acción</th>
+              </tr>
+            </thead>
+      		  <tbody id="table-result-body">
+
+      		  </tbody>
+      		</table>
+        </div>
+      </div>
+
+      <div id="pages_container" class="invisible container">
+        <center>
+          <div style="text-align:center" id="page-selection"></div>
+        </center>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div id="container"></div>
+<div id="modal"></div>
+
+<script type="text/javascript">
+  var original_class = document.getElementsByTagName('body')[0].className;
+
+  function show_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className += " loading";
+  }
+
+  function hide_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className = original_class;
+  }
+
+  $('#numero_documento_search').on('change textInput input', function () {
+    do_search(currentPage);
+  });
+
+  firstTime = true;
+  var currentPage = 1;
+  function do_search(index_) {
+    currentPage = index_;
+    show_loading_indicator();
+    $.post("/crue/tests/search_pendientes_v2",
+      {
+        index: index_,
+        size:'10',
+        numero_documento:$('#numero_documento_search').val()
+      },function(result){
+        hide_loading_indicator();
+        $('#loading-indicator').hide();
+        $('#table-result-body').empty();
+        $('#table-result-body').append($.parseHTML( result ));
+        var cantidadPaginas = $('#cantidad_paginas').val();
+        var cantidadRegistros = $('#cantidad_registros').val();
+        if(firstTime){
+          initPager(cantidadPaginas);
+          firstTime = false;
+        }
+        if(cantidadRegistros == "0"){
+          $('#pages_container').addClass("invisible");
+          $('#table_header_container').addClass("invisible");
+        }else{
+          $('#pages_container').removeClass("invisible");
+          $('#table_header_container').removeClass("invisible");
+        }
+    }, "text");
+  }
+
+  function initPager(count){
+
+		$('#page-selection').bootpag({
+			total: count,
+	    page: <%= params[:id] || "1" %>,
+      maxVisible: 10,
+      firstLastUse: true,
+      first: '←',
+      last: '→'
+		}).on("page", function(event, num){
+		    //$(".content").html("Page " + num); // or some ajax content loading...
+				do_search(num);
+		});
+
+	}
+
+  //setInterval(function() {
+    do_search(currentPage);
+  //}, 5000);
+
+  <%=  render partial: 'laboratorio/tests/logic.js' %>
+
+</script>

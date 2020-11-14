@@ -1,0 +1,53 @@
+<%= form_tag(crue_entidad_prestadora_path, method: "patch",  :multipart => true, "data-ajax" => "false" ) do %>
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title"></h3>
+	</div>
+	<div class="panel-body">
+		<h1>Edicion EAPB</h1>
+
+		<ol class="breadcrumb">
+		  <li class="active"><%= link_to "EAPB's", crue_entidad_prestadoras_path %></li>
+		</ol>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:codigo, "Codigo:") %>
+				</br>
+				<%= text_field_tag(:codigo, @entidad_prestadora.codigo, class:'form-control') %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:nombre, "Nombre:") %>
+				</br>
+				<%= text_field_tag(:nombre, @entidad_prestadora.nombre, required:true, class:'form-control') %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:especial, "Especial:") %>
+				</br>
+				<%= check_box_tag :especial, '1', @entidad_prestadora.especial, class: "form-control" %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:roles_asignados, "Roles asignados:") %>
+				</br>
+				<% for rol in ROLES_ENTIDADES_PRESTADORAS %>
+					<div style="<%= 'display:none;' unless rol[:enabled] %>">
+						<%= check_box_tag "roles[#{rol[:id]}]", "1", @entidad_prestadora.roles_array.include?(rol) %>
+						<%= rol[:nombre] %>
+					</div>
+				<% end %>
+			</div>
+		</div>
+
+		<%= submit_tag("Guardar Cambios") %>
+	</div>
+</div>
+<% end %>

@@ -1,0 +1,50 @@
+<% @llamadas.each do |llamada| -%>
+  <% caso = llamada.caso_salud_publica -%>
+  <tr class='<%= llamada.table_value %>'>
+    <td class="text-right">
+      <% if llamada.caso_salud_publica -%>
+        🦠
+      <% end -%>
+      <%= "#{llamada.id}" %>
+    </td>
+    <td><%= llamada.nombre_completo %></td>
+    <td><%= llamada.tipo_documento %>-<%= llamada.numero_documento %></td>
+    <td><%= llamada.telefono_fijo %></td>
+    <td><%= llamada.celular %></td>
+    <td><%= llamada.intension.nombre if llamada.intension %></td>
+    <td style="word-wrap: break-word;min-width: 400px;max-width: 400px;" data-toggle="tooltip" title="<%= llamada.descripcion %>"><%= truncate llamada.descripcion, length: 170, separator: /\w+/ %></td>
+    <td><%= llamada.created_at.strftime('%d %b %Y %l:%M %p') %></td>
+    <td>
+      <div class="btn-group dropleft">
+        <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Opciones
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#" onclick="show_detalle_llamada(<%= llamada.id %>);"><i class="fas fa-info-circle"></i> Detalle llamada</a>
+          <% if !current_usuario.roles_array.include?(ROLES[5]) -%>
+            <a class="dropdown-item" href="#" onclick="load_edit_llamada(<%= llamada.id %>);"><i class="fas fa-edit"></i> Editar llamada</a>
+          <% end -%>
+          <% if llamada.caso_salud_publica -%>
+            <a class="dropdown-item" href="#" onclick="show_detalle_caso(<%= caso.id %>);"><i class="fas fa-info-circle"></i> Detalle caso</a>
+          <% end -%>
+          <% if caso -%>
+            <% if !current_usuario.roles_array.include?(ROLES[5]) -%>
+              <a class="dropdown-item" href="#" onclick="load_edit(<%= caso.id %>);"><i class="fas fa-edit"></i> Editar caso</a>
+              <a class="dropdown-item" href="#" onclick="show_edit_ubicacion(<%= caso.id %>);"><i class="fas fa-map-marker-alt"></i> Editar ubicacion</a>
+            <% end -%>
+            <a class="dropdown-item" href="#" onclick="show_contactos(<%= caso.id %>);"><i class="fas fa-users"></i> Editar contactos(<%= caso.contactos.count %>)</a>
+            <a class="dropdown-item" href="#" onclick="show_seguimientos(<%= caso.id %>);"><i class="fas fa-list-ol"></i> Seguimiento</a>
+          <% end -%>
+          <% if TimeDifference.between(llamada.created_at, Time.now).in_hours < 24 -%>
+            <div class="dropdown-divider"></div>
+            <%= link_to crue_llamada_path(llamada.id), :method => :delete, :remote => true, :class => "dropdown-item", style:"color:red;", :title => "Borrar", :data => { :confirm => 'Estas seguro? Este cambio no se puede revertir' } do %>
+               <i class="fas fa-trash-alt"></i> Borrar
+            <% end %>
+          <% end -%>
+        </div>
+      </div>
+    </td>
+  </tr>
+<% end -%>
+
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

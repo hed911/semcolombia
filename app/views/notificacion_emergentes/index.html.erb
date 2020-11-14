@@ -1,0 +1,78 @@
+<div class="container-fluid">
+  <h1>Notificaciones</h1>
+  <div class="row">
+    <div class="col-12">
+      <div class="container-fluid">
+
+        <div class="table-responsive">
+          <table id="table-result" class="table table-hover tablesorter">
+            <thead>
+              <tr>
+                <th data-sort="string">Id</th>
+                <th data-sort="string">Titulo</th>
+                <th data-sort="string">Descripcion</th>
+                <th data-sort="string">Fecha de creacion</th>
+              </tr>
+            </thead>
+      		  <tbody id="table-result-body">
+
+      		  </tbody>
+      		</table>
+        </div>
+      </div>
+
+      <div class="container">
+        <center>
+          <div style="text-align:center" id="page-selection"></div>
+        </center>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div id="container"></div>
+<div id="modal"></div>
+
+<script>
+  firstTime = true;
+  var currentPage = 1;
+  function do_search(index_) {
+    currentPage = index_;
+    $('#loading-indicator').show();
+    $.post("/notificacion_emergentes/search",
+      {
+        index: index_,
+        size:'10'
+      },function(result){
+        $('#loading-indicator').hide();
+        $('#table-result-body').empty();
+        $('#table-result-body').append($.parseHTML( result ));
+        var cantidadPaginas = $('#cantidad_paginas').val();
+        if(firstTime){
+          initPager(cantidadPaginas);
+          firstTime = false;
+        }
+    }, "text");
+  }
+
+  function initPager(count){
+
+		$('#page-selection').bootpag({
+			total: count,
+	    page: <%= params[:id] || "1" %>,
+      maxVisible: 10,
+      firstLastUse: true,
+      first: '←',
+      last: '→'
+		}).on("page", function(event, num){
+		    //$(".content").html("Page " + num); // or some ajax content loading...
+				do_search(num);
+		});
+
+	}
+
+  //setInterval(function() {
+    do_search(currentPage);
+  //}, 5000);
+
+</script>

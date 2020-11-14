@@ -1,0 +1,56 @@
+<%= link_to "Nuevo Usuario", new_crue_usuario_path, :class => "btn btn-danger" %>
+
+<h1>Usuarios</h1>
+<%= form_tag(export_xls_crue_usuarios_path, method: "post",  :multipart => true, "data-ajax" => "false" ) do %>
+		<div class="table-responsive">
+		<table id="table-result" class="table table-bordered table-hover table-striped tablesorter">
+		  <thead>
+		    <tr>
+		      <th data-sort="int">#</th>
+					<th data-sort="string">Nombre Completo</th>
+					<th data-sort="string">Telefono</th>
+					<th data-sort="string">Celular</th>
+					<th data-sort="string">Identificacion</th>
+					<th data-sort="string">Email</th>
+					<th data-sort="string">Cargo</th>
+					<th data-sort="string">Fecha Vigencia</th>
+		      <th data-sort="string">Roles</th>
+					<th data-sort="string">Municipio</th>
+		      <th>Acciónes</th>
+		    </tr>
+		  </thead>
+		  <tbody id="table-result-body">
+		  	<% count = 0 -%>
+			<% @usuarios.each do |usuario| -%>
+				<% count += 1 -%>
+				<tr class="<%= (usuario.activo) ? 'success' : 'danger' %>">
+					<td><%= count %></td>
+			    <td><%= usuario.nombre_completo %></td>
+					<td><%= usuario.telefono %></td>
+					<td><%= usuario.celular %></td>
+			    <td><%= usuario.identificacion %></td>
+					<td><%= usuario.email %></td>
+					<td><%= usuario.cargo %></td>
+					<td><%= usuario.fecha_vigencia.strftime("%e %b %Y") if usuario.fecha_vigencia %></td>
+					<td><%= usuario.roles_value %></td>
+					<td>
+						<%= usuario.municipio_alterno.nombre if usuario.municipio_alterno %>
+						<%= usuario.municipio.nombre if usuario.municipio_alterno.nil? && usuario.municipio %>
+					</td>
+					<td>
+
+					    <%= link_to '<i class="fa fa-edit"></i> Editar'.html_safe, edit_crue_usuario_path(usuario.id), html_options = {:class => "btn btn-xs btn-success", :title => "Editar"} %>
+
+					    <%= link_to '<i class="fa fa-times"></i> Borrar'.html_safe, crue_usuario_path(usuario.id), html_options = {:class => "btn btn-xs btn-success", :title => "Borrar", :method => "delete", :confirm => 'Estas seguro, se borraran todos los datos asociados a este usuario?'} %>
+
+							<%= link_to '<i class="fa fa-navicon"></i> Restablecer Contraseña'.html_safe, reset_password_crue_usuario_path(usuario.id), html_options = {:class => "btn btn-xs btn-success", :method => :patch, :title => "Restablecer Contraseña", :confirm => 'Estas seguro?, se enviará un correo para reestablecer la contraseña de este usuario'} %>
+
+					</td>
+				</tr>
+			<% end -%>
+		  </tbody>
+		</table>
+	</div>
+
+	<%= submit_tag "✓Exportar Datos", :name => 'export_data' %>
+<% end %>

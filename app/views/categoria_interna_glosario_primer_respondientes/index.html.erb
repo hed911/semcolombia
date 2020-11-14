@@ -1,0 +1,174 @@
+</br>
+</br>
+
+
+<div class="container-fluid">
+
+	<button type="button" class="btn btn-primary btn-lg" onclick="load_new();">
+		Nueva Categoria Interna
+	</button>
+
+	<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+  		<%= link_to "Categorias Internas Glosario".html_safe, categoria_interna_glosario_primer_respondientes_path, class:"breadcrumb-item" %>
+  	</li>
+  </ol>
+
+  <div class="row">
+    <%= form_tag("#", :multipart => true, "data-ajax" => "false" ) do %>
+      <div class="col-md-2">
+        <div class="panel panel-customized">
+          <div class="panel-heading">
+            <h3 class="panel-title">Filtros</h3>
+          </div>
+          <div class="panel-body">
+              <div>
+								<div class="option">
+									<%= select_tag :categoria_id, options_for_select(@categorias.collect{ |categoria| [categoria.nombre, categoria.id] }, @categorias.first.id), { include_blank: "Categoria", id: 'categoria_select', class:"form-control", disabled:false } %>
+								</div>
+
+                <div class="option">
+                  <%= text_field_tag(:per_page, '10', placeholder:"Resultados por pagina", class:'form-control') %>
+                </div>
+
+    						<div class="option">
+                  <button onclick="do_search(1);" type="button" class="btn btn-primary">Buscar</button>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    <% end -%>
+    <div class="col-md-10">
+      <div class="container-fluid">
+
+        <div class="table-responsive">
+          <table id="table-result" class="table table-hover tablesorter">
+      			<thead>
+              <tr>
+								<th data-sort="string">Nombre</th>
+                <th data-sort="string">Descripcion</th>
+								<th data-sort="string">Acción</th>
+      				</tr>
+      			</thead>
+      		  <tbody id="table-result-body">
+
+      		  </tbody>
+      		</table>
+        </div>
+      </div>
+
+      <div class="container">
+        <center>
+          <div style="text-align:center" id="page-selection"></div>
+        </center>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="modal"></div>
+
+<script>
+  //http://jsfiddle.net/fF675/3/
+  var pages_count = 0;
+	var firstTime = true;
+  var currentPage = 1;
+
+  function update_paginas() {
+  	$("#page-links").empty();
+  	for (var i = 1; i <= pages_count; i++)
+    {
+      var li = $("<button/>", {
+          class: 'btn page_link'
+      }).html(i);
+      li.appendTo('#page-links');
+    }
+
+    $('.page_link').on('click', function() {
+    	xxx = $(this).html();
+        load_page($(this).html());
+    });
+  }
+
+  function do_search(index) {
+    currentPage = index;
+		if(index == 1){
+			firstTime = true;
+		}else{
+			firstTime = false;
+		}
+  	show_loading_indicator();
+		size_ = $('#per_page').val();
+		admin_id_ = $('#admin_select').val();
+		categoria_id_ = $('#categoria_select').val();
+
+    $.post("/categoria_interna_glosario_primer_respondientes/search",
+    	{
+				index: index,
+				size:size_,
+				admin_id:admin_id_,
+				categoria_id:categoria_id_
+    	},function(result){
+				hide_loading_indicator();
+				$('#table-result-body').empty();
+				$('#table-result-body').append($.parseHTML( result ));
+				var cantidadPaginas = $('#cantidad_paginas').val();
+				if(firstTime){
+					initPager(cantidadPaginas);
+				}
+		}, "text");
+  }
+
+	function initPager(count){
+
+		$('#page-selection').bootpag({
+			total: count,
+	    page: 1,
+      maxVisible: 10,
+      firstLastUse: true,
+      first: '←',
+      last: '→'
+		}).on("page", function(event, num){
+		    //$(".content").html("Page " + num); // or some ajax content loading...
+				do_search(num);
+		});
+
+	}
+
+  var original_class = document.getElementsByTagName('body')[0].className;
+
+  function show_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className += " loading";
+  }
+
+  function hide_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className = original_class;
+  }
+
+  function load_new(){
+    $.get("/categoria_interna_glosario_primer_respondientes/new",
+      {
+      },function(result){
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#new-categoria-interna").modal('show');
+    }, "text");
+  }
+
+  function load_edit(id){
+    $.get("/categoria_interna_glosario_primer_respondientes/" + id + "/edit",
+      {
+      },function(result){
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#edit-categoria-interna").modal('show');
+    }, "text");
+  }
+
+	do_search(1);
+
+</script>

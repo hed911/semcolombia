@@ -1,0 +1,9 @@
+<% if @error %>
+  alert("<%= @error %>");
+<% else %>
+  $('#edit-iec').modal('hide');
+  do_search(currentPage);
+  <% if @reload_modal %>
+    load_edit_iec(<%= @caso.id %>);
+  <% end %>
+<% end %>

@@ -1,0 +1,99 @@
+<script src="https://static.opentok.com/v2/js/opentok.min.js"></script>
+<style>
+  #videos {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#subscriber {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+
+#publisher {
+    position: absolute;
+    width: 360px;
+    height: 240px;
+    bottom: 10px;
+    left: 10px;
+    z-index: 100;
+    border: 3px solid white;
+    border-radius: 3px;
+}
+</style>
+
+<div class="container">
+  <% if @reunion.nil? -%>
+    <h1>Teleconsulta no se pudo iniciar</h1>
+    <p><small>Por favor revise el enlace, no se pudo encontrar una sesion con el enlace suministrado</small></p>
+  <% elsif @is_host -%>
+    <% caso = @reunion.caso_salud_publica -%>
+    <h1>Teleconsulta (MEDICO)</h1>
+    <p><small>Actualmente se encuentra en una sesion con <%= caso.nombre_completo if caso %></small></p>
+  <% else -%>
+    <% medico = @reunion.medico -%>
+    <h1>Teleconsulta (PACIENTE)</h1>
+    <p><small>Actualmente se encuentra en una sesion con <%= medico.nombre_completo if medico %></small></p>
+  <% end -%>
+</div>
+<div class="container-fluid">
+  <div id="videos">
+    <div id="subscriber"></div>
+    <div id="publisher"></div>
+  </div>
+</div>
+
+<% unless @reunion.nil? -%>
+  <script>
+  var apiKey = "46763492";
+  var sessionId = "<%= @reunion.opentok_session_id %>";
+  var token = "<%= @is_host ? @reunion.opentok_host_token : @reunion.opentok_participant_token %>";
+
+  // Handling all of our errors here by alerting them
+  function handleError(error) {
+    if (error) {
+      alert(error.message);
+    }
+  }
+
+  // (optional) add server code here
+  initializeSession();
+
+  function initializeSession() {
+    var session = OT.initSession(apiKey, sessionId);
+
+    // Subscribe to a newly created stream
+    session.on('streamCreated', function(event) {
+      session.subscribe(event.stream, 'subscriber', {
+        insertMode: 'append',
+        width: '100%',
+        height: '100%'
+      }, handleError);
+    });
+
+    // Create a publisher
+    var publisher = OT.initPublisher('publisher', {
+      insertMode: 'append',
+      width: '100%',
+      height: '100%'
+    }, handleError);
+
+    // Connect to the session
+    session.connect(token, function(error) {
+      // If the connection is successful, initialize a publisher and publish to the session
+      if (error) {
+        handleError(error);
+      } else {
+        session.publish(publisher, handleError);
+      }
+    });
+  }
+  </script>
+<% end -%>

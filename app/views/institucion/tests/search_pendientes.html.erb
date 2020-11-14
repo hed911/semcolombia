@@ -1,0 +1,55 @@
+<% if @muestras.any? -%>
+  <% @muestras.each do |muestra| -%>
+    <% caso = muestra.caso_salud_publica -%>
+    <% next if caso.nil? -%>
+    <tr class='<%= muestra.table_value%>'>
+      <td class="text-right">
+        <%= "#{caso.numero_oficial}" %>
+      </td>
+      <td class="text-right">
+        <% if muestra.fecha_recepcion_interna_laboratorio_asignado %>
+          <i style="color:green;" class="fas fa-check"></i>
+        <% end %>
+        <%= "#{caso.id}" %>
+      </td>
+      <td><%= muestra.tipo_value %></td>
+      <td><%= muestra.estado_value %></td>
+      <td><%= caso.nombre_completo.upcase %></td>
+      <td><%= caso.edad_value %> <%= caso.unidad_medida_value %></td>
+      <td><%= caso.tipo_documento %>-<%= caso.numero_documento %></td>
+      <td><%= caso.entidad_prestadora.nombre if caso.entidad_prestadora %></td>
+      <td><%= muestra.institucion.nombre if muestra.institucion %></td>
+      <td><%= caso.servicio_value %></td>
+      <td><%= muestra.laboratorio.nombre if muestra.laboratorio %></td>
+      <td><%= muestra.fecha.strftime('%I:%M:%S%p %d-%m-%Y') if muestra.fecha %></td>
+      <td><%= muestra.fecha_recepcion_interna.strftime('%I:%M:%S%p %d-%m-%Y') if muestra.fecha_recepcion_interna %></td>
+      <td><%= muestra.fecha_despacho_interna.strftime('%I:%M:%S%p %d-%m-%Y') if muestra.fecha_despacho_interna %></td>
+      <td><%= muestra.resultado_value %></td>
+      <td>
+        <div class="btn-group dropleft">
+          <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Opciones
+          </button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="#" onclick="show_detalle_caso(<%= caso.id %>);"><i class="fas fa-info-circle"></i> Detalle caso</a>
+            <a class="dropdown-item" href="#" onclick="show_detalle_muestra(<%= caso.id %>, <%= muestra.id %>);"><i class="fas fa-info-circle"></i> Detalle muestra</a>
+            <% if muestra.archivos.any? -%>
+              <%= link_to archivo_path(muestra.archivos.first.uuid), :method => :get, :class => "dropdown-item", :title => "Descargar" do %>
+                <i class="fas fa-file-download"></i> Descargar
+              <% end %>
+            <% elsif muestra.resultado == 2 || muestra.resultado == 3 %>
+              <%= link_to generate_and_download_archivo_path(muestra.id), :method => :get, :class => "btn btn-warning btn-lg #{'disabled' if !PDF_ENABLED}", :title => "Descargar" do %>
+                <i class="fas fa-file-download"></i> Descargar
+              <% end %> 
+            <% end %>
+          </div>
+        </div>
+      </td>
+    </tr>
+  <% end -%>
+<% else -%>
+
+<% end -%>
+
+<%= hidden_field_tag :cantidad_registros, @cantidad_registros %>
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

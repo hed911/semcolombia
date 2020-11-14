@@ -1,0 +1,132 @@
+<div class="container-fluid">
+	<h3>Dashboard Ambulancias</h3>
+	<% if false -%>
+	<div class="col-lg-4">
+		<div class="panel panel-danger">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-xs-6">
+						<i class="fa fa-ambulance fa-5x"></i>
+					</div>
+					<div class="col-xs-6 text-right">
+						<p class="announcement-heading"><%= @cantidad_total %></p>
+						<p class="announcement-text">Total ambulancias</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-4">
+		<div class="panel panel-success">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-xs-6">
+						<i class="fa fa-ambulance fa-5x"></i>
+					</div>
+					<div class="col-xs-6 text-right">
+						<p class="announcement-heading"><%= @ambulancias_disponibles.count %></p>
+						<p class="announcement-text">Disponibles para atender casos</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-4">
+		<div class="panel panel-success">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-xs-6">
+						<i class="fa fa-ambulance fa-5x"></i>
+					</div>
+					<div class="col-xs-6 text-right">
+						<p class="announcement-heading"><%= @ambulancias_en_transito.count %></p>
+						<p class="announcement-text">En transito</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-4">
+		<div class="panel panel-danger">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-xs-6">
+						<i class="fa fa-ambulance fa-5x"></i>
+					</div>
+					<div class="col-xs-6 text-right">
+						<p class="announcement-heading"><%= @ambulancias_no_disponibles.count %></p>
+						<p class="announcement-text">No disponibles</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-4">
+		<div class="panel panel-danger">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-xs-6">
+						<i class="fa fa-ambulance fa-5x"></i>
+					</div>
+					<div class="col-xs-6 text-right">
+						<p class="announcement-heading"><%= @ambulancias_deshabilitadas.count %></p>
+						<p class="announcement-text">Deshabilitadas</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-4">
+		<div class="panel panel-danger">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-xs-6">
+						<i class="fa fa-ambulance fa-5x"></i>
+					</div>
+					<div class="col-xs-6 text-right">
+						<p class="announcement-heading"><%= @ambulancias_desconectadas.count %></p>
+						<p class="announcement-text">Desconectadas</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<% end -%>
+
+	<div class="row">
+    <div class="col-md-12">
+			<table id="table-result" class="table table-bordered table-hover table-striped tablesorter">
+			  <thead>
+			    <tr>
+						<th data-sort="string">Placa</th>
+						<th data-sort="string">Empresa</th>
+						<th data-sort="string">Disponible</th>
+						<th data-sort="string">Habilitada</th>
+						<th data-sort="string">Sin Suspención</th>
+						<th data-sort="string">Conectada a Internet</th>
+			      <th data-sort="string">GPS Reciente</th>
+						<th data-sort="string">Puede recibir casos?</th>
+			    </tr>
+			  </thead>
+			  <tbody id="table-result-body">
+					<% @ambulancias.each do |ambulancia| -%>
+						<% resumen_estado = ambulancia.resumen_estado -%>
+						<tr>
+							<td><%= ambulancia.placa.upcase if ambulancia.placa %></td>
+							<td><%= ambulancia.empresa_ambulancia.nombre if ambulancia.empresa_ambulancia %></td>
+
+							<td><%= resumen_estado[:variables][:disponible] ? '<i style="color:green;" class="fa fa-check fa-3x" aria-hidden="true"></i>'.html_safe : '<i style="color:red;" class="fa fa-3x fa-times" aria-hidden="true"></i>'.html_safe %></td>
+							<td><%= resumen_estado[:variables][:habilitada] ? '<i style="color:green;" class="fa fa-check fa-3x" aria-hidden="true"></i>'.html_safe : '<i style="color:red;" class="fa fa-3x fa-times" aria-hidden="true"></i>'.html_safe %></td>
+							<td><%= !resumen_estado[:variables][:suspencion_activa] ? '<i style="color:green;" class="fa fa-check fa-3x" aria-hidden="true"></i>'.html_safe : '<i style="color:red;" class="fa fa-3x fa-times" aria-hidden="true"></i>'.html_safe %></td>
+							<td><%= resumen_estado[:variables][:ping_reciente] ? '<i style="color:green;" class="fa fa-check fa-3x" aria-hidden="true"></i>'.html_safe : '<i style="color:red;" class="fa fa-3x fa-times" aria-hidden="true"></i>'.html_safe %></td>
+							<td><%= resumen_estado[:variables][:ubicacion_reciente] ? '<i style="color:green;" class="fa fa-check fa-3x" aria-hidden="true"></i>'.html_safe : '<i style="color:red;" class="fa fa-3x fa-times" aria-hidden="true"></i>'.html_safe %></td>
+
+							<td><%= resumen_estado[:puede_recibir_casos] ? '<i style="color:green;" class="fa fa-check fa-3x" aria-hidden="true"></i>'.html_safe : '<i style="color:red;" class="fa fa-3x fa-times" aria-hidden="true"></i>'.html_safe %></td>
+						</tr>
+					<% end %>
+			  </tbody>
+			</table>
+		</div>
+	</div>
+</div>

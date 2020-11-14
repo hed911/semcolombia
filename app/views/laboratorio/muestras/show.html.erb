@@ -1,0 +1,102 @@
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL SEGUIMIENTOS =-=-=-=-=-=-=-=-=-=-========== -->
+<div class="modal fade" id="detalle-muestra" tabindex="-1" role="dialog" aria-labelledby="seguimientos" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class='col-12 modal-title text-center'>
+          Detalle muestra caso <%= @caso.id %>
+          <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+            <span aria-hidden='true'>&times;</span>
+          </button>
+        </h3>
+      </div>
+      <div class="modal-body">
+        <%= form_tag("#", method: "post", remote:true, :multipart => true, "data-ajax" => "false" ) do %>
+          <div class="row">
+
+            <div class="container card-group">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title"></h5>
+                  <div>
+                    <div class="form-group">
+                      <p class="control-label">Laboratorio</p>
+                      <%= text_field_tag(:codigo, (@muestra.laboratorio.nil? ? nil : @muestra.laboratorio.nombre), class:'form-control', required:true, disabled:true) %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Tipo</p>
+                      <%= text_field_tag(:codigo, @muestra.tipo_value, class:'form-control', required:true, disabled:true) %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Fecha toma de muestra</p>
+                      <%= text_field_tag(:codigo, @muestra.fecha, class:'form-control', required:true, disabled:true) %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Fecha resultado</p>
+                      <%= text_field_tag(:codigo, @muestra.fecha_realizacion, class:'form-control', required:true, disabled:true) %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Quien recibe</p>
+                      <%= text_field_tag(:quien_recibe, (@muestra.quien_recibe.nil? ? nil : @muestra.quien_recibe.nombre_completo), class:'form-control', required:true, disabled:true) %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Quien envia</p>
+                      <%= text_field_tag(:quien_despacha, (@muestra.quien_despacha.nil? ? nil : @muestra.quien_despacha.nombre_completo), class:'form-control', required:true, disabled:true) %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Responsable resultado</p>
+                      <%= text_field_tag(:codigo, (@muestra.finalizador.nil? ? nil : @muestra.finalizador.nombre_completo), class:'form-control', required:true, disabled:true) %>
+                    </div>
+
+
+
+                    <div class="form-group">
+                      <p class="control-label">Codigo</p>
+                      <%= text_field_tag(:codigo, @muestra.codigo, class:'form-control', required:true, disabled:true) %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Prueba</p>
+                      <select id="prueba" name="prueba" disabled required class="form-control">
+                        <option value></option>
+                        <option <%= "selected" if @muestra.prueba == 1 %> value="1">RT-PCR para SARS CoV-2 (COVID-19)</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Resultado</p>
+                      <select id="resultado" name="resultado" disabled required class="form-control">
+                        <option value></option>
+                        <option <%= "selected" if @muestra.resultado == 2 && @muestra.publico %> value="2">Positivo</option>
+                        <option <%= "selected" if @muestra.resultado == 3 %> value="3">Negativo</option>
+                        <option <%= "selected" if @muestra.resultado == 4 %> value="4">SE SOLICITA NUEVA MUESTRA</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Observaciones</p>
+                      <%= text_area_tag(:observaciones, @muestra.observaciones, size: "30x4", class:'form-control', disabled:true) %>
+                    </div>
+                    <% if @muestra.archivos.any? && (@muestra.resultado != 2 || (@muestra.resultado == 2 && @muestra.publico)) %>
+                      <div class="form-group">
+                        <p class="control-label">Soporte PDF</p>
+                        <%= link_to archivo_path(@muestra.archivos.first.uuid), :method => :get, :class => "btn btn-primary btn-lg", :title => "Descargar" do %>
+                          <i class="fas fa-file-download"></i> Descargar
+                        <% end %>
+                      </div>
+                    <% elsif @muestra.resultado == 2 || @muestra.resultado == 3 %>
+                      <%= link_to generate_and_download_archivo_path(@muestra.id), :method => :get, :class => "btn btn-warning btn-lg #{'disabled' if !PDF_ENABLED}", :title => "Descargar" do %>
+                        <i class="fas fa-file-download"></i> Descargar
+                      <% end %> 
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        <% end %>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== MODAL SEGUIMIENTOS ==========-=-=-=-=-=-=-=-=-=-= -->

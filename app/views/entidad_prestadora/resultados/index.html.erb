@@ -1,0 +1,158 @@
+
+<div class="container">
+  <h1>Consulta resultados</h1>
+  <div class="row">
+    <div class="col-12" >
+      <div class="">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title"></h3>
+          </div>
+          <div class="panel-body">
+            <div>
+              <div class="option">
+                <%= text_field_tag(:numero_documento_search, nil, placeholder:"Numero documento", class:'form-control', style:"text-transform: uppercase; text-align: center;") %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="container-fluid">
+
+        <div class="table-responsive">
+          <table id="table-result" class="table table-hover tablesorter">
+            <thead id="table_header_container" class="invisible">
+              <tr>
+                <th data-sort="string">Numero oficial caso</th>
+                <th data-sort="string">Id</th>
+                <th data-sort="string">Nombre</th>
+                <th data-sort="string">Edad</th>
+                <th data-sort="string"># Documento</th>
+                <th data-sort="string">EAPB</th>
+                <th data-sort="string">IPS</th>
+                <th data-sort="string">Laboratorio</th>
+                <th data-sort="string">Resultado muestra</th>
+                <th data-sort="string">Fecha toma muestra</th>
+                <th data-sort="string">Fecha resultado</th>
+                <th data-sort="string"></th>
+              </tr>
+            </thead>
+      		  <tbody id="table-result-body">
+
+      		  </tbody>
+      		</table>
+        </div>
+      </div>
+
+      <div id="pages_container" class="invisible container">
+        <center>
+          <div style="text-align:center" id="page-selection"></div>
+        </center>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div id="container"></div>
+<div id="modal"></div>
+
+<script>
+
+  $('#numero_documento_search').on('change textInput input', function () {
+    do_search(currentPage);
+  });
+
+  var pages_count = 0;
+	var firstTime = true;
+  var currentPage = 1;
+
+  function update_paginas() {
+  	$("#page-links").empty();
+  	for (var i = 1; i <= pages_count; i++)
+    {
+      var li = $("<button/>", {
+          class: 'btn page_link'
+      }).html(i);
+      li.appendTo('#page-links');
+    }
+
+    $('.page_link').on('click', function() {
+    	xxx = $(this).html();
+        load_page($(this).html());
+    });
+  }
+
+  function do_search(index) {
+    currentPage = index;
+		if(index == 1){
+			firstTime = true;
+		}else{
+			firstTime = false;
+		}
+  	show_loading_indicator();
+
+  	id_ = $('#id').val();
+    numero_documento_ = $('#numero_documento_search').val();
+    size_ = 10;
+
+    $.post("/entidad_prestadora/resultados/search",
+    	{
+				index: index,
+        numero_documento:numero_documento_,
+        size:size_
+    	},function(result){
+				hide_loading_indicator();
+				$('#table-result-body').empty();
+				$('#table-result-body').append($.parseHTML( result ));
+				var cantidadPaginas = $('#cantidad_paginas').val();
+        var cantidadRegistros = $('#cantidad_registros').val();
+				if(firstTime){
+					initPager(cantidadPaginas);
+				}
+        if(cantidadRegistros == "0"){
+          $('#pages_container').addClass("invisible");
+          $('#table_header_container').addClass("invisible");
+        }else{
+          $('#pages_container').removeClass("invisible");
+          $('#table_header_container').removeClass("invisible");
+        }
+		}, "text");
+  }
+
+	function initPager(count){
+
+		$('#page-selection').bootpag({
+			total: count,
+	    page: 1,
+      maxVisible: 10,
+      firstLastUse: true,
+      first: '←',
+      last: '→'
+		}).on("page", function(event, num){
+		    //$(".content").html("Page " + num); // or some ajax content loading...
+				do_search(num);
+		});
+
+	}
+
+  var original_class = document.getElementsByTagName('body')[0].className;
+
+  function show_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className += " loading";
+  }
+
+  function hide_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className = original_class;
+  }
+
+  do_search(currentPage);
+
+</script>

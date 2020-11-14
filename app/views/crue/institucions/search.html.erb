@@ -1,0 +1,54 @@
+<% count = 0 -%>
+<% @institucions.each do |institucion| -%>
+  <% count += 1 -%>
+  <% municipio = institucion.municipio_alterno ? institucion.municipio_alterno : institucion.municipio -%>
+  <% departamento = municipio.departamento -%>
+  <tr class="<%= institucion.activo == true ? 'success' : 'danger' %>">
+      <td><%= institucion.id %></td>
+      <td>
+        <% if institucion.latitude && institucion.longitude -%>
+          <i style="color:green" class="fa fa-2x fa-map-marker"></i>
+        <% end -%>
+        <%= institucion.roles_value %>
+      </td>
+      <td><%= institucion.nivel_value %></td>
+      <td><%= institucion.nivel_complejidad_value %></td>
+      <td><%= institucion.atiende_salud_mental ? "SI" : "NO" %></td>
+      <td><%= institucion.codigo %></td>
+      <td><%= institucion.numero_sede %></td>
+      <td><%= institucion.nombre if institucion.nombre %></td>
+      <td><%= institucion.direccion %></td>
+      <td><%= institucion.telefono %></td>
+      <td><%= institucion.email %></td>
+      <td><%= institucion.nit %></td>
+
+      <td><%= departamento.nombre if departamento %></td>
+      <td><%= municipio.nombre if municipio %></td>
+
+      <td>
+
+        <a class="btn btn-xs btn-success" onclick="show_detalle(<%= institucion.id %>);">Detalle</a>
+
+        <%= link_to edit_crue_institucion_path(institucion.id), :class => "btn btn-xs btn-success", :title => "Editar institucion" do %>
+          <i class="fa fa-pencil-square-o"></i> Editar
+        <% end %>
+
+        <%= link_to crue_institucion_path(institucion.id), :class => "btn btn-xs btn-danger", method: :delete, title:"Borrar institucion", :data => {:confirm => 'Estas seguro? Este cambio no se puede revertir' } do %>
+          <i class="fa fa-trash-o"></i> Borrar
+        <% end %>
+
+        <% if true #institucion.entidad_prestadora %>
+          <%= link_to crue_institucion_hospital_users_path(institucion.id), :class => "btn btn-xs btn-success", :title => "Usuarios" do %>
+            Usuarios(<%= institucion.usuarios.count %>)
+          <% end %>
+        <% end %>
+
+        <%= link_to sedes_crue_institucion_path(institucion.id), :class => "btn btn-success", :title => "Usuarios", :target => "_blank" do %>
+					<i class="fa fa-hospital-o"></i> Sedes(<%= institucion.sedes.count %>)
+			  <% end %>
+
+      </td>
+
+  </tr>
+<% end -%>
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

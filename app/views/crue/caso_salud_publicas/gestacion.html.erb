@@ -1,0 +1,406 @@
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL AGREGAR EAPB =-=-=-=-=-=-=-=-=-=-========== -->
+	<div class="modal fade" id="gestacion" tabindex="-1" role="dialog" aria-labelledby="add-edit-Label" aria-hidden="true">
+	  <div class="modal-dialog modal-xl">
+	    <div class="modal-content">
+	      <div class="modal-header">
+					<h3 class='col-12 modal-title text-center'>
+		        Encuesta mujeres gestantes
+		        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+		          <span aria-hidden='true'>&times;</span>
+		        </button>
+		      </h3>
+	      </div>
+	      <div class="modal-body">
+	        <%= form_tag(update_gestacion_crue_caso_salud_publica_path(@caso.id), method: "put", :remote => true, :multipart => true, "data-ajax" => "false" ) do %>
+	          <div class="row">
+
+							<div class="container card-group">
+			          <div class="card">
+			            <div class="card-body">
+			              <h5 class="card-title"></h5>
+			              <div>
+											<div class="form-group">
+			                  <p class="control-label">Fecha atencion</p>
+			                  <%= date_field_tag(:gestacion_fecha_atencion, (@caso.gestacion_fecha_atencion.nil? ? nil : @caso.gestacion_fecha_atencion.strftime('%Y-%m-%d')), class:"form-control", required:true) %>
+			                </div>
+											<div class="form-group row">
+		                    <div class="col-sm-6">
+	                        <label for="tipo_documento">Tipo de documento</label>
+													<select disabled id="tipo_documento" name="tipo_documento" class="form-control">
+														<option <%= "selected" if @caso.tipo_documento == "CC" %> value="CC">Cédula de Ciudadania</option>
+														<option <%= "selected" if @caso.tipo_documento == "RC" %> value="RC">Registro Civil</option>
+														<option <%= "selected" if @caso.tipo_documento == "TI" %> value="TI">Tarjeta de Identidad</option>
+														<option <%= "selected" if @caso.tipo_documento == "CE" %> value="CE">Cédula de Extranjeria</option>
+														<option <%= "selected" if @caso.tipo_documento == "PA" %> value="PA">Pasaporte</option>
+														<option <%= "selected" if @caso.tipo_documento == "NV" %> value="NV">Nacido Vivo</option>
+														<option <%= "selected" if @caso.tipo_documento == "CD" %> value="CD">Carnet Diplomatico</option>
+														<option <%= "selected" if @caso.tipo_documento == "SC" %> value="SC">Salvoconducto de Permanencia</option>
+														<option <%= "selected" if @caso.tipo_documento == "PR" %> value="PR">Pasaporte de la ONU</option>
+														<option <%= "selected" if @caso.tipo_documento == "AS" %> value="AS">Adulto sin Identificación</option>
+														<option <%= "selected" if @caso.tipo_documento == "MS" %> value="MS">Menor sin Identificación</option>
+														<option <%= "selected" if @caso.tipo_documento == "PE" %> value="PE">Permiso Especial</option>
+													</select>
+		                    </div>
+		                    <div class="col-sm-6">
+	                        <label for="numero_documento">Numero de documento</label>
+	                        <%= text_field_tag(:numero_documento, @caso.numero_documento, :disabled => true, :required => true, :class =>"form-control") %>
+		                    </div>
+			                </div>
+											<div class="form-group row">
+		                    <div class="col-sm-6">
+	                        <label for="primer_nombre">Primer nombre</label>
+	                        <%= text_field_tag(:primer_nombre, @caso.primer_nombre, :disabled => true, :required => false, :class =>"form-control") %>
+		                    </div>
+												<div class="col-sm-6">
+	                        <label for="segundo_nombre">Segundo nombre</label>
+	                        <%= text_field_tag(:segundo_nombre, @caso.segundo_nombre, :disabled => true, :required => false, :class =>"form-control") %>
+		                    </div>
+			                </div>
+											<div class="form-group row">
+												<div class="col-sm-6">
+	                        <label for="primer_apellido">Primer apellido</label>
+	                        <%= text_field_tag(:primer_apellido, @caso.primer_apellido, :disabled => true, :required => false, :class =>"form-control") %>
+		                    </div>
+		                    <div class="col-sm-6">
+	                        <label for="segundo_apellido">Segundo apellido</label>
+	                        <%= text_field_tag(:segundo_apellido, @caso.segundo_apellido, :disabled => true, :required => false, :class =>"form-control") %>
+		                    </div>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Fecha nacimiento</p>
+			                  <%= date_field_tag(:fecha_nacimiento, (@caso.fecha_nacimiento.nil? ? nil : @caso.fecha_nacimiento.strftime('%Y-%m-%d')), class:"form-control", :disabled => true) %>
+			                </div>
+											<div class="form-group row">
+												<div class="col-sm-12">
+	                        <label for="segundo_apellido">Edad</label>
+	                        <%= number_field_tag(:edad, @caso.edad, :required => false, :class =>"form-control", :disabled => true) %>
+		                    </div>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Direccion</p>
+			                  <%= text_field_tag(:direccion, @caso.direccion, :required => true, :disabled => true, :class =>"form-control") %>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Telefono</p>
+			                  <%= text_field_tag(:telefono, @caso.telefono, :disabled => true, :required => false, :class =>"form-control") %>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Edad gestacional en semanas</p>
+			                  <%= number_field_tag(:gestacion_edad_gestacional, @caso.gestacion_edad_gestacional, :disabled => false, :required => true, :class => "form-control") %>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Tiene alguna enfermedad?</p>
+												<select required id="gestacion_tiene_enfermedad" name="gestacion_tiene_enfermedad" class="form-control">
+													<option <%= "selected" if @caso.gestacion_tiene_enfermedad == 1 %> value="1">Si</option>
+													<option <%= "selected" if @caso.gestacion_tiene_enfermedad == 2 %> value="2">No</option>
+													<option <%= "selected" if @caso.gestacion_tiene_enfermedad == 3 %> value="3">No sabe</option>
+												</select>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Si la respuesta anterior es afirmativa, cuál enfermedad?</p>
+			                  <%= text_field_tag(:gestacion_enfermedad, @caso.gestacion_enfermedad, :required => false, :class =>"form-control") %>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Estas asistiendo al control prenatal?</p>
+												<select required id="gestacion_control_prenatal" name="gestacion_control_prenatal" class="form-control">
+													<option <%= "selected" if @caso.gestacion_control_prenatal == 1 %> value="1">Si</option>
+													<option <%= "selected" if @caso.gestacion_control_prenatal == 2 %> value="2">No</option>
+												</select>
+			                </div>
+											<div class="form-group">
+												<label for="observacion">Observacion</label>
+												<%= text_area_tag(:observacion, @caso.observacion, size: "30x4", class:'form-control') %>
+			                </div>
+			              </div>
+			            </div>
+			          </div>
+
+								<div class="card">
+			            <div class="card-body">
+			              <h5 class="card-title"></h5>
+			              <div>
+											<div class="form-group row">
+		                    <div class="col-sm-6">
+	                        <label for="gestacion_gravida">GRAVIDA</label>
+													<select required id="gestacion_gravida" name="gestacion_gravida" class="form-control">
+														<option <%= "selected" if @caso.gestacion_gravida == 1 %> value="1">1</option>
+														<option <%= "selected" if @caso.gestacion_gravida == 2 %> value="2">2</option>
+														<option <%= "selected" if @caso.gestacion_gravida == 3 %> value="3">3</option>
+														<option <%= "selected" if @caso.gestacion_gravida == 4 %> value="4">4</option>
+														<option <%= "selected" if @caso.gestacion_gravida == 5 %> value="5">5</option>
+														<option <%= "selected" if @caso.gestacion_gravida == 6 %> value="6">6</option>
+														<option <%= "selected" if @caso.gestacion_gravida == 7 %> value="7">7</option>
+													</select>
+		                    </div>
+		                    <div class="col-sm-6">
+	                        <label for="gestacion_para">PARA</label>
+													<select required id="gestacion_para" name="gestacion_para" class="form-control">
+														<option <%= "selected" if @caso.gestacion_para == 1 %> value="1">1</option>
+														<option <%= "selected" if @caso.gestacion_para == 2 %> value="2">2</option>
+														<option <%= "selected" if @caso.gestacion_para == 3 %> value="3">3</option>
+														<option <%= "selected" if @caso.gestacion_para == 4 %> value="4">4</option>
+														<option <%= "selected" if @caso.gestacion_para == 5 %> value="5">5</option>
+														<option <%= "selected" if @caso.gestacion_para == 6 %> value="6">6</option>
+														<option <%= "selected" if @caso.gestacion_para == 7 %> value="7">7</option>
+													</select>
+		                    </div>
+			                </div>
+											<div class="form-group row">
+		                    <div class="col-sm-6">
+	                        <label for="gestacion_abortos">ABORTOS</label>
+													<select required id="gestacion_abortos" name="gestacion_abortos" class="form-control">
+														<option <%= "selected" if @caso.gestacion_abortos == 1 %> value="1">1</option>
+														<option <%= "selected" if @caso.gestacion_abortos == 2 %> value="2">2</option>
+														<option <%= "selected" if @caso.gestacion_abortos == 3 %> value="3">3</option>
+														<option <%= "selected" if @caso.gestacion_abortos == 4 %> value="4">4</option>
+														<option <%= "selected" if @caso.gestacion_abortos == 5 %> value="5">5</option>
+														<option <%= "selected" if @caso.gestacion_abortos == 6 %> value="6">6</option>
+														<option <%= "selected" if @caso.gestacion_abortos == 7 %> value="7">7</option>
+													</select>
+		                    </div>
+		                    <div class="col-sm-6">
+	                        <label for="gestacion_cesareas">CESAREAS</label>
+													<select required id="gestacion_cesareas" name="gestacion_cesareas" class="form-control">
+														<option <%= "selected" if @caso.gestacion_cesareas == 1 %> value="1">1</option>
+														<option <%= "selected" if @caso.gestacion_cesareas == 2 %> value="2">2</option>
+														<option <%= "selected" if @caso.gestacion_cesareas == 3 %> value="3">3</option>
+														<option <%= "selected" if @caso.gestacion_cesareas == 4 %> value="4">4</option>
+														<option <%= "selected" if @caso.gestacion_cesareas == 5 %> value="5">5</option>
+														<option <%= "selected" if @caso.gestacion_cesareas == 6 %> value="6">6</option>
+														<option <%= "selected" if @caso.gestacion_cesareas == 7 %> value="7">7</option>
+													</select>
+		                    </div>
+			                </div>
+											<div class="form-group row">
+		                    <div class="col-sm-6">
+	                        <label for="gestacion_vivos">VIVOS</label>
+													<select required id="gestacion_vivos" name="gestacion_vivos" class="form-control">
+														<option <%= "selected" if @caso.gestacion_vivos == 1 %> value="1">1</option>
+														<option <%= "selected" if @caso.gestacion_vivos == 2 %> value="2">2</option>
+														<option <%= "selected" if @caso.gestacion_vivos == 3 %> value="3">3</option>
+														<option <%= "selected" if @caso.gestacion_vivos == 4 %> value="4">4</option>
+														<option <%= "selected" if @caso.gestacion_vivos == 5 %> value="5">5</option>
+														<option <%= "selected" if @caso.gestacion_vivos == 6 %> value="6">6</option>
+														<option <%= "selected" if @caso.gestacion_vivos == 7 %> value="7">7</option>
+													</select>
+		                    </div>
+		                    <div class="col-sm-6">
+	                        <label for="gestacion_muertos">MUERTOS</label>
+													<select required id="gestacion_muertos" name="gestacion_muertos" class="form-control">
+														<option <%= "selected" if @caso.gestacion_muertos == 1 %> value="1">1</option>
+														<option <%= "selected" if @caso.gestacion_muertos == 2 %> value="2">2</option>
+														<option <%= "selected" if @caso.gestacion_muertos == 3 %> value="3">3</option>
+														<option <%= "selected" if @caso.gestacion_muertos == 4 %> value="4">4</option>
+														<option <%= "selected" if @caso.gestacion_muertos == 5 %> value="5">5</option>
+														<option <%= "selected" if @caso.gestacion_muertos == 6 %> value="6">6</option>
+														<option <%= "selected" if @caso.gestacion_muertos == 7 %> value="7">7</option>
+													</select>
+		                    </div>
+			                </div>
+
+											<div class="form-group new-field">
+			                  <p class="control-label">Fecha ultima regla</p>
+			                  <%= date_field_tag(:gestacion_fecha_ultima_regla, (@caso.gestacion_fecha_ultima_regla.nil? ? nil : @caso.gestacion_fecha_ultima_regla.strftime('%Y-%m-%d')), class:"form-control", required:true) %>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Ha tenido alguna de las siguientes enfermedades de transmisión sexual?</p>
+												<select required id="gestacion_ha_tenido" name="gestacion_ha_tenido" class="form-control">
+													<option <%= "selected" if @caso.gestacion_ha_tenido == 1 %> value="1">SIFILIS</option>
+													<option <%= "selected" if @caso.gestacion_ha_tenido == 2 %> value="2">VIH</option>
+													<option <%= "selected" if @caso.gestacion_ha_tenido == 3 %> value="3">GONORREA</option>
+													<option <%= "selected" if @caso.gestacion_ha_tenido == 4 %> value="4">TRICHOMONA</option>
+													<option <%= "selected" if @caso.gestacion_ha_tenido == 5 %> value="5">VPH</option>
+													<option <%= "selected" if @caso.gestacion_ha_tenido == 6 %> value="6">HERPES</option>
+													<option <%= "selected" if @caso.gestacion_ha_tenido == 7 %> value="7">CLAMIDIA</option>
+													<option <%= "selected" if @caso.gestacion_ha_tenido == 8 %> value="8">HEPATITIS B</option>
+													<option <%= "selected" if @caso.gestacion_ha_tenido == 9 %> value="9">Ninguna</option>
+												</select>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Vacunas</p>
+												<select required id="gestacion_vacunas" name="gestacion_vacunas" class="form-control">
+													<option <%= "selected" if @caso.gestacion_vacunas == 1 %> value="1">TETANO</option>
+													<option <%= "selected" if @caso.gestacion_vacunas == 2 %> value="2">INFLUENZA</option>
+													<option <%= "selected" if @caso.gestacion_vacunas == 3 %> value="3">TDaP (Tetano-Difteria-Pertussis)</option>
+													<option <%= "selected" if @caso.gestacion_vacunas == 4 %> value="4">Ninguna</option>
+												</select>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">ANSIEDAD. Has presentado alguno de los siguientes síntomas:</p>
+												<div class="form-check">
+												  <input class="form-check-input" type="checkbox" name="gestacion_ansiedad[0]" <%= "checked" if @caso.gestacion_ansiedad[0] %> value="1" id="gestacion_ansiedad_0">
+												  <label class="form-check-label" for="gestacion_ansiedad_0">
+												    Te preocupas con facilidad
+												  </label>
+												</div>
+												<div class="form-check">
+												  <input class="form-check-input" type="checkbox" name="gestacion_ansiedad[1]" <%= "checked" if @caso.gestacion_ansiedad[1] %> value="1" id="gestacion_ansiedad_1">
+												  <label class="form-check-label" for="gestacion_ansiedad_1">
+												    Se te dificulta concentrarte y vivir en el presente
+												  </label>
+												</div>
+												<div class="form-check">
+												  <input class="form-check-input" type="checkbox" name="gestacion_ansiedad[2]" <%= "checked" if @caso.gestacion_ansiedad[2] %> value="1" id="gestacion_ansiedad_2">
+												  <label class="form-check-label" for="gestacion_ansiedad_2">
+												    Piensas demasiado y te agota tu mente
+												  </label>
+												</div>
+												<div class="form-check">
+												  <input class="form-check-input" type="checkbox" name="gestacion_ansiedad[3]" <%= "checked" if @caso.gestacion_ansiedad[3] %> value="1" id="gestacion_ansiedad_3">
+												  <label class="form-check-label" for="gestacion_ansiedad_3">
+												    Sientes miedo de manera constante o sin un motivo especifico
+												  </label>
+												</div>
+												<div class="form-check">
+												  <input class="form-check-input" type="checkbox" name="gestacion_ansiedad[4]" <%= "checked" if @caso.gestacion_ansiedad[4] %> value="1" id="gestacion_ansiedad_4">
+												  <label class="form-check-label" for="gestacion_ansiedad_4">
+												    Estás más irritable o cansado/a
+												  </label>
+												</div>
+												<div class="form-check">
+												  <input class="form-check-input" type="checkbox" name="gestacion_ansiedad[5]" <%= "checked" if @caso.gestacion_ansiedad[5] %> value="1" id="gestacion_ansiedad_5">
+												  <label class="form-check-label" for="gestacion_ansiedad_5">
+												    No logras disfrutar de momentos agradables
+												  </label>
+												</div>
+												<div class="form-check">
+												  <input class="form-check-input" type="checkbox" name="gestacion_ansiedad[6]" <%= "checked" if @caso.gestacion_ansiedad[6] %> value="1" id="gestacion_ansiedad_6">
+												  <label class="form-check-label" for="gestacion_ansiedad_6">
+												    Ha disminuido tu productividad y motivación
+												  </label>
+												</div>
+												<div class="form-check">
+												  <input class="form-check-input" type="checkbox" name="gestacion_ansiedad[7]" <%= "checked" if @caso.gestacion_ansiedad[7] %> value="1" id="gestacion_ansiedad_7">
+												  <label class="form-check-label" for="gestacion_ansiedad_7">
+												    Ninguno de los anteriores
+												  </label>
+												</div>
+			                </div>
+
+											<div class="form-group">
+			                  <p class="control-label">DEPRESION. Has presentado alguno de los siguientes síntomas: </p>
+												<select required id="gestacion_depresion" name="gestacion_depresion" class="form-control">
+													<option <%= "selected" if @caso.gestacion_depresion == 1 %> value="1">Estado de ánimo irritable o bajo la mayoría de las veces</option>
+													<option <%= "selected" if @caso.gestacion_depresion == 2 %> value="2">Dificultad para conciliar el sueño o exceso de sueño</option>
+													<option <%= "selected" if @caso.gestacion_depresion == 3 %> value="3">Cambio grande en el apetito, a menudo con aumento o pérdida de peso</option>
+													<option <%= "selected" if @caso.gestacion_depresion == 4 %> value="4">Cansancio y falta de energía</option>
+													<option <%= "selected" if @caso.gestacion_depresion == 5 %> value="5">Sentimientos de inutilidad, odio a sí mismo y culpa</option>
+													<option <%= "selected" if @caso.gestacion_depresion == 6 %> value="6">Dificultad para concentrarse</option>
+													<option <%= "selected" if @caso.gestacion_depresion == 7 %> value="7">Inactividad y retraimiento de las actividades usuales</option>
+													<option <%= "selected" if @caso.gestacion_depresion == 8 %> value="8">Sentimientos de desesperanza o abandono</option>
+													<option <%= "selected" if @caso.gestacion_depresion == 9 %> value="9">Pensamientos repetitivos de muerte o suicidio</option>
+													<option <%= "selected" if @caso.gestacion_depresion == 10 %> value="10">Pérdida de placer en actividades que suelen hacerlo feliz, incluso la actividad sexual</option>
+													<option <%= "selected" if @caso.gestacion_depresion == 11 %> value="11">Ninguno de los anteriores</option>
+												</select>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Otro</p>
+			                  <%= text_field_tag(:gestacion_ansiedad_otro, @caso.gestacion_ansiedad_otro, :required => false, :class =>"form-control") %>
+			                </div>
+											<div class="form-group row">
+		                    <div class="col-sm-6">
+	                        <label for="gestacion_vivos">VIVOS</label>
+													<select required id="gestacion_vivos" name="gestacion_vivos" class="form-control">
+														<option <%= "selected" if @caso.gestacion_vivos == 1 %> value="1">1</option>
+														<option <%= "selected" if @caso.gestacion_vivos == 2 %> value="2">2</option>
+														<option <%= "selected" if @caso.gestacion_vivos == 3 %> value="3">3</option>
+														<option <%= "selected" if @caso.gestacion_vivos == 4 %> value="4">4</option>
+														<option <%= "selected" if @caso.gestacion_vivos == 5 %> value="5">5</option>
+														<option <%= "selected" if @caso.gestacion_vivos == 6 %> value="6">6</option>
+														<option <%= "selected" if @caso.gestacion_vivos == 7 %> value="7">7</option>
+													</select>
+		                    </div>
+		                    <div class="col-sm-6">
+	                        <label for="gestacion_muertos">MUERTOS</label>
+													<select required id="gestacion_muertos" name="gestacion_muertos" class="form-control">
+														<option <%= "selected" if @caso.gestacion_muertos == 1 %> value="1">1</option>
+														<option <%= "selected" if @caso.gestacion_muertos == 2 %> value="2">2</option>
+														<option <%= "selected" if @caso.gestacion_muertos == 3 %> value="3">3</option>
+														<option <%= "selected" if @caso.gestacion_muertos == 4 %> value="4">4</option>
+														<option <%= "selected" if @caso.gestacion_muertos == 5 %> value="5">5</option>
+														<option <%= "selected" if @caso.gestacion_muertos == 6 %> value="6">6</option>
+														<option <%= "selected" if @caso.gestacion_muertos == 7 %> value="7">7</option>
+													</select>
+		                    </div>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Detecta violencia intrafamiliar?</p>
+												<select required id="gestacion_violencia_familiar" name="gestacion_violencia_familiar" class="form-control">
+													<option <%= "selected" if @caso.gestacion_violencia_familiar == 1 %> value="1">Si</option>
+													<option <%= "selected" if @caso.gestacion_violencia_familiar == 2 %> value="2">No</option>
+												</select>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Estado nutricional</p>
+												<select required id="gestacion_estado_nutricional" name="gestacion_estado_nutricional" class="form-control">
+													<option <%= "selected" if @caso.gestacion_estado_nutricional == 1 %> value="1">Normal</option>
+													<option <%= "selected" if @caso.gestacion_estado_nutricional == 2 %> value="2">Bajo peso</option>
+													<option <%= "selected" if @caso.gestacion_estado_nutricional == 3 %> value="3">Sobrepeso</option>
+													<option <%= "selected" if @caso.gestacion_estado_nutricional == 4 %> value="4">Obesidad</option>
+												</select>
+			                </div>
+
+											<div class="form-group">
+			                  <p class="control-label">Ha presentado alguno de los siguientes síntomas durante el embarazo?</p>
+												<div class="form-check">
+												  <input class="form-check-input" type="checkbox" name="gestacion_sintomas[0]" <%= "checked" if @caso.gestacion_sintomas[0] %> value="1" id="gestacion_sintomas_0">
+												  <label class="form-check-label" for="gestacion_sintomas_0">
+												    Cefalea que no cede a analgésicos
+												  </label>
+												</div>
+												<div class="form-check">
+												  <input class="form-check-input" type="checkbox" name="gestacion_sintomas[1]" <%= "checked" if @caso.gestacion_sintomas[1] %> value="1" id="gestacion_sintomas_1">
+												  <label class="form-check-label" for="gestacion_sintomas_1">
+												    Epigastralgia
+												  </label>
+												</div>
+												<div class="form-check">
+												  <input class="form-check-input" type="checkbox" name="gestacion_sintomas[2]" <%= "checked" if @caso.gestacion_sintomas[2] %> value="1" id="gestacion_sintomas_2">
+												  <label class="form-check-label" for="gestacion_sintomas_2">
+												    Flujo vaginal
+												  </label>
+												</div>
+												<div class="form-check">
+												  <input class="form-check-input" type="checkbox" name="gestacion_sintomas[3]" <%= "checked" if @caso.gestacion_sintomas[3] %> value="1" id="gestacion_sintomas_3">
+												  <label class="form-check-label" for="gestacion_sintomas_3">
+												    Salida de liquido por vagina
+												  </label>
+												</div>
+												<div class="form-check">
+												  <input class="form-check-input" type="checkbox" name="gestacion_sintomas[4]" <%= "checked" if @caso.gestacion_sintomas[4] %> value="1" id="gestacion_sintomas_4">
+												  <label class="form-check-label" for="gestacion_sintomas_4">
+												    Sangrado vaginal
+												  </label>
+												</div>
+												<div class="form-check">
+												  <input class="form-check-input" type="checkbox" name="gestacion_sintomas[5]" <%= "checked" if @caso.gestacion_sintomas[5] %> value="1" id="gestacion_sintomas_5">
+												  <label class="form-check-label" for="gestacion_sintomas_5">
+												    Ninguno de los anteriores
+												  </label>
+												</div>
+			                </div>
+
+										</div>
+									</div>
+								</div>
+
+							</div>
+
+							</br>
+							</br>
+
+							<div class="col-md-12">
+	              <div class="text-center">
+									<%= submit_tag "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Guardar Cambios&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".html_safe, :class => "btn btn-lg btn-primary" %>
+	              </div>
+	            </div>
+
+	          </div>
+
+	        <% end %>
+
+	      </div>
+	    </div>
+	  </div>
+	</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== /MODAL AGREGAR EAPB ==========-=-=-=-=-=-=-=-=-=-= -->

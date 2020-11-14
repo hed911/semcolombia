@@ -1,0 +1,167 @@
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<h3 class="panel-title">Filtros</h3>
+	</div>
+	<div class="panel-body">
+		<div class="row">
+
+			<div class="col-lg-3">
+				<%= label_tag(:start_date, "Fecha Inicio:") %>
+				</br>
+				<input value="<%= @start_date %>" name="start_date" id="start_date" class="form-control" type="date">
+			</div>
+
+			<div class="col-lg-3">
+				<%= label_tag(:end_date, "Fecha Fin:") %>
+				</br>
+				<input value="<%= @end_date %>" name="end_date" id="end_date" class="form-control" type="date">
+			</div>
+		</div>
+		<button onclick="change_url();" type="button" class="btn btn-primary">Buscar</button>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="text-center"><h3>Dashboard Casos</h3></div>
+		<div id="graph" style="height: 250px;"></div>
+	</div>
+</div>
+
+<div id="container_por_ips"></div>
+<div id="container_por_ambulancia"></div>
+<div id="container_por_tipo"></div>
+<div id="container_por_ips_ambulancia"></div>
+<div id="container_por_ips_categoria_evento"></div>
+
+<script>
+	$('#evento').on('change', function() {
+		var url = '/dashboard';
+		var start_date = $('#start_date').val();
+		var end_date = $('#end_date').val();
+		if(start_date != null && start_date != "" && end_date != null && end_date != ""){
+			url += "&start_date=" + start_date + "&end_date=" + end_date;
+		}
+		location.href = url;
+	});
+
+	function change_url(){
+		var start_date = $('#start_date').val();
+		var end_date = $('#end_date').val();
+    var is_null_start_date = start_date == null || start_date == "";
+		var is_null_end_date = end_date == null || end_date == "";
+		var are_null_dates = is_null_start_date || is_null_end_date
+		if(are_null_dates) return;
+		var url = '/dashboard';
+		if(start_date != null && start_date != "" && end_date != null && end_date != ""){
+			url += "?start_date=" + start_date + "&end_date=" + end_date;
+		}
+		location.href = url;
+	}
+
+	var original_class = document.getElementsByTagName('body')[0].className;
+  function show_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className += " loading";
+  }
+  function hide_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className = original_class;
+  }
+
+	function search_por_ips() {
+		show_loading_indicator();
+		var start_date = $('#start_date').val();
+		var end_date = $('#end_date').val();
+		var url = "/dashboard_por_ips";
+		if(start_date != null && start_date != "" && end_date != null && end_date != ""){
+			url += "?start_date=" + start_date + "&end_date=" + end_date;
+		}
+    $.get(url,
+    	{
+
+    	},function(result){
+				hide_loading_indicator();
+				$('#container_por_ips').empty();
+				$('#container_por_ips').append($.parseHTML( result ));
+		}, "text");
+  }
+
+  function search_por_ambulancia() {
+		show_loading_indicator();
+		var start_date = $('#start_date').val();
+		var end_date = $('#end_date').val();
+		var url = "/dashboard_por_ambulancia";
+		if(start_date != null && start_date != "" && end_date != null && end_date != ""){
+			url += "?start_date=" + start_date + "&end_date=" + end_date;
+		}
+    $.get(url,
+    	{
+
+    	},function(result){
+				hide_loading_indicator();
+				$('#container_por_ambulancia').empty();
+				$('#container_por_ambulancia').append($.parseHTML( result ));
+		}, "text");
+  }
+
+	function search_por_tipo() {
+		show_loading_indicator();
+		var start_date = $('#start_date').val();
+		var end_date = $('#end_date').val();
+		var url = "/dashboard_por_tipo";
+		if(start_date != null && start_date != "" && end_date != null && end_date != ""){
+			url += "?start_date=" + start_date + "&end_date=" + end_date;
+		}
+    $.get(url,
+    	{
+
+    	},function(result){
+				hide_loading_indicator();
+				$('#container_por_tipo').empty();
+				$('#container_por_tipo').append($.parseHTML( result ));
+		}, "text");
+  }
+
+	function search_por_ips_ambulancia() {
+		show_loading_indicator();
+		var start_date = $('#start_date').val();
+		var end_date = $('#end_date').val();
+		var url = "/dashboard_por_ips_ambulancia";
+		if(start_date != null && start_date != "" && end_date != null && end_date != ""){
+			url += "?start_date=" + start_date + "&end_date=" + end_date;
+		}
+    $.get(url,
+    	{
+
+    	},function(result){
+				hide_loading_indicator();
+				$('#container_por_ips_ambulancia').empty();
+				$('#container_por_ips_ambulancia').append($.parseHTML( result ));
+		}, "text");
+  }
+
+	function search_por_ips_categoria_evento() {
+		show_loading_indicator();
+		var start_date = $('#start_date').val();
+		var end_date = $('#end_date').val();
+		var url = "/dashboard_por_ips_categoria_evento";
+		if(start_date != null && start_date != "" && end_date != null && end_date != ""){
+			url += "?start_date=" + start_date + "&end_date=" + end_date;
+		}
+    $.get(url,
+    	{
+
+    	},function(result){
+				hide_loading_indicator();
+				$('#container_por_ips_categoria_evento').empty();
+				$('#container_por_ips_categoria_evento').append($.parseHTML( result ));
+		}, "text");
+  }
+
+	search_por_ips();
+	search_por_ambulancia();
+	search_por_tipo();
+	search_por_ips_ambulancia();
+	search_por_ips_categoria_evento();
+</script>

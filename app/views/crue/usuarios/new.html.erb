@@ -1,0 +1,203 @@
+<%= form_tag(crue_usuarios_path, method: "post",  :multipart => true, "data-ajax" => "false" ) do %>
+<div class="container">
+	<h1>Creacion Usuario</h1>
+
+	<ol class="breadcrumb">
+	  <li class="active"><%= link_to "Usuarios", crue_usuarios_path %></li>
+	</ol>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:primer_nombre, "Primer Nombre:") %>
+			<div class="input">
+				<%= text_field_tag(:primer_nombre, nil , class:'form-control', required:true) %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:segundo_nombre, "Segundo Nombre:") %>
+			<div class="input">
+				<%= text_field_tag(:segundo_nombre, nil , class:'form-control') %>
+			</div>
+		</div>
+	</fieldset>
+
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:primer_apellido, "Primer Apellido:") %>
+			<div class="input">
+				<%= text_field_tag(:primer_apellido, nil , class:'form-control', required:true) %>
+			</div>
+		</div>
+	</fieldset>
+
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:segundo_apellido, "Segundo Apellido:") %>
+			<div class="input">
+				<%= text_field_tag(:segundo_apellido, nil , class:'form-control', required:true) %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:telefono, "Telefono:") %>
+			<div class="input">
+				<%= text_field_tag(:telefono, nil , class:'form-control') %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:celular, "Celular:") %>
+			<div class="input">
+				<%= text_field_tag(:celular, nil , class:'form-control') %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:identificacion, "Identificacion:") %>
+			<div class="input">
+				<%= text_field_tag(:identificacion, nil , class:'form-control') %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:cargo, "Cargo:") %>
+			<div class="input">
+				<%= text_field_tag(:cargo, nil , class:'form-control') %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:fecha_vigencia, "Fecha de Vigencia:") %>
+			<div class="input">
+				<%= date_field_tag(:fecha_vigencia, nil , class:'form-control') %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:email, "Email:") %>
+			<div class="input">
+				<%= email_field_tag(:email, nil , class:'form-control', required:true) %>
+			</div>
+		</div>
+	</fieldset>
+
+
+		<div class="clearfix">
+			<%= label_tag(:password_dinamica, "Password Dinamica:") %>
+			<div class="input">
+				<%= check_box_tag :password_dinamica, 'true', true, onchange:"passwordDinamicaChanged();", class:'form-control' %>
+			</div>
+		</div>
+
+
+
+		<div id="password_container" class="clearfix">
+			<%= label_tag(:password, "Contraseña:") %>
+			<div class="input">
+				<%= text_field_tag(:password, nil , :minlength => 8, class:'form-control', required:true) %>
+			</div>
+		</div>
+
+
+
+		<div id="password_again_container" class="clearfix">
+			<%= label_tag(:password_again, "Repita su Contraseña:") %>
+			<div class="input">
+				<%= text_field_tag(:password_again, nil , :minlength => 8, class:'form-control', required:true) %>
+			</div>
+		</div>
+
+		<% if current_usuario.es_super_admin %>
+			<div class="form-group">
+				<label class="control-label">Departamento</label>
+				<%= select_tag "departamento_id", options_for_select(@departamentos.collect{ |departamento| [departamento.nombre, departamento.id] }, (@departamento_caso.nil? ? nil : @departamento_caso.id)), { include_blank:true, id:'departamentos_select', disabled:false, required:true, class:'form-control' } %>
+			</div>
+
+			<div class="form-group">
+				<label class="control-label">Municipio</label>
+				<%= select_tag "municipio_id", options_for_select(@municipios.collect{ |municipio| [municipio.nombre, municipio.id] }, (@municipio_caso.nil? ? nil : @municipio_caso.id)), { id:'municipios_select', disabled:false, required:true, class:'form-control'} %>
+			</div>
+		<% end %>
+
+		<div class="form-group">
+			<label class="control-label">Departamento alterno</label>
+			<%= select_tag "departamento_alterno_id", options_for_select(@departamentos.collect{ |departamento| [departamento.nombre, departamento.id] }, nil), { include_blank:true, id:'departamentos_alternos_select', disabled:false, required:false, class:'form-control' } %>
+		</div>
+
+		<div class="form-group">
+			<label class="control-label">Municipio alterno</label>
+			<%= select_tag "municipio_alterno_id", options_for_select(@municipios.collect{ |municipio| [municipio.nombre, municipio.id] }, nil), {include_blank:true, id:'municipios_alternos_select', disabled:false, required:false, class:'form-control'} %>
+		</div>
+
+
+	<h5>Roles</h5>
+	<fieldset>
+		<% for rol in ROLES %>
+			<div style="<%= 'display:none;' unless rol[:enabled] %>">
+				<%= check_box_tag "roles[#{rol[:id]}]", "1", false %>
+				<%= rol[:nombre] %>
+			</div>
+		<% end %>
+	</fieldset>
+
+	<%= submit_tag("Crear") %>
+
+</div>
+
+<% end %>
+
+
+<script type="text/javascript">
+	$("#password_container").hide();
+	$("#password_again_container").hide();
+	$("#password").removeAttr('required');
+	$("#password_again").removeAttr('required');
+	function passwordDinamicaChanged(){
+    if(!$('#password_dinamica').is(":checked")){
+			$("#password_container").show();
+			$("#password_again_container").show();
+			$("#password").attr('required','');
+			$("#password_again").attr('required','');
+		}
+    else{
+			$("#password_container").hide();
+			$("#password_again_container").hide();
+			$("#password").removeAttr('required');
+			$("#password_again").removeAttr('required');
+		}
+  }
+
+	<% if current_usuario.es_super_admin %>
+		$("#departamentos_select").on("change", function() {
+			return $.ajax({
+				url: "/departamentos/" + $('#departamentos_select option:selected').val() + "/get_municipios",
+				type: "GET",
+				dataType: "script"
+			});
+		});
+	<% end %>
+	$("#departamentos_alternos_select").on("change", function() {
+		return $.ajax({
+			url: "/departamentos/" + $('#departamentos_alternos_select option:selected').val() + "/get_municipios?component_id=municipios_alternos_select",
+			type: "GET",
+			dataType: "script"
+		});
+	});
+</script>

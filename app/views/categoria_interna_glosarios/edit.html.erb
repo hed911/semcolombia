@@ -1,0 +1,113 @@
+<div class="modal" id="edit-categoria-interna" tabindex="-1" role="dialog" aria-labelledby="add-edit-Label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title text-center" id="add-table-Label">Edicion Categoria Interna</h4>
+      </div>
+      <div class="modal-body">
+        <%= form_tag(categoria_interna_glosario_path(@categoria.id), method: "put", :multipart => true, "data-ajax" => "false" ) do %>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <p class="control-label">Nombre</p>
+                <%= text_field_tag(:nombre, @categoria.nombre, :class =>"form-control", :placeholder => "", required:true, disabled:false) %>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="form-group">
+                <p class="control-label">Descripcion</p>
+                <%= text_area_tag(:descripcion, @categoria.descripcion, size: "30x4", class:'form-control') %>
+              </div>
+            </div>
+
+						<div class="col-md-12">
+              <div class="form-group">
+                <p class="control-label">Categoria</p>
+                <%= select_tag :categoria_id, options_for_select(@categorias.collect{ |categoria| [categoria.nombre, categoria.id] }, @categoria.categoria_glosario.id), { include_blank: "Categoria", id: 'categoria_select', class:"form-control", disabled:false } %>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <h4>Imagenes:</h4>
+            </div>
+            <% assets_imagenes = @categoria.asset_categorias.where(url_video:[nil, ""]) -%>
+            <% imagenes_count = assets_imagenes.count -%>
+            <% (0..imagenes_count).step(1) do |i| -%>
+              <div class="col-md-6">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    #<%= i + 1 %>
+                    <% if i < imagenes_count -%>
+                      <%= button_tag(type: 'submit', value:"#{i}", class: "pull-right btn btn-xs btn-danger") do %>
+                        <i class="fa fa-trash-o" aria-hidden="true"></i>
+                      <% end %>
+                    <% end -%>
+                  </div>
+                  <div class="panel-body">
+                    <% imagen = assets_imagenes[i] -%>
+
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <%= link_to('Preview', (imagen ? imagen.url_imagen : "#"), target:'_blank', style:"#{'color:red;' if imagen.nil?}") %>
+                        <p class="control-label">Imagen <small>1000x720</small></p>
+                        <%= file_field_tag (i == imagenes_count ? "new_imagen" : "imagen[#{i}]") %>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            <% end -%>
+
+            <div class="col-md-12">
+              <h4>Videos:</h4>
+            </div>
+            <% assets_videos = @categoria.asset_categorias.where(url_imagen:[nil, ""]) -%>
+            <% videos_count = assets_videos.count -%>
+            <% (0..videos_count).step(1) do |i| -%>
+              <div class="col-md-6">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    #<%= i + 1 %>
+                    <% if i < videos_count -%>
+                      <%= button_tag(type: 'submit', value:"#{i}", class: "pull-right btn btn-xs btn-danger") do %>
+                        <i class="fa fa-trash-o" aria-hidden="true"></i>
+                      <% end %>
+                    <% end -%>
+                  </div>
+                  <div class="panel-body">
+                    <% video = assets_videos[i] -%>
+
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <% if i == videos_count -%>
+                          <%= text_field_tag "new_video", "", placeholder:"https://www.youtube.com/watch?v=C_Xy_pD_Or8&list=RDiRusbYIyRNI&index=3", class:"form-control" %>
+                        <% else -%>
+                          <%= text_field_tag "video[#{i}]", video.url_video, placeholder:"", class:"form-control" %>
+                        <% end -%>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            <% end -%>
+
+            <div class="col-md-12">
+              <div class="form-group">
+                <%= submit_tag "Guardar Cambios", :class => "btn btn-default form-control" %>
+              </div>
+            </div>
+
+          </div>
+
+        <% end %>
+
+      </div>
+    </div>
+  </div>
+</div>

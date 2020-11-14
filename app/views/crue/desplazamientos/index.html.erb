@@ -1,0 +1,176 @@
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL DESPLAZAMIENTOS =-=-=-=-=-=-=-=-=-=-========== -->
+<div class="modal fade" id="desplazamientos" tabindex="-1" role="dialog" aria-labelledby="desplazamientos" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class='col-12 modal-title text-center'>
+          Desplazamientos caso <%= @caso.id %>
+          <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+            <span aria-hidden='true'>&times;</span>
+          </button>
+        </h3>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+
+          <div class="container card-group">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title"><%= @parent.nil? ? "Sin predecesor" : "Datos paciente nivel #{@parent.nivel + 1 if @parent.nivel}" %></h5>
+                <div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="numero_documento"># Documento</label>
+                      <%= text_field_tag(:numero_documento, (@parent.nil? ? nil : "#{@parent.tipo_documento}-#{@parent.numero_documento}"), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="nombre_completo">Nombre completo</label>
+                      <%= text_field_tag(:nombre_completo, (@parent.nil? ? nil : @parent.nombre_completo), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="numero_documento">Email</label>
+                      <%= text_field_tag(:email, (@parent.nil? ? nil : @parent.email), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="nombre_completo">Telefono</label>
+                      <%= text_field_tag(:telefono, (@parent.nil? ? nil : @parent.telefono), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="numero_documento">Cantidad contactos</label>
+                      <%= text_field_tag(:email, (@parent.nil? ? nil : @parent.contactos.count), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="nombre_completo">Resultado muestra</label>
+                      <%= text_field_tag(:telefono, (@parent.nil? ? nil : @parent.estado_enfermedad_value), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Datos paciente nivel <%= @caso.nivel + 1 if @caso.nivel %></h5>
+                <div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="numero_documento"># Documento</label>
+                      <%= text_field_tag(:numero_documento, "#{@caso.tipo_documento}-#{@caso.numero_documento}", :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="nombre_completo">Nombre completo</label>
+                      <%= text_field_tag(:nombre_completo, @caso.nombre_completo, :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="numero_documento">Email</label>
+                      <%= text_field_tag(:email, @caso.email, :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="nombre_completo">Telefono</label>
+                      <%= text_field_tag(:telefono, @caso.telefono, :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="numero_documento">Cantidad contactos</label>
+                      <%= text_field_tag(:email, @caso.contactos.count, :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="nombre_completo">Resultado muestra</label>
+                      <%= text_field_tag(:telefono, @caso.estado_enfermedad_value, :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="container card-group">
+
+          </div>
+        </div>
+
+        <% if @caso.desplazamientos.any? -%>
+          <div class="table-responsive" style="overflow:auto;">
+        		<table id="table-result" class="table table-hover tablesorter">
+              <thead>
+                <tr>
+                  <th data-sort="string">Observacion</th>
+                  <th data-sort="string">Fecha</th>
+                  <th data-sort="string">Usuario</th>
+                </tr>
+              </thead>
+
+              <tbody id="table-result-body">
+                <% @caso.desplazamientos.order('created_at DESC').each do |desplazamiento| -%>
+                  <tr class="">
+                    <td><%= desplazamiento.contenido %></td>
+                    <td><%= desplazamiento.fecha %></td>
+                    <td><%= desplazamiento.usuario.nombre_completo if desplazamiento.usuario %></td>
+                    <td>
+                      <%= link_to "#{crue_caso_salud_publica_desplazamiento_path(id:desplazamiento.id, caso_salud_publica_id:@caso.id)}", :method => :delete, :remote => true, :class => "dropdown-item", style:"color:red;", :title => "Borrar", :data => { :confirm => 'Estas seguro? Borraras el registro de la base de datos (Esta operacion no se puede revertir)' } do %>
+                         <i class="fas fa-trash-alt"></i> Borrar
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end -%>
+              </tbody>
+        		</table>
+        	</div>
+          </br>
+          </br>
+          </br>
+          </br>
+          </br>
+          </br>
+        <% else -%>
+          <div class="jumbotron">
+            <h1>No hay datos</h1>
+            <p>Aun no se han agregado desplazamientos a <%= @caso.primer_nombre %>.
+            <p>Una vez crees registros aqui apareceran en forma de tabla</p>
+          </div>
+        <% end -%>
+
+        <% if !current_usuario.roles_array.include?(ROLES[5]) -%>
+          <%= form_tag(crue_caso_salud_publica_desplazamientos_path(@caso.id), method: "post", :multipart => true, "data-ajax" => "false", :remote => true, id:'crear_caso_form' ) do %>
+
+            <div class="container card-group">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Nuevo registro</h5>
+                  <div>
+                    <div class="form-group">
+                      <p class="control-label">Observacion</p>
+                      <%= text_area_tag(:contenido, "", size: "30x4", style:"min-width: 100%") %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Fecha</p>
+                      <%= date_field_tag(:fecha, nil, :required => true, :disabled => false, :class =>"form-control") %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+
+              <div class="col-md-12">
+                <div class="text-center">
+                  <%= submit_tag "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".html_safe, :class => "btn btn-lg btn-primary" %>
+                </div>
+              </div>
+
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== MODAL DESPLAZAMIENTOS ==========-=-=-=-=-=-=-=-=-=-= -->

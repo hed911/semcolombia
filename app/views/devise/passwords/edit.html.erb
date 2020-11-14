@@ -1,0 +1,35 @@
+<br><br>
+<div class="container">
+
+  <div class="row">
+    <div class="col-sm-6 col-sm-offset-3">
+      <p class="text-center">Ingresa los siguientes datos para cambiar de contraseña</p>
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+      <%= f.hidden_field :reset_password_token %>
+      <%= devise_error_messages! %>
+      <%= f.password_field :password, autofocus: true, autocomplete: "off", :placeholder => "Nueva Contraseña", :class => "input-lg form-control" %>
+      <div class="row">
+        <div class="col-sm-6">
+          <span class="glyphicon glyphicon-remove" id="8char" style="color:#FF0004;"></span>
+          <% if @minimum_password_length %>
+          <em>(<%= @minimum_password_length %>
+            caracteres como minimo)</em><br/>
+          <% end %><br>
+          <span class="glyphicon glyphicon-remove" id="ucase" style="color:#FF0004;"></span>
+          Una letra en mayuscula
+        </div>
+      </div>
+      <%= f.password_field :password_confirmation, autocomplete: "off", :placeholder => "Repetir Contraseña", :class => "input-lg form-control" %>
+      <div class="row">
+        <div class="col-sm-12">
+          <span class="glyphicon glyphicon-remove" id="pwmatch" style="color:#FF0004;"></span>
+          Contraseñas coinciden
+        </div>
+      </div>
+      <%= f.submit "Cambiar mi contraseña", :class => "col-xs-12 btn btn-primary btn-load btn-lg", "data-loading-text" => "Changing Password..." %>
+      <% end %>
+    </div>
+    <!--/col-sm-6-->
+  </div>
+  <!--/row-->
+</div>

@@ -1,0 +1,9 @@
+<% @registros.each do |registro| -%>
+  <tr class="<%= registro.class_value %>">
+    <td><%= registro.enumeracion_resultado_value %></td>
+    <td><%= registro.observacion_resultado %></td>
+    <td><%= registro.tipo_documento %></td>
+    <td><%= registro.numero_documento %></td>
+  </tr>
+<% end -%>
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

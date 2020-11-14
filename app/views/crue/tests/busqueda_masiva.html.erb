@@ -1,0 +1,30 @@
+<div class="container">
+  <h1><small>Busqueda masiva</small></h1>
+  <p><small>Busqueda de 1 o mas numeros de documento</small></p>
+  <%= form_tag(do_busqueda_masiva_crue_tests_path, :multipart => true, "data-ajax" => "false") do %>
+    <div class="row">
+      <div class="col-12" >
+        <div class="">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title"></h3>
+            </div>
+            <div class="panel-body">
+              <div>
+                <div class="option">
+                  <%= text_area_tag(:numeros_documento, nil, placeholder:"93839393\n3938949494\n3434343443\n132323232", size: "30x14", class:'form-control') %>
+                </div>
+                <div class="option">
+                  <%= file_field_tag(:archivo, accept: 'text/plain', required:false, class:'form-control') %>
+                </div>
+                <div class="option">
+                  <%= submit_tag "Descargar".html_safe, :class => "btn btn-warning" %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end -%>
+</div>

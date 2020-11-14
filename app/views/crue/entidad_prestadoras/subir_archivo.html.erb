@@ -1,0 +1,42 @@
+<div class="modal" id="subir-archivo" tabindex="-1" role="dialog" aria-labelledby="add-edit-Label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title text-center" id="add-table-Label">Adjuntar Archivo</h4>
+      </div>
+      <div class="modal-body">
+        <%= form_tag("#{do_subir_archivo_crue_entidad_prestadora_path(@institucion.id)}?entidad_prestadora_id=#{@entidad_prestadora.id}", method: "put", remote:true, :multipart => true, authenticity_token: true, "data-ajax" => "false" ) do %>
+
+          <div class="row">
+
+            <div class="col-md-12">
+              <div class="form-group">
+                <p class="control-label">Observacion</p>
+                <%= text_area_tag(:observacion, nil, size: "30x4", class:'form-control') %>
+              </div>
+            </div>
+
+						<div class="col-md-12">
+              <div class="form-group">
+                <p class="control-label">Archivo</p>
+                <%= file_field_tag(:telefono_responsable, :class =>"form-control", required:true, disabled:false) %>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="form-group">
+                <%= submit_tag "Guardar Cambios", :class => "btn btn-default form-control" %>
+              </div>
+            </div>
+
+          </div>
+
+        <% end %>
+
+      </div>
+    </div>
+  </div>
+</div>

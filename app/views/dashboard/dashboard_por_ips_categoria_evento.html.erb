@@ -1,0 +1,31 @@
+<h3>Ingresos por IPS/Categoria</h3>
+<table id="table-result" class="table table-bordered table-hover table-striped tablesorter">
+	<thead>
+		<tr>
+			<th data-sort="string"></th>
+			<% @columns.each do |k,v| -%>
+				<th data-sort="string"><%= v.html_safe %></th>
+			<% end -%>
+			<th data-sort="string">Total General</th>
+		</tr>
+	</thead>
+	<tbody id="table-result-body">
+		<% count = 0 -%>
+		<% @registros.each do |item| -%>
+			<tr>
+				<td><%= item[:text] %></td>
+				<% @columns.each do |k,v| -%>
+					<td><%= item[:items][k] || 0 %></td>
+				<% end -%>
+				<td><%= item[:items][:total_general] %></td>
+			</tr>
+		<% end -%>
+		<tr class="warning">
+			<td></td>
+			<% @columns.each do |k,v| -%>
+				<td><%= @totales[k] %></td>
+			<% end -%>
+			<td><%= @totales[:total_general] %></td>
+		</tr>
+	</tbody>
+</table>

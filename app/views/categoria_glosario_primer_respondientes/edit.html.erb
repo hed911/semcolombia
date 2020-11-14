@@ -1,0 +1,24 @@
+<%= form_tag(categoria_glosario_primer_respondiente_path, method: "patch",  :multipart => true, "data-ajax" => "false" ) do %>
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title"></h3>
+	</div>
+	<div class="panel-body">
+		<h1>Edicion Categoria P.R</h1>
+
+		<ol class="breadcrumb">
+		  <li class="active"><%= link_to "Categorias Glosario", categoria_glosario_primer_respondientes_path %></li>
+		</ol>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:nombre, "Nombre:") %>
+				</br>
+				<%= text_field_tag(:nombre, @categoria.nombre, required:true) %>
+			</div>
+		</div>
+
+		<%= submit_tag("Guardar Cambios") %>
+	</div>
+</div>
+<% end %>

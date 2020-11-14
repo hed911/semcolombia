@@ -1,0 +1,57 @@
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL SEGUIMIENTOS =-=-=-=-=-=-=-=-=-=-========== -->
+<div class="modal fade" id="edit-crue" tabindex="-1" role="dialog" aria-labelledby="seguimientos" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class='col-12 modal-title text-center'>
+          Editar crue <%= @caso.id %>
+          <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+            <span aria-hidden='true'>&times;</span>
+          </button>
+        </h3>
+      </div>
+      <div class="modal-body">
+        <%= form_tag(update_crue_entidad_prestadora_caso_salud_publica_path(@caso.id), method: "put", remote:true, :multipart => true, "data-ajax" => "false" ) do %>
+          <div class="row">
+            <div class="container card-group">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title"></h5>
+                  <div>
+                    <div class="form-group">
+                      <label for="servicio">Servicio</label>
+                      <select id="servicio" name="servicio" class="form-control">
+                        <option value></option>
+                        <option <%= "selected" if @caso.servicio == 1 %> value="1">Hospitalizacion</option>
+                        <option <%= "selected" if @caso.servicio == 2 %> value="2">Urgencia</option>
+                        <option <%= "selected" if @caso.servicio == 3 %> value="3">UCI plena</option>
+                        <option <%= "selected" if @caso.servicio == 4 %> value="4">UCI intermedia</option>
+                        <option <%= "selected" if @caso.servicio == 0 %> value="0">No tiene</option>
+                        <option <%= "selected" if @caso.servicio == 5 %> value="5">Ambulatorio</option>
+                      </select>
+                    </div>
+                    <div class="covid_confirmed form-check">
+                      <label class="form-check-label">
+                        <input <%= "checked" if @caso.fallecido %> type="checkbox" class="form-check-input" value="1" name="fallecido"><span style="color:red;">El paciente se encuentra fallecido?</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="text-center">
+                <%= submit_tag "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Guardar Cambios&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".html_safe, :class => "btn btn-lg btn-primary" %>
+              </div>
+            </div>
+
+          </div>
+
+        <% end %>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== MODAL SEGUIMIENTOS ==========-=-=-=-=-=-=-=-=-=-= -->

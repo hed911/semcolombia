@@ -1,0 +1,196 @@
+<nav aria-label="breadcrumb" role="navigation">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><%= link_to 'EAPBs', crue_entidad_prestadoras_path %></li>
+    <li class="breadcrumb-item"><%= link_to @entidad_prestadora.nombre, red_urgencia_crue_entidad_prestadora_path(@entidad_prestadora.id) %></li>
+  </ol>
+</nav>
+<h1>Red de urgencias Complejidad Baja de <%= @entidad_prestadora.nombre %></h1>
+<%= form_tag("#", method: "post",  :multipart => true, "data-ajax" => "false" ) do %>
+	<div class="panel panel-danger">
+		<div class="panel-heading">
+			<h3 class="panel-title"></h3>
+		</div>
+		<div class="panel-body">
+			<div class="table-responsive">
+				<table id="table-result" class="table table-bordered table-hover table-striped tablesorter">
+				  <thead>
+				    <tr>
+              <th data-sort="string">Nombre</th>
+              <th data-sort="string">Nivel</th>
+              <th data-sort="string">Servicios Habilitados</th>
+							<th>Acción</th>
+				    </tr>
+				  </thead>
+          <tbody id="table-result-body">
+            <% @entidad_prestadora.institucions.where(nivel:1).order("nombre ASC").each do |institucion| -%>
+              <tr class="table-success">
+                <td><%= institucion.nombre %></td>
+                <td><%= institucion.nivel %></td>
+                <td><%= institucion.categoria_referencias.map(&:nombre).join(', ') %></td>
+                <td>
+                  <%= link_to "#{toggle_habilitacion_hospital_crue_entidad_prestadora_path(@entidad_prestadora.id)}?institucion_id=#{institucion.id}", :method => :put, :class => "btn btn-default", :title => "Habilitar/Deshabilitar hospital" do %>
+                    <i class="fa fa-hospital-o"></i>
+                    Deshabilitar
+                  <% end %>
+                  <%= link_to "#{edit_extend_crue_categoria_referencia_path(institucion.id)}?entidad_prestadora_id=#{@entidad_prestadora.id}", :class => "btn btn-default", :title => "Hospitales", :disabled => false do %>
+                    <i class="fa fa-hospital-o"></i> Servicios
+                  <% end %>
+                  <%= link_to '<i class="fa fa-edit"></i> Adjuntar Archivo'.html_safe, "#", html_options = {:disabled => false, :onclick => "load_subir_archivo(#{institucion.id}, #{@entidad_prestadora.id});", :class => "btn btn-default", :title => "Subir Archivo"} %>
+                </td>
+              </tr>
+						<% end -%>
+						<% @instituciones.where(nivel:1).order("nombre ASC").each do |institucion| -%>
+              <tr class="table-danger">
+                <td><%= institucion.nombre %></td>
+                <td><%= institucion.nivel %></td>
+                <td><%= institucion.categoria_referencias.map(&:nombre).join(', ') %></td>
+                <td>
+                  <%= link_to "#{toggle_habilitacion_hospital_crue_entidad_prestadora_path(@entidad_prestadora.id)}?institucion_id=#{institucion.id}", :method => :put, :class => "btn btn-default", :title => "Habilitar/Deshabilitar hospital" do %>
+                    <i class="fa fa-hospital-o"></i>
+                    Habilitar
+                  <% end %>
+                  <%= link_to "#{edit_extend_crue_categoria_referencia_path(institucion.id)}?entidad_prestadora_id=#{@entidad_prestadora.id}", :class => "btn btn-default", :title => "Hospitales", :disabled => true do %>
+                    <i class="fa fa-hospital-o"></i> Servicios
+                  <% end %>
+                  <%= link_to '<i class="fa fa-edit"></i> Adjuntar Archivo'.html_safe, "#", html_options = {:disabled => false, :onclick => "load_subir_archivo(#{institucion.id}, #{@entidad_prestadora.id});", :class => "btn btn-default", :title => "Subir Archivo"} %>
+                </td>
+              </tr>
+						<% end -%>
+				  </tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+<% end %>
+
+<h1>Red de urgencias Complejidad Media de <%= @entidad_prestadora.nombre %></h1>
+<%= form_tag("#", method: "post",  :multipart => true, "data-ajax" => "false" ) do %>
+	<div class="panel panel-danger">
+		<div class="panel-heading">
+			<h3 class="panel-title"></h3>
+		</div>
+		<div class="panel-body">
+			<div class="table-responsive">
+				<table id="table-result" class="table table-bordered table-hover table-striped tablesorter">
+				  <thead>
+				    <tr>
+              <th data-sort="string">Nombre</th>
+              <th data-sort="string">Nivel</th>
+              <th data-sort="string">Servicios Habilitados</th>
+							<th>Acción</th>
+				    </tr>
+				  </thead>
+          <tbody id="table-result-body">
+            <% @entidad_prestadora.institucions.where(nivel:2).order("nombre ASC").each do |institucion| -%>
+              <tr class="table-success">
+                <td><%= institucion.nombre %></td>
+                <td><%= institucion.nivel %></td>
+                <td><%= institucion.categoria_referencias.map(&:nombre).join(', ') %></td>
+                <td>
+                  <%= link_to "#{toggle_habilitacion_hospital_crue_entidad_prestadora_path(@entidad_prestadora.id)}?institucion_id=#{institucion.id}", :method => :put, :class => "btn btn-default", :title => "Habilitar/Deshabilitar hospital" do %>
+                    <i class="fa fa-hospital-o"></i>
+                    Deshabilitar
+                  <% end %>
+                  <%= link_to "#{edit_extend_crue_categoria_referencia_path(institucion.id)}?entidad_prestadora_id=#{@entidad_prestadora.id}", :class => "btn btn-default", :title => "Hospitales", :disabled => false do %>
+                    <i class="fa fa-hospital-o"></i> Servicios
+                  <% end %>
+                  <%= link_to '<i class="fa fa-edit"></i> Adjuntar Archivo'.html_safe, "#", html_options = {:disabled => false, :onclick => "load_subir_archivo(#{institucion.id}, #{@entidad_prestadora.id});", :class => "btn btn-default", :title => "Subir Archivo"} %>
+                </td>
+              </tr>
+						<% end -%>
+						<% @instituciones.where(nivel:2).order("nombre ASC").each do |institucion| -%>
+              <tr class="table-danger">
+                <td><%= institucion.nombre %></td>
+                <td><%= institucion.nivel %></td>
+                <td><%= institucion.categoria_referencias.map(&:nombre).join(', ') %></td>
+                <td>
+                  <%= link_to "#{toggle_habilitacion_hospital_crue_entidad_prestadora_path(@entidad_prestadora.id)}?institucion_id=#{institucion.id}", :method => :put, :class => "btn btn-default", :title => "Habilitar/Deshabilitar hospital" do %>
+                    <i class="fa fa-hospital-o"></i>
+                    Habilitar
+                  <% end %>
+                  <%= link_to "#{edit_extend_crue_categoria_referencia_path(institucion.id)}?entidad_prestadora_id=#{@entidad_prestadora.id}", :class => "btn btn-default", :title => "Hospitales", :disabled => true do %>
+                    <i class="fa fa-hospital-o"></i> Servicios
+                  <% end %>
+                  <%= link_to '<i class="fa fa-edit"></i> Adjuntar Archivo'.html_safe, "#", html_options = {:disabled => false, :onclick => "load_subir_archivo(#{institucion.id}, #{@entidad_prestadora.id});", :class => "btn btn-default", :title => "Subir Archivo"} %>
+                </td>
+              </tr>
+						<% end -%>
+				  </tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+<% end %>
+
+<h1>Red de urgencias Complejidad Alta de <%= @entidad_prestadora.nombre %></h1>
+<%= form_tag("#", method: "post",  :multipart => true, "data-ajax" => "false" ) do %>
+	<div class="panel panel-danger">
+		<div class="panel-heading">
+			<h3 class="panel-title"></h3>
+		</div>
+		<div class="panel-body">
+			<div class="table-responsive">
+				<table id="table-result" class="table table-bordered table-hover table-striped tablesorter">
+				  <thead>
+				    <tr>
+              <th data-sort="string">Nombre</th>
+              <th data-sort="string">Nivel</th>
+              <th data-sort="string">Servicios Habilitados</th>
+							<th>Acción</th>
+				    </tr>
+				  </thead>
+          <tbody id="table-result-body">
+            <% @entidad_prestadora.institucions.where(nivel:3).order("nombre ASC").each do |institucion| -%>
+              <tr class="table-success">
+                <td><%= institucion.nombre %></td>
+                <td><%= institucion.nivel %></td>
+                <td><%= institucion.categoria_referencias.map(&:nombre).join(', ') %></td>
+                <td>
+                  <%= link_to "#{toggle_habilitacion_hospital_crue_entidad_prestadora_path(@entidad_prestadora.id)}?institucion_id=#{institucion.id}", :method => :put, :class => "btn btn-default", :title => "Habilitar/Deshabilitar hospital" do %>
+                    <i class="fa fa-hospital-o"></i>
+                    Deshabilitar
+                  <% end %>
+                  <%= link_to "#{edit_extend_crue_categoria_referencia_path(institucion.id)}?entidad_prestadora_id=#{@entidad_prestadora.id}", :class => "btn btn-default", :title => "Hospitales", :disabled => false do %>
+                    <i class="fa fa-hospital-o"></i> Servicios
+                  <% end %>
+                  <%= link_to '<i class="fa fa-edit"></i> Adjuntar Archivo'.html_safe, "#", html_options = {:disabled => false, :onclick => "load_subir_archivo(#{institucion.id}, #{@entidad_prestadora.id});", :class => "btn btn-default", :title => "Subir Archivo"} %>
+                </td>
+              </tr>
+						<% end -%>
+						<% @instituciones.where(nivel:3).order("nombre ASC").each do |institucion| -%>
+              <tr class="table-danger">
+                <td><%= institucion.nombre %></td>
+                <td><%= institucion.nivel %></td>
+                <td><%= institucion.categoria_referencias.map(&:nombre).join(', ') %></td>
+                <td>
+                  <%= link_to "#{toggle_habilitacion_hospital_crue_entidad_prestadora_path(@entidad_prestadora.id)}?institucion_id=#{institucion.id}", :method => :put, :class => "btn btn-default", :title => "Habilitar/Deshabilitar hospital" do %>
+                    <i class="fa fa-hospital-o"></i>
+                    Habilitar
+                  <% end %>
+                  <%= link_to "#{edit_extend_crue_categoria_referencia_path(institucion.id)}?entidad_prestadora_id=#{@entidad_prestadora.id}", :class => "btn btn-default", :title => "Hospitales", :disabled => true do %>
+                    <i class="fa fa-hospital-o"></i> Servicios
+                  <% end %>
+                  <%= link_to '<i class="fa fa-edit"></i> Adjuntar Archivo'.html_safe, "#", html_options = {:disabled => false, :onclick => "load_subir_archivo(#{institucion.id}, #{@entidad_prestadora.id});", :class => "btn btn-default", :title => "Subir Archivo"} %>
+                </td>
+              </tr>
+						<% end -%>
+				  </tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+<% end %>
+
+
+<div id="modal"></div>
+<script>
+  function load_subir_archivo(id, entidad_prestadora_id){
+    $.get("/crue/entidad_prestadoras/" + id + "/subir_archivo?entidad_prestadora_id=" + entidad_prestadora_id,
+      {
+      },function(result){
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#subir-archivo").modal('show');
+    }, "text");
+  }
+</script>

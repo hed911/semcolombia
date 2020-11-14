@@ -1,0 +1,315 @@
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+<%= javascript_include_tag "l.control.geosearch" %>
+<%= javascript_include_tag "l.geosearch.provider.google" %>
+<%= javascript_include_tag "l.geosearch.provider.openstreetmap" %>
+<script src="https://unpkg.com/esri-leaflet@2.0.4"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/esri-leaflet-geocoder/2.2.1/esri-leaflet-geocoder.css">
+<script src="https://cdn.jsdelivr.net/npm/esri-leaflet-geocoder@2.2.1/dist/esri-leaflet-geocoder-debug.min.js"></script>
+
+
+<%= link_to new_crue_institucion_path, :class => "btn btn-primary btn-lg", :title => "Nueva IPS" do %>
+	Nueva IPS
+<% end %>
+
+<h1>IPS's</h1>
+
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<h3 class="panel-title">Buscar</h3>
+	</div>
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:nombre, "Nombre:") %>
+				</br>
+				<%= text_field_tag(:nombre, nil, class:"form-control") %>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<%= form_tag(search_csv_crue_institucions_path, method: "post",  :multipart => true, "data-ajax" => "false" ) do %>
+
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title"></h3>
+	</div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table id="table-result" class="table table-bordered table-hover table-striped tablesorter">
+			  <thead>
+			    <tr>
+						<th data-sort="string">Id</th>
+			      <th data-sort="string">Roles</th>
+						<th data-sort="string">Nivel U</th>
+						<th data-sort="string">Nivel C</th>
+						<th data-sort="string">Atiende Salud Mental?</th>
+						<th data-sort="string">Codigo</th>
+						<th data-sort="string">Numero sede</th>
+						<th data-sort="string">Nombre</th>
+						<th data-sort="string">Direccion</th>
+						<th data-sort="string">Telefono</th>
+						<th data-sort="string">Email</th>
+						<th data-sort="string">Nit</th>
+						<th data-sort="string">Departamento</th>
+						<th data-sort="string">Municipio</th>
+			      <th>Acción</th>
+			    </tr>
+			  </thead>
+				<tbody id="table-result-body">
+
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="container">
+		<center>
+			<div style="text-align:center" id="page-selection"></div>
+		</center>
+	</div>
+
+</div>
+		<div id="modal"></div>
+		<%= submit_tag "✓Exportar Datos", :name => 'export_data' %>
+<% end %>
+
+
+
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL AGREGAR INSTITUCION =-=-=-=-=-=-=-=-=-=-========== -->
+	<div class="modal fade" id="add-institucion" tabindex="-1" role="dialog" aria-labelledby="add-edit-Label" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	        <h4 class="modal-title text-center" id="add-table-Label">Nueva IPS</h4>
+	      </div>
+	      <div class="modal-body">
+	        <%= form_tag(crue_institucions_path, method: "post",  :multipart => true, "data-ajax" => "false" ) do %>
+
+	          <div class="row">
+
+	            <div class="col-md-12">
+	              <div class="form-group">
+	                <p class="control-label">Codigo</p>
+	                <%= text_field_tag(:codigo, "", :class =>"form-control") %>
+	              </div>
+	            </div>
+
+							<div class="col-md-12">
+	              <div class="form-group">
+	                <p class="control-label">Nombre</p>
+	                <%= text_field_tag(:nombre, "", :class =>"form-control", required:true) %>
+	              </div>
+	            </div>
+
+							<div class="col-md-12">
+	              <div class="form-group">
+	                <p class="control-label">Direccion</p>
+	                <%= text_field_tag(:direccion, "", :class =>"form-control", :placeholder => "CLL XX KRA XX", required:true) %>
+	              </div>
+	            </div>
+
+							<div class="col-md-12">
+								<div style='width: 100%; height: 400px;'>
+								  <div id="map_interno" style='width: 100%; height: 400px;'></div>
+								</div>
+							</div>
+
+							<div class="col-md-12">
+	              <div class="form-group">
+	                <p class="control-label">Latitude</p>
+	                <%= text_field_tag(:latitude, "", :class =>"form-control", required:true) %>
+	              </div>
+	            </div>
+
+							<div class="col-md-12">
+	              <div class="form-group">
+	                <p class="control-label">Longitude</p>
+	                <%= text_field_tag(:longitude, "", :class =>"form-control", required:true) %>
+	              </div>
+	            </div>
+
+							<div class="col-md-12">
+	              <div class="form-group">
+	                <p class="control-label">Telefono</p>
+	                <%= text_field_tag(:telefono, "", :class =>"form-control") %>
+	              </div>
+	            </div>
+
+							<div class="col-md-12">
+	              <div class="form-group">
+	                <p class="control-label">Nit</p>
+	                <%= text_field_tag(:nit, "", :class =>"form-control") %>
+	              </div>
+	            </div>
+
+							<div class="col-md-12">
+	              <div class="form-group">
+	                <p class="control-label">Fecha Habilitacion</p>
+									<%=	date_field_tag(:fecha_habilitacion, :data, class:"form-control") %>
+	              </div>
+	            </div>
+
+							<div class="col-md-12">
+								<div class="form-group">
+									<p class="control-label">Nivel</p>
+									<select id="estado_select" name="nivel" class="form-control">
+										<option value="1">Bajo</option>
+										<option value="2">Medio</option>
+										<option value="3">Alto</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="col-md-12">
+	              <div class="form-group">
+	                <p class="control-label">Roles</p>
+										<% for rol in ROLES_INSTITUCIONES %>
+											<div style="<%= 'display:none;' unless rol[:enabled] %>">
+												<%= check_box_tag "roles[#{rol[:id]}]", "1", false %>
+												<%= rol[:nombre] %>
+											</div>
+										<% end %>
+	              </div>
+	            </div>
+
+	            <div class="col-md-12">
+	              <div class="form-group">
+									<%= submit_tag "Crear", :class => "btn btn-default form-control" %>
+	              </div>
+	            </div>
+
+	          </div>
+
+	        <% end %>
+
+	      </div>
+	    </div>
+	  </div>
+	</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== /MODAL AGREGAR INSTITUCION ==========-=-=-=-=-=-=-=-=-=-= -->
+
+
+<script>
+  //http://jsfiddle.net/fF675/3/
+  var pages_count = 0;
+	var firstTime = true;
+  var currentPage = 1;
+
+
+
+
+
+
+
+  function show_aprobar_afiliacion(id){
+    $.get("/Afiliacions/" + id + '/aprobar',
+      {
+      },function(result){
+        $('#modals-container').empty();
+        $('#modals-container').append($.parseHTML( result ));
+        $("#aprobar-afiliacion").modal('show');
+    }, "text");
+  }
+
+</script>
+
+
+<script>
+	var original_class = document.getElementsByTagName('body')[0].className;
+
+	function update_paginas() {
+  	$("#page-links").empty();
+  	for (var i = 1; i <= pages_count; i++)
+    {
+      var li = $("<button/>", {
+          class: 'btn page_link'
+      }).html(i);
+      li.appendTo('#page-links');
+    }
+
+    $('.page_link').on('click', function() {
+    	xxx = $(this).html();
+        load_page($(this).html());
+    });
+  }
+
+  function do_search(index) {
+    currentPage = index;
+		if(index == 1){
+			firstTime = true;
+		}else{
+			firstTime = false;
+		}
+
+  	show_loading_indicator();
+    size_ = 10;
+		term = $('#nombre').val();
+    $.post("/crue/institucions/search",
+    	{
+				term: term,
+				index: index,
+        size: size_
+    	},function(result){
+				hide_loading_indicator();
+				$('#table-result-body').empty();
+				$('#table-result-body').append($.parseHTML( result ));
+				var cantidadPaginas = $('#cantidad_paginas').val();
+				if(firstTime){
+					initPager(cantidadPaginas);
+				}
+		}, "text");
+  }
+
+	function initPager(count){
+
+		$('#page-selection').bootpag({
+			total: count,
+	    page: 1,
+      maxVisible: 10,
+      firstLastUse: true,
+      first: '←',
+      last: '→'
+		}).on("page", function(event, num){
+		    //$(".content").html("Page " + num); // or some ajax content loading...
+				do_search(num);
+		});
+
+	}
+
+	function show_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className += " loading";
+  }
+
+  function hide_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className = original_class;
+  }
+
+	function show_detalle(id){
+    $.get("/crue/institucions/" + id,
+      {
+      },function(result){
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#detalle-institucion").modal('show');
+    }, "text");
+  }
+
+	$('#nombre').on('input',function(e){
+		if($('#nombre').val().length > 3){
+			currentPage = 1;
+			do_search(currentPage);
+		}
+	});
+
+	do_search(1);
+</script>

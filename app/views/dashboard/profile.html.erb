@@ -1,0 +1,117 @@
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <h3 class="panel-title"><%= "#{current_usuario.primer_nombre} #{current_usuario.primer_apellido}" %></h3>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-md-3 col-lg-3 " align="center">
+        <%= image_tag("profile-img.jpg", class:"img-circle img-responsive", alt:"Imagen Perfil") %>
+        <button data-toggle="modal" data-target="#cambiar-contraseña" class="btn btn-lg btn-danger">Cambiar mi contraseña</button>
+      </div>
+      <div class=" col-md-9 col-lg-9 ">
+        <table class="table table-user-information">
+          <tbody>
+            <tr>
+              <td>Departamento:</td>
+              <td><%= current_usuario.municipio.departamento.nombre if current_usuario.municipio && current_usuario.municipio.departamento %></td>
+            </tr>
+            <tr>
+              <td>Municipio:</td>
+              <td><%= current_usuario.municipio.nombre if current_usuario.municipio %></td>
+            </tr>
+            <tr>
+              <td>Nombre:</td>
+              <td><%= current_usuario.nombre_completo %></td>
+            </tr>
+            <tr>
+              <td>Email</td>
+              <td><%= current_usuario.email %></td>
+            </tr>
+            <tr>
+              <td>Telefono</td>
+              <td><%= current_usuario.telefono %></td>
+            </tr>
+            <tr>
+              <td>Celular</td>
+              <td><%= current_usuario.celular %></td>
+            </tr>
+            <tr>
+              <td>Identificacion</td>
+              <td><%= current_usuario.identificacion %></td>
+            </tr>
+            <tr>
+              <td>Cargo:</td>
+              <td><%= current_usuario.cargo %></td>
+            </tr>
+            <tr>
+              <td>Fecha Creacion:</td>
+              <td><%= current_usuario.created_at.strftime '%m/%d/%Y' %></td>
+            </tr>
+            <tr>
+              <td>Roles Activados:</td>
+              <td><%= current_usuario.roles_array.first[:nombre] if current_usuario.roles_array.any? %></td>
+            </tr>
+
+            <% current_usuario.roles_array.drop(1).each do |r| %>
+              <tr>
+                <td></td>
+                <td><%= r[:nombre] %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+  <div class="panel-footer">
+
+  </div>
+
+</div>
+
+
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL CAMBIAR CONTRASEÑA =-=-=-=-=-=-=-=-=-=-========== -->
+	<div class="modal fade" id="cambiar-contraseña" tabindex="-1" role="dialog" aria-labelledby="cambiar-contraseña-Label" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	        <h4 class="modal-title text-center" id="add-table-Label"><i class="fa fa-key" aria-hidden="true"></i></h4>
+	      </div>
+	      <div class="modal-body">
+	        <%= form_tag(change_my_pass_crue_usuarios_path, method: "post", :multipart => true, "data-ajax" => "false", id:'crear_evento_form' ) do %>
+
+	          <div class="row">
+
+              <div class="col-md-12">
+	              <div class="form-group">
+	                <p class="control-label">Nueva Contraseña</p>
+									<%= password_field_tag(:password, "", :minlength => 8, :class =>"form-control", required:true) %>
+	              </div>
+	            </div>
+
+              <div class="col-md-12">
+	              <div class="form-group">
+	                <p class="control-label">Repita la nueva Contraseña</p>
+									<%= password_field_tag(:password_confirmation, "", :minlength => 8, :class =>"form-control", required:true) %>
+	              </div>
+	            </div>
+
+	            <div class="col-md-12">
+	              <div class="form-group">
+                  <%= submit_tag("Guardar Cambios", :class => "btn btn-primary form-control") %>
+	              </div>
+	            </div>
+
+	          </div>
+
+	        <% end %>
+
+	      </div>
+	    </div>
+	  </div>
+	</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== /MODAL CAMBIAR CONTRASEÑA ==========-=-=-=-=-=-=-=-=-=-= -->

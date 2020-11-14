@@ -1,0 +1,47 @@
+{
+  "version":1,
+  "productos":[
+    {
+      "id":1,
+      "nombre":"Agua",
+      "variaciones":[{"id":1, "nombre":"Sin gas"}, {"id":2, "nombre":"Con gas"}]
+    },
+    {
+      "id":2,
+      "nombre":"Gaseosa 500",
+      "variaciones":[{"id":3, "nombre":"Manzana"}, {"id":4, "nombre":"Uva"}]
+    },
+    {
+      "id":3,
+      "nombre":"Gaseosa 3000",
+      "variaciones":[{"id":5, "nombre":"Kola"}, {"id":6, "nombre":"Naranja"}]
+    }
+  ],
+  "combos":[
+    {
+      "id":1,
+      "nombre":"Combo X",
+      "productos":[
+        {"id":1, "producto_id":1, "multiplicador":2},
+        {"id":2, "producto_id":2, "multiplicador":1},
+        {"id":3, "producto_id":3, "multiplicador":1}
+      ],
+      "combinaciones":[
+        {"id":305, "variaciones":[1,2,4,6]},
+        {"id":306, "variaciones":[1,2,3,6]}
+      ]
+    },
+    {
+      "id":2,
+      "nombre":"Combo Y",
+      "productos":[
+        {"id":4, "producto_id":1, "multiplicador":1},
+        {"id":5, "producto_id":3, "multiplicador":2}
+      ],
+      "combinaciones":[
+        {"id":304, "variaciones":[1,5,6]},
+        {"id":305, "variaciones":[2,5,6]}
+      ]
+    }
+  ]
+}

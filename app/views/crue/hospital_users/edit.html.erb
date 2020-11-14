@@ -1,0 +1,100 @@
+<%= form_tag(crue_institucion_hospital_user_path(:institucion_id => @institucion.id, :id => @usuario.id), method: "patch",  :multipart => true, "data-ajax" => "false" ) do %>
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title"></h3>
+	</div>
+	<div class="panel-body">
+		<h1>Edicion Usuario</h1>
+
+		<ol class="breadcrumb">
+		  <li class="active"><%= link_to "Usuarios", crue_institucion_hospital_users_path(@institucion.id) %></li>
+		</ol>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:primer_nombre, "Primer Nombre:") %>
+				</br>
+				<%= text_field_tag(:primer_nombre, @usuario.primer_nombre, required:true) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:segundo_nombre, "Segundo Nombre:") %>
+				</br>
+				<%= text_field_tag(:segundo_nombre, @usuario.segundo_nombre) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:primer_apellido, "Primer Apellido:") %>
+				</br>
+				<%= text_field_tag(:primer_apellido, @usuario.primer_apellido, required:true) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:segundo_apellido, "Segundo Apellido:") %>
+				</br>
+				<%= text_field_tag(:segundo_apellido, @usuario.segundo_apellido, required:true) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:telefono, "Telefono:") %>
+				</br>
+				<%= text_field_tag(:telefono, @usuario.telefono) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:identificacion, "Identificacion:") %>
+				</br>
+				<%= text_field_tag(:identificacion, @usuario.identificacion) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:cargo, "Cargo:") %>
+				</br>
+				<%= text_field_tag(:cargo, @usuario.cargo) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:fecha_vigencia, "Fecha de Vigencia:") %>
+				</br>
+				<%= date_field_tag(:fecha_vigencia, (@usuario.fecha_vigencia.strftime('%Y-%m-%d') if @usuario.fecha_vigencia) ) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:activo, "Activado:") %>
+				</br>
+				<%= check_box_tag 'activo', '1', @usuario.activo %>
+			</div>
+		</div>
+
+		<div class="col-md-12">
+			<div class="form-group">
+				<p class="control-label">Roles actuales<p>
+					<% ROLES_USUARIOS_INSTITUCIONES.each do |rol| %>
+						<div style="<%= 'display:none;' unless rol[:enabled] %>">
+							<%= check_box_tag "roles[#{rol[:id]}]", "1", @usuario.roles_array.include?(rol) %>
+							<%= rol[:nombre] %>
+						</div>
+					<% end %>
+			</div>
+		</div>
+
+		<%= submit_tag("Guardar Cambios") %>
+	</div>
+</div>
+<% end %>

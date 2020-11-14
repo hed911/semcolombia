@@ -1,0 +1,26 @@
+<%= form_tag(do_update_crue__camas_institucion_path, method: "put",  :multipart => true, "data-ajax" => "false" ) do %>
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title"></h3>
+	</div>
+	<div class="panel-body">
+		<h1>Edicion Cantidad Camas</h1>
+
+		<ol class="breadcrumb">
+		  <li class="active"><%= link_to "Instituciones", crue_institucions_path %></li>
+		</ol>
+
+    <% @limites.each do |limite_tipo_cama| -%>
+  		<div class="row">
+  			<div class="col-lg-3">
+  				<%= label_tag("tipo_cama[#{limite_tipo_cama.tipo_cama.id}]", "#{limite_tipo_cama.tipo_cama.nombre}:") %>
+  				</br>
+  				<%= text_field_tag("tipo_cama[#{limite_tipo_cama.tipo_cama.id}]", limite_tipo_cama.cantidad) %>
+  			</div>
+  		</div>
+    <% end %>
+
+		<%= submit_tag("Guardar Cambios") %>
+	</div>
+</div>
+<% end %>

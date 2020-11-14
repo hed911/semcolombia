@@ -1,0 +1,32 @@
+<%= form_tag(crue_aseguradora_path, method: "patch",  :multipart => true, "data-ajax" => "false" ) do %>
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title"></h3>
+	</div>
+	<div class="panel-body">
+		<h1>Edicion Aseguradora</h1>
+
+		<ol class="breadcrumb">
+		  <li class="active"><%= link_to "Aseguradoras", crue_aseguradoras_path %></li>
+		</ol>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:codigo, "Codigo:") %>
+				</br>
+				<%= text_field_tag(:codigo, @aseguradora.codigo, class:'form-control') %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:nombre, "Nombre:") %>
+				</br>
+				<%= text_field_tag(:nombre, @aseguradora.nombre, required:true, class:'form-control') %>
+			</div>
+		</div>
+
+		<%= submit_tag("Guardar Cambios") %>
+	</div>
+</div>
+<% end %>

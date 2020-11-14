@@ -1,0 +1,94 @@
+<%= link_to new_crue_intension_path, :class => "btn btn-primary btn-lg", :title => "Nueva intencion" do %>
+	Nueva intencion
+<% end %>
+
+
+<%= form_tag("#", method: "post",  :multipart => true, "data-ajax" => "false" ) do %>
+<h1>Intenciones</h1>
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title"></h3>
+	</div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table id="table-result" class="table table-bordered table-hover table-striped tablesorter">
+			  <thead>
+			    <tr>
+						<th data-sort="string">Codigo</th>
+						<th data-sort="string">Nombre</th>
+						<th data-sort="string">Crea casos</th>
+			      <th>Acción</th>
+			    </tr>
+			  </thead>
+			  <tbody id="table-result-body">
+					<% @intensions.each do |intension| -%>
+						<tr class="<%= intension.crea_casos ? "table-warning" : "" %>">
+							<td><%= intension.id %></td>
+					    <td><%= intension.nombre %></td>
+							<td><%= intension.crea_casos ? "SI" : "NO" %></td>
+							<td>
+								<%= link_to edit_crue_intension_path(intension.id), :title => "Editar EAPB", :class => "btn btn-xs btn-success" do %>
+									<i class="fa fa-pencil-square-o"></i> Editar
+							  <% end %>
+								<% if !intension.llamadas.any? %>
+									<%= link_to crue_intension_path(intension.id), class:"btn btn-xs btn-success", method: :delete, title:"Borrar EAPB", :data => { :confirm => 'Estas seguro? Este cambio no se puede revertir' } do %>
+										<i class="fa fa-trash-o"></i> Borrar
+								  <% end %>
+								<% end %>
+							</td>
+						</tr>
+					<% end -%>
+			  </tbody>
+			</table>
+		</div>
+	</div>
+</div>
+	<% if false -%>
+		<%= submit_tag "✓Exportar Datos", :name => 'export_data' %>
+	<% end -%>
+<% end %>
+
+
+
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL AGREGAR INTENSION =-=-=-=-=-=-=-=-=-=-========== -->
+	<div class="modal fade" id="add-intension" tabindex="-1" role="dialog" aria-labelledby="add-edit-Label" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+					<h4 class="modal-title text-center" id="add-table-Label">Nueva intencion</h4>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+	      </div>
+	      <div class="modal-body">
+	        <%= form_tag(crue_intensions_path, method: "post", :multipart => true, "data-ajax" => "false" ) do %>
+
+	          <div class="row">
+
+							<div class="col-md-12">
+	              <div class="form-group">
+	                <p class="control-label">Nombre</p>
+	                <%= text_field_tag(:nombre, "", :required => true, :class =>"form-control") %>
+	              </div>
+	            </div>
+
+							<div class="col-md-12">
+	              <div class="form-group">
+	                <p class="control-label">Crea casos de COVID</p>
+	                <%= check_box_tag 'crea_casos', '1', false %>
+	              </div>
+	            </div>
+
+	            <div class="col-md-12">
+	              <div class="form-group">
+									<%= submit_tag "Crear", :class => "btn btn-default form-control" %>
+	              </div>
+	            </div>
+
+	          </div>
+
+	        <% end %>
+
+	      </div>
+	    </div>
+	  </div>
+	</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== /MODAL AGREGAR EAPB ==========-=-=-=-=-=-=-=-=-=-= -->

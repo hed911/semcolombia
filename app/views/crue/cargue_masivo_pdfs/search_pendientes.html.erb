@@ -1,0 +1,10 @@
+<% @registros.each do |registro| -%>
+  <tr class="<%= registro.class_value %>">
+    <td><%= registro.tipo_documento %></td>
+    <td><%= registro.numero_documento %></td>
+    <td>
+      <a class="btn btn-success" href="#" onclick="show_resolver(<%= registro.id %>);">Resolver</a>
+    </td>
+  </tr>
+<% end -%>
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

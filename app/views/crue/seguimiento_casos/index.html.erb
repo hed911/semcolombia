@@ -1,0 +1,241 @@
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL SEGUIMIENTOS =-=-=-=-=-=-=-=-=-=-========== -->
+<div class="modal fade" id="seguimientos" tabindex="-1" role="dialog" aria-labelledby="seguimientos" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class='col-12 modal-title text-center'>
+          Seguimientos caso <%= @caso.id %>
+          <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+            <span aria-hidden='true'>&times;</span>
+          </button>
+        </h3>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+
+          <div class="container card-group">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title"><%= @parent.nil? ? "Sin predecesor" : "Datos paciente nivel #{@parent.nivel + 1 if @parent.nivel}" %></h5>
+                <div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="numero_documento"># Documento</label>
+                      <%= text_field_tag(:numero_documento, (@parent.nil? ? nil : "#{@parent.tipo_documento}-#{@parent.numero_documento}"), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="nombre_completo">Nombre completo</label>
+                      <%= text_field_tag(:nombre_completo, (@parent.nil? ? nil : @parent.nombre_completo), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="numero_documento">Email</label>
+                      <%= text_field_tag(:email, (@parent.nil? ? nil : @parent.email), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="nombre_completo">Telefono</label>
+                      <%= text_field_tag(:telefono, (@parent.nil? ? nil : @parent.telefono), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="numero_documento">Cantidad contactos</label>
+                      <%= text_field_tag(:email, (@parent.nil? ? nil : @parent.contactos.count), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="nombre_completo">Resultado muestra</label>
+                      <%= text_field_tag(:telefono, (@parent.nil? ? nil : @parent.estado_enfermedad_value), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Datos paciente nivel <%= @caso.nivel + 1 if @caso.nivel %></h5>
+                <div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="numero_documento"># Documento</label>
+                      <%= text_field_tag(:numero_documento, "#{@caso.tipo_documento}-#{@caso.numero_documento}", :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="nombre_completo">Nombre completo</label>
+                      <%= text_field_tag(:nombre_completo, @caso.nombre_completo, :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="numero_documento">Email</label>
+                      <%= text_field_tag(:email, @caso.email, :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="nombre_completo">Telefono</label>
+                      <%= text_field_tag(:telefono, @caso.telefono, :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="numero_documento">Cantidad contactos</label>
+                      <%= text_field_tag(:email, @caso.contactos.count, :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="nombre_completo">Resultado muestra</label>
+                      <%= text_field_tag(:telefono, @caso.estado_enfermedad_value, :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="container card-group">
+
+          </div>
+        </div>
+
+        <% if @caso.seguimiento_casos.where(crue:false).any? -%>
+          <div class="table-responsive" style="overflow:auto;">
+        		<table id="table-result" class="table table-hover tablesorter">
+              <thead>
+                <tr>
+                  <th data-sort="string">Dia</th>
+                  <th data-sort="string">Asintomatico</th>
+                  <th data-sort="string">Temperatura >= 38º</th>
+                  <th data-sort="string">Tos</th>
+                  <th data-sort="string">Dificultad respiratoria</th>
+                  <th data-sort="string">Odinofagia</th>
+                  <th data-sort="string">Fatiga/Adinamia</th>
+                  <th data-sort="string">Observacion</th>
+                  <th data-sort="string">Fecha</th>
+                  <th data-sort="string">Usuario</th>
+                  <th data-sort="string">Usuario</th>
+                </tr>
+              </thead>
+
+              <tbody id="table-result-body">
+                <% count = 0 -%>
+                <% first_date = @caso.seguimiento_casos.where(crue:false).order('created_at ASC').first.created_at.to_date if @caso.seguimiento_casos.where(crue:false).any? -%>
+                <% @caso.seguimiento_casos.where(crue:false).order('created_at DESC').each do |seguimiento| -%>
+                  <tr class="<%= seguimiento.llamada_fallida ? 'table-danger' : '' %>">
+                    <td><%= "Dia #{TimeDifference.between(first_date, seguimiento.created_at.to_date).in_days.to_i + 1}" %></td>
+                    <td><%= seguimiento.asintomatico ? "SI" : "NO" %></td>
+                    <td><%= seguimiento.temperatura ? "SI" : "NO" %></td>
+                    <td><%= seguimiento.tos ? "SI" : "NO" %></td>
+                    <td><%= seguimiento.dificultad_respiratoria ? "SI" : "NO" %></td>
+                    <td><%= seguimiento.odinofagia ? "SI" : "NO" %></td>
+                    <td><%= seguimiento.fatiga ? "SI" : "NO" %></td>
+                    <td style="word-wrap: break-word;min-width: 400px;max-width: 400px;" data-toggle="tooltip" title="<%= seguimiento.contenido %>"><%= truncate seguimiento.contenido, length: 170, separator: /\w+/ %></td>
+                    <td><%= seguimiento.created_at_formatted %></td>
+                    <td><%= seguimiento.usuario.nombre_completo if seguimiento.usuario %></td>
+                    <td><%= seguimiento.tipo_usuario %></td>
+                  </tr>
+                <% end -%>
+              </tbody>
+        		</table>
+        	</div>
+          </br>
+          </br>
+          </br>
+          </br>
+          </br>
+          </br>
+        <% else -%>
+          <div class="jumbotron">
+            <h1>No hay datos</h1>
+            <p>Aun no se han agregado seguimientos diarios de <%= @caso.primer_nombre %>.
+            <p>Una vez crees registros aqui apareceran en forma de tabla</p>
+          </div>
+        <% end -%>
+
+        <% if !current_usuario.roles_array.include?(ROLES[5]) -%>
+          <%= form_tag(crue_caso_salud_publica_seguimiento_casos_path(@caso.id), method: "post", :multipart => true, "data-ajax" => "false", :remote => true, id:'crear_caso_form' ) do %>
+
+            <div class="container card-group">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Nuevo registro</h5>
+                  <div>
+                    <div class="form-group row">
+                      <div class="col-sm-6 form-check">
+                        <label class="form-check-label">
+                          <input type="checkbox" class="form-control form-check-input" value="1" name="asintomatico">Asintomatico
+                        </label>
+                      </div>
+                      <div class="col-sm-6 form-check">
+                        <label class="form-check-label">
+                          <input type="checkbox" class="form-control form-check-input" value="1" name="temperatura">Temperatura >= 38º
+                        </label>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <div class="col-sm-6 form-check">
+                        <label class="form-check-label">
+                          <input type="checkbox" class="form-control form-check-input" value="1" name="tos">Tos
+                        </label>
+                      </div>
+                      <div class="col-sm-6 form-check">
+                        <label class="form-check-label">
+                          <input type="checkbox" class="form-control form-check-input" value="1" name="dificultad_respiratoria">Dificultad respiratoria
+                        </label>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <div class="col-sm-6 form-check">
+                        <label class="form-check-label">
+                          <input type="checkbox" class="form-control form-check-input" value="1" name="odinofagia">Odinofagia
+                        </label>
+                      </div>
+                      <div class="col-sm-6 form-check">
+                        <label class="form-check-label">
+                          <input type="checkbox" class="form-control form-check-input" value="1" name="fatiga">Fatiga/Adinamia
+                        </label>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Observacion</p>
+                      <%= text_area_tag(:contenido, "", size: "30x4", style:"min-width: 100%") %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Fecha</p>
+                      <%= text_field_tag(:dia, "DIA #{first_date ? TimeDifference.between(first_date, Time.now.to_date).in_days.to_i + 1 : 1}", :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Estado</p>
+                      <select id="estado" class="form-control" name="estado">
+                        <option <%= "selected" if @caso.estado_seguimiento.nil? %> value></option>
+                        <option <%= "selected" if @caso.estado_seguimiento == 1 %> value="1">EN SEGUIMIENTO</option>
+                        <option <%= "selected" if @caso.estado_seguimiento == 3 %> value="3">RESUELTO SATISFACTORIAMENTE</option>
+                        <option <%= "selected" if @caso.estado_seguimiento == 4 %> value="4">NO CUMPLE CON DEFINICION DE CASO</option>
+                        <option <%= "selected" if @caso.estado_seguimiento == 5 %> value="5">AISLAMIENTO EN CASA</option>
+                        <option <%= "selected" if @caso.estado_seguimiento == 9 %> value="9">SEGUIMIENTO TERMINADO</option>
+                        <option disabled <%= "selected" if @caso.estado_seguimiento == 6 %> value="6">INTERNACION</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Hubo problemas para contactar a la persona?</p>
+                      <%= check_box_tag :llamada_fallida, '1', false, class:'form-control' %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+
+              <div class="col-md-12">
+                <div class="text-center">
+                  <%= submit_tag "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".html_safe, :class => "btn btn-lg btn-primary" %>
+                </div>
+              </div>
+
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== MODAL SEGUIMIENTOS ==========-=-=-=-=-=-=-=-=-=-= -->

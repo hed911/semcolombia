@@ -1,0 +1,312 @@
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/leaflet-heatmap@1.0.0/leaflet-heatmap.min.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+<%= javascript_include_tag "l.control.geosearch" %>
+<%= javascript_include_tag "l.geosearch.provider.google" %>
+<%= javascript_include_tag "l.geosearch.provider.openstreetmap" %>
+<%= javascript_include_tag "leaflet-routing-machine" %>
+<%= javascript_include_tag "leaflet.rotatedMarker" %>
+
+<script src="https://unpkg.com/esri-leaflet@2.0.4"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/esri-leaflet-geocoder/2.2.1/esri-leaflet-geocoder.css">
+<script src="https://cdn.jsdelivr.net/npm/esri-leaflet-geocoder@2.2.1/dist/esri-leaflet-geocoder-debug.min.js"></script>
+
+<style>
+  @mixin background-variant($name, $color) {
+    .bg-#{$name} {
+      background-color: #{$color} !important;
+
+      &,
+      > a {
+        color: color-yiq($color) !important;
+      }
+
+      &.btn {
+        &:hover {
+          border-color: darken($color, 10%);
+          color: darken(color-yiq($color), 7.5%);
+        }
+
+        &:not(:disabled):not(.disabled):active,
+        &:not(:disabled):not(.disabled).active,
+        &:active,
+        &.active {
+          background-color: darken($color, 10%) !important;
+          border-color: darken($color, 12.5%);
+          color: color-yiq(darken($color, 10%));
+        }
+      }
+    }
+  }
+
+  // Background Gradient Variant
+  @mixin background-gradient-variant($name, $color) {
+    .bg-gradient-#{$name} {
+      @include bg-gradient-variant('&', $color);
+      color: color-yiq($color);
+
+      &.btn {
+        &.disabled,
+        &:disabled,
+        &:not(:disabled):not(.disabled):active,
+        &:not(:disabled):not(.disabled).active,
+        .show > &.dropdown-toggle {
+          background-image: none !important;
+        }
+
+        &:hover {
+          @include bg-gradient-variant('&', darken($color, 7.5%));
+          border-color: darken($color, 10%);
+          color: darken(color-yiq($color), 7.5%);
+        }
+
+        &:not(:disabled):not(.disabled):active,
+        &:not(:disabled):not(.disabled).active,
+        &:active,
+        &.active {
+          @include bg-gradient-variant('&', darken($color, 10%));
+          border-color: darken($color, 12.5%);
+          color: color-yiq(darken($color, 10%));
+        }
+      }
+    }
+  }
+  .info-box {
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.125), 0 1px 3px rgba(0, 0, 0, 0.2);
+    border-radius: 0.25rem;
+    background: #ffffff;
+    display: -ms-flexbox;
+    display: flex;
+    margin-bottom: 1rem;
+    min-height: 80px;
+    padding: .5rem;
+    position: relative;
+  }
+
+  .info-box .progress {
+    background-color: rgba(0, 0, 0, 0.125);
+    height: 2px;
+    margin: 5px 0;
+  }
+
+  .info-box .progress .progress-bar {
+    background-color: #ffffff;
+  }
+
+  .info-box .info-box-icon {
+    border-radius: 0.25rem;
+    -ms-flex-align: center;
+    align-items: center;
+    display: -ms-flexbox;
+    display: flex;
+    font-size: 1.875rem;
+    -ms-flex-pack: center;
+    justify-content: center;
+    text-align: center;
+    width: 70px;
+  }
+
+  .info-box .info-box-icon > img {
+    max-width: 100%;
+  }
+
+  .info-box .info-box-content {
+    -ms-flex: 1;
+    flex: 1;
+    padding: 5px 10px;
+  }
+
+  .info-box .info-box-number {
+    display: block;
+    font-weight: 700;
+  }
+
+  .info-box .progress-description,
+  .info-box .info-box-text {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .info-box .info-box .bg-primary,
+  .info-box .info-box .bg-gradient-primary {
+    color: #ffffff;
+  }
+
+  .info-box .info-box .bg-primary .progress-bar,
+  .info-box .info-box .bg-gradient-primary .progress-bar {
+    background-color: #ffffff;
+  }
+
+  .info-box .info-box .bg-secondary,
+  .info-box .info-box .bg-gradient-secondary {
+    color: #ffffff;
+  }
+
+  .info-box .info-box .bg-secondary .progress-bar,
+  .info-box .info-box .bg-gradient-secondary .progress-bar {
+    background-color: #ffffff;
+  }
+
+  .info-box .info-box .bg-success,
+  .info-box .info-box .bg-gradient-success {
+    color: #ffffff;
+  }
+
+  .info-box .info-box .bg-success .progress-bar,
+  .info-box .info-box .bg-gradient-success .progress-bar {
+    background-color: #ffffff;
+  }
+
+  .info-box .info-box .bg-info,
+  .info-box .info-box .bg-gradient-info {
+    color: #ffffff;
+  }
+
+  .info-box .info-box .bg-info .progress-bar,
+  .info-box .info-box .bg-gradient-info .progress-bar {
+    background-color: #ffffff;
+  }
+
+  .info-box .info-box .bg-warning,
+  .info-box .info-box .bg-gradient-warning {
+    color: #1F2D3D;
+  }
+
+  .info-box .info-box .bg-warning .progress-bar,
+  .info-box .info-box .bg-gradient-warning .progress-bar {
+    background-color: #1F2D3D;
+  }
+
+  .info-box .info-box .bg-danger,
+  .info-box .info-box .bg-gradient-danger {
+    color: #ffffff;
+  }
+
+  .info-box .info-box .bg-danger .progress-bar,
+  .info-box .info-box .bg-gradient-danger .progress-bar {
+    background-color: #ffffff;
+  }
+
+  .info-box .info-box .bg-light,
+  .info-box .info-box .bg-gradient-light {
+    color: #1F2D3D;
+  }
+
+  .info-box .info-box .bg-light .progress-bar,
+  .info-box .info-box .bg-gradient-light .progress-bar {
+    background-color: #1F2D3D;
+  }
+
+  .info-box .info-box .bg-dark,
+  .info-box .info-box .bg-gradient-dark {
+    color: #ffffff;
+  }
+
+  .info-box .info-box .bg-dark .progress-bar,
+  .info-box .info-box .bg-gradient-dark .progress-bar {
+    background-color: #ffffff;
+  }
+
+  .info-box .info-box-more {
+    display: block;
+  }
+
+  .info-box .progress-description {
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    .col-xl-2 .info-box .progress-description,
+    .col-lg-2 .info-box .progress-description,
+    .col-md-2 .info-box .progress-description {
+      display: none;
+    }
+    .col-xl-3 .info-box .progress-description,
+    .col-lg-3 .info-box .progress-description,
+    .col-md-3 .info-box .progress-description {
+      display: none;
+    }
+  }
+
+  @media (min-width: 992px) {
+    .col-xl-2 .info-box .progress-description,
+    .col-lg-2 .info-box .progress-description,
+    .col-md-2 .info-box .progress-description {
+      font-size: 0.75rem;
+      display: block;
+    }
+    .col-xl-3 .info-box .progress-description,
+    .col-lg-3 .info-box .progress-description,
+    .col-md-3 .info-box .progress-description {
+      font-size: 0.75rem;
+      display: block;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .col-xl-2 .info-box .progress-description,
+    .col-lg-2 .info-box .progress-description,
+    .col-md-2 .info-box .progress-description {
+      font-size: 1rem;
+      display: block;
+    }
+    .col-xl-3 .info-box .progress-description,
+    .col-lg-3 .info-box .progress-description,
+    .col-md-3 .info-box .progress-description {
+      font-size: 1rem;
+      display: block;
+    }
+  }
+</style>
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark">Mapa de calor (Positivos)</h1>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+
+<section class="content">
+  <div class="container-fluid">
+    <div style='width: 100%; height: 100%;'>
+      <div id="map" style='width: 100%; height: 600px;'></div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  var testData = {
+    max: 8,
+    data: <%= @result.to_json.html_safe %>
+  };
+  var baseLayer = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: 'hedu911.22cnjci9', //'your.mapbox.project.id',
+    accessToken: 'pk.eyJ1IjoiaGVkdTkxMSIsImEiOiJjaXY5cTlwaWEwMGpoMnptODgzMjE4MDF3In0.lvUD1nWuzyTqt5KspZhHug'
+  });
+  var cfg = {
+    "radius": 100,
+    "maxOpacity": .8,
+    "scaleRadius": false,
+    "useLocalExtrema": true,
+    latField: 'lat',
+    lngField: 'lng',
+    valueField: 'count'
+  };
+  var heatmapLayer = new HeatmapOverlay(cfg);
+  var map = new L.Map('map', {
+    center: new L.LatLng(25.6586, -80.3568),
+    zoom: 4,
+    layers: [baseLayer, heatmapLayer]
+  }).setView([<%= "#{current_city_point[0]}, #{current_city_point[1]}" %>], 16);
+  heatmapLayer.setData(testData);
+
+</script>

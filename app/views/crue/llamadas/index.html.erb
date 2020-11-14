@@ -1,0 +1,576 @@
+<div class="container-fluid">
+  <h1>Consulta llamadas</h1>
+  <div class="row">
+    <%= form_tag("#",  :multipart => true, "data-ajax" => "false", class:"col-2" ) do %>
+      <div class="">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title"></h3>
+          </div>
+          <div class="panel-body">
+              <div>
+                <div class="option">
+                  <%= text_field_tag(:id, nil, placeholder:"ID", class:'form-control', style:"text-transform:uppercase") %>
+                </div>
+
+                <div class="option">
+                  <%= text_field_tag(:numero_documento_search, nil, placeholder:"Numero documento", class:'form-control', style:"text-transform:uppercase") %>
+                </div>
+
+                <div class="option">
+                  <%= select_tag :intension_id, options_for_select(@intensions.collect { |intension|
+        				[intension.nombre.titleize, intension.id] }, ""), { id: 'intension_id', class:'form-control', include_blank: 'Intencionalidad'} %>
+                </div>
+
+                <div class="option">
+                  <input value="" name="start_date" id="start_date" class="form-control" type="date">
+                </div>
+
+                <div class="option">
+                  <input value="" name="end_date" id="end_date" class="form-control" type="date">
+                </div>
+
+                <div class="option">
+                  <%= text_field_tag(:per_page, '10', placeholder:"Resultados por pagina", class:'form-control') %>
+                </div>
+
+    						<div class="option">
+                  <button onclick="do_search(1);" type="button" class="btn btn-primary">Buscar</button>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    <% end -%>
+    <div class="col-10">
+      <div class="container-fluid">
+
+        <div class="table-responsive">
+          <table id="table-result" class="table table-hover tablesorter">
+            <thead>
+              <tr>
+                <th data-sort="string">Numero oficial caso</th>
+                <th data-sort="string">Id</th>
+                <th data-sort="string">Nombre completo</th>
+                <th data-sort="string"># Documento</th>
+                <th data-sort="string">Telefono fijo</th>
+                <th data-sort="string">Celular</th>
+                <th data-sort="string">Intencionalidad</th>
+                <th data-sort="string">Descripcion</th>
+                <th data-sort="string">Fecha</th>
+                <th data-sort="string"></th>
+              </tr>
+            </thead>
+      		  <tbody id="table-result-body">
+
+      		  </tbody>
+      		</table>
+        </div>
+      </div>
+
+      <div class="container">
+        <center>
+          <div style="text-align:center" id="page-selection"></div>
+        </center>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div id="container"></div>
+<div id="modal"></div>
+
+<script type="text/javascript">
+
+  var original_class = document.getElementsByTagName('body')[0].className;
+
+  function show_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className += " loading";
+  }
+
+  function hide_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className = original_class;
+  }
+
+  firstTime = true;
+  var currentPage = 1;
+  function do_search(index) {
+    currentPage = index;
+    if(index == 1){
+      firstTime = true;
+    }else{
+      firstTime = false;
+    }
+    show_loading_indicator();
+
+    id_ = $('#id').val();
+    numero_documento_ = $('#numero_documento_search').val();
+    intension_id_ = $('#intension_id').val();
+    start_date_ = $('#start_date').val();
+    end_date_ = $('#end_date').val();
+    size_ = $('#per_page').val();
+
+    $.post("/crue/llamadas/search",
+      {
+        index: index,
+        id: id_,
+        numero_documento:numero_documento_,
+        intension_id:intension_id_,
+        start_date:start_date_,
+        end_date:end_date_,
+        size:size_
+      },function(result){
+        hide_loading_indicator();
+        $('#table-result-body').empty();
+        $('#table-result-body').append($.parseHTML( result ));
+        var cantidadPaginas = $('#cantidad_paginas').val();
+        if(firstTime){
+          initPager(cantidadPaginas);
+        }
+    }, "text");
+  }
+
+  function initPager(count){
+
+		$('#page-selection').bootpag({
+			total: count,
+	    page: <%= params[:id] || "1" %>,
+      maxVisible: 10,
+      firstLastUse: true,
+      first: '←',
+      last: '→'
+		}).on("page", function(event, num){
+		    //$(".content").html("Page " + num); // or some ajax content loading...
+				do_search(num);
+		});
+
+	}
+
+  //setInterval(function() {
+    do_search(currentPage);
+  //}, 5000);
+
+  function show_contactos(id){
+    $.get("/crue/caso_salud_publicas/" + id + "/contactos",
+      {
+      },function(result){
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#contactos").modal('show');
+    }, "text");
+  }
+
+  function show_detalle_caso(id){
+    $.get("/crue/caso_salud_publicas/" + id,
+      {
+      },function(result){
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#detalle-caso").modal('show');
+    }, "text");
+  }
+
+  function show_detalle_llamada(id){
+    $.get("/crue/llamadas/" + id,
+      {
+      },function(result){
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#detalle-llamada").modal('show');
+    }, "text");
+  }
+
+  function show_seguimientos(id){
+    $.get("/crue/caso_salud_publicas/" + id + "/seguimiento_casos",
+      {
+      },function(result){
+        $("#detalle-evento").modal('hide');
+        $("#detalle-caso").modal('hide');
+        setTimeout(function() {
+          $('#modal').empty();
+          $('#modal').append($.parseHTML( result ));
+          var channel = pusher.subscribe("caso_" + id);
+        	channel.bind('owned', function(data) {
+        		if(data.id != user_id){
+        			alert("EL USUARIO " + data.nombre + " SE ENCUENTRA VISUALIZANDO ESTA PRESCRIPCION");
+        			$('#seguimientos').modal('hide');
+        		}
+          });
+          $.ajax({
+            url: '/crue/caso_salud_publicas/' + id + '/owned',
+            type: 'PUT',
+            success: function(response) {
+
+            }
+          });
+          $("#seguimientos").modal('show');
+        }, 500);
+    }, "text");
+  }
+
+  function load_new_llamada(){
+    $.get("/crue/llamadas/new",
+      {
+      },function(result){
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#departamentos_select").on("change", function() {
+          return $.ajax({
+            url: "/departamentos/" + $('#departamentos_select option:selected').val() + "/get_municipios",
+            type: "GET",
+            dataType: "script"
+          });
+        });
+        $("#new-llamada").modal('show');
+    }, "text");
+  }
+
+  function load_new(id){
+    $.get("/crue/caso_salud_publicas/new?llamada_id=" + id,
+      {
+      },function(result){
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#departamentos_select").on("change", function() {
+          return $.ajax({
+            url: "/departamentos/" + $('#departamentos_select option:selected').val() + "/get_municipios",
+            type: "GET",
+            dataType: "script"
+          });
+        });
+        $("#municipios_select").on("change", function() {
+          return $.ajax({
+            url: "/municipios/" + $('#municipios_select option:selected').val() + "/get_barrios",
+            type: "GET",
+            dataType: "script"
+          });
+        });
+        $("#departamentos_contacto_uno_select").on("change", function() {
+          return $.ajax({
+            url: "/departamentos/" + $('#departamentos_contacto_uno_select option:selected').val() + "/get_municipios?component_id=municipios_contacto_uno_select",
+            type: "GET",
+            dataType: "script"
+          });
+        });
+        show_covid_fields();
+        init_validation();
+        $("#new-caso").modal('show');
+    }, "text");
+  }
+
+  function load_edit(id){
+    $.get("/crue/caso_salud_publicas/" + id + "/edit",
+      {
+      },function(result){
+        $("#contactos").modal('hide');
+        setTimeout(function(){
+          $('#modal').empty();
+          $('#modal').append($.parseHTML( result ));
+          $("#departamentos_select").on("change", function() {
+            return $.ajax({
+              url: "/departamentos/" + $('#departamentos_select option:selected').val() + "/get_municipios",
+              type: "GET",
+              dataType: "script"
+            });
+          });
+          $("#municipios_select").on("change", function() {
+            return $.ajax({
+              url: "/municipios/" + $('#municipios_select option:selected').val() + "/get_barrios",
+              type: "GET",
+              dataType: "script"
+            });
+          });
+          $("#departamentos_contacto_uno_select").on("change", function() {
+            return $.ajax({
+              url: "/departamentos/" + $('#departamentos_contacto_uno_select option:selected').val() + "/get_municipios?component_id=municipios_contacto_uno_select",
+              type: "GET",
+              dataType: "script"
+            });
+          });
+          show_covid_fields();
+          init_validation();
+          $("#edit-caso").modal('show');
+        }, 500);
+    }, "text");
+  }
+
+  function load_edit_llamada(id){
+    $.get("/crue/llamadas/" + id + "/edit",
+      {
+      },function(result){
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#departamentos_select").on("change", function() {
+          return $.ajax({
+            url: "/departamentos/" + $('#departamentos_select option:selected').val() + "/get_municipios",
+            type: "GET",
+            dataType: "script"
+          });
+        });
+        $("#municipios_select").on("change", function() {
+          return $.ajax({
+            url: "/municipios/" + $('#municipios_select option:selected').val() + "/get_barrios",
+            type: "GET",
+            dataType: "script"
+          });
+        });
+        $("#edit-llamada").modal('show');
+    }, "text");
+  }
+
+  function init_validation(){
+    $('#tipo_documento,#numero_documento').on('change textInput input', function () {
+      var tipo_documento = $('#tipo_documento').val();
+      var numero_documento = $('#numero_documento').val();
+      if($('#tipo_documento_saved').val() != "" && $('#numero_documento').val() != "" &&
+        tipo_documento == $('#tipo_documento_saved').val() && numero_documento == $('#numero_documento_saved').val()){
+        $('#ya_existe').addClass("d-none");
+        return
+      }
+      if(tipo_documento != "" && numero_documento != "" && numero_documento.length > 3){
+        $.get("/crue/caso_salud_publicas/existe?tipo_documento=" + tipo_documento + "&numero_documento=" + numero_documento,
+          {
+          },function(result){
+            result = JSON.parse(result);
+            if(result.result){
+              $('#ya_existe').removeClass("d-none");
+            }else{
+              $('#ya_existe').addClass("d-none");
+            }
+        }, "text");
+      }
+    });
+  }
+
+  function show_covid_fields(){
+    $('.covid_confirmed').removeClass("invisible");
+    $('.covid_confirmed').addClass("visible");
+  }
+
+  function hide_covid_fields(){
+    $('.covid_confirmed').removeClass("visible");
+    $('.covid_confirmed').addClass("invisible");
+  }
+
+  function show_edit_ubicacion(id, flag){
+    var url = "/crue/caso_salud_publicas/" + id + "/edit_ubicacion";
+    if(flag == true){
+      url = url + "?close=true";
+    }
+    $.get(url,
+      {
+      },function(result){
+        setTimeout(function() {
+          $('#modal').empty();
+          $('#modal').append($.parseHTML( result ));
+          $("#edit-ubicacion").modal('show');
+          init_mapa_interno();
+          $('#direccion,#barrio').on('change textInput input', function () {
+            search_implementation(this.value, false);
+          });
+          $('#edit-ubicacion').on('shown.bs.modal', function (e) {
+            setTimeout(function() {
+              mymap_interno.invalidateSize();
+
+              var latitude = $('#latitude').val();
+              var longitude = $('#longitude').val();
+              if(latitude != null && longitude != null){
+                if(marker_interno){
+                  mymap_interno.removeLayer(marker_interno);
+                }
+                point = new L.LatLng(latitude, longitude);
+                marker_interno = L.marker(point, {draggable:'true'}).addTo(mymap_interno);
+                set_drag_event_v1();
+                mymap_interno.setView(point, 16);
+              }
+              if(latitude == "" && longitude == ""){
+                search_implementation($('#direccion').val(), false);
+              }
+
+            }, 10);
+          });
+
+        }, 500);
+    }, "text");
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  var mymap_interno = null;
+  function init_mapa_interno(){
+    mymap_interno = L.map('map_interno').setView([<%= "#{current_city_point[0]}, #{current_city_point[1]}" %>], 16);
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+      maxZoom: 18,
+      id: 'hedu911.22cnjci9', //'your.mapbox.project.id',
+      accessToken: 'pk.eyJ1IjoiaGVkdTkxMSIsImEiOiJjaXY5cTlwaWEwMGpoMnptODgzMjE4MDF3In0.lvUD1nWuzyTqt5KspZhHug'
+    }).addTo(mymap_interno);
+  }
+
+  function search_implementation(value, without_validation){
+    var val = value;
+    if (without_validation || val !== oldValueDireccion /*&& $('#barrio').val() != "" && $('#barrio').val() != null*/) {
+      oldValueDireccion = val;
+      search_address();
+    }
+  }
+
+  function search_address_v1(){
+    var current_uuid = last_uuid + "";
+    googleGeocodeProvider.GetLocations($('#municipio').val() + ' ' + $('#barrio').val() + ' ' + $('#direccion').val(), function ( data ) {
+      //console.log("EL ACTUAL ES:" + current_uuid + ", ULTIMO: " + last_uuid);
+      if(current_uuid != last_uuid){
+        //console.log("ups se descarto un punto");
+        return;
+      }
+      if(data.length > 0){
+        var latitude = data[0].Y;
+        var longitude = data[0].X;
+        if(marker_interno){
+          mymap_interno.removeLayer(marker_interno);
+        }
+        point = new L.LatLng(latitude, longitude);
+        marker_interno = L.marker(point, {draggable:'true'}).addTo(mymap_interno);
+        set_drag_event_v1();
+        mymap_interno.setView(point, 16);
+        $('#latitude').val(latitude);
+        $('#longitude').val(longitude);
+      }
+    });
+  }
+
+  var oldValueDireccion;
+  var last_uuid = null;
+  var googleGeocodeProvider = new L.GeoSearch.Provider.Google(),
+       addressText = '';
+  var geocodeService = L.esri.Geocoding.geocodeService();
+  var marker_interno = null;
+
+  function search_address(){
+    last_uuid = new Date().getTime().toString();
+    $.post("/crue/eventos_ambulatorios/geocode",
+      {
+        direccion:$('#direccion').val(),
+        uuid:last_uuid
+      },function(result){
+        result = JSON.parse(result);
+        var latitude = parseFloat(result.latitude);
+        var longitude = parseFloat(result.longitude);
+        //console.log("EL ULTIMO ES:" + last_uuid + ", OBTENIDO: " + result.uuid);
+        if(result.uuid != last_uuid)
+        {
+          //console.log("ups se descarto un punto");
+          return;
+        }
+        if(latitude == 0 || longitude == 0){
+          search_address_v1();
+          return
+        }
+
+        if(marker_interno){
+          mymap_interno.removeLayer(marker_interno);
+        }
+        point = new L.LatLng(latitude, longitude);
+        marker_interno = L.marker(point, {draggable:'true'}).addTo(mymap_interno);
+        set_drag_event_v1();
+        mymap_interno.setView(point, 16);
+        $('#latitude').val(latitude);
+        $('#longitude').val(longitude);
+    }, "text").fail(function(response) {
+      search_address_v1();
+    });
+  }
+
+  function set_drag_event_v1(){
+    if(marker_interno){
+      marker_interno.on('dragend', function (e) {
+        var latLng = e.target.getLatLng();
+        $('#latitude').val(latLng.lat);
+        $('#longitude').val(latLng.lng);
+        geocodeService.reverse().latlng(latLng).run(function(error, result) {
+          if(result.address.CountryCode == "COL" && result.address.City.toLowerCase() == $('#municipio').val().toLowerCase()){
+            if(!is_direccion_fixed()){
+              $('#direccion').val(result.address.Address);
+            }
+          }else{
+            alert("Direccion no valida, solo se aceptan direcciones dentro de la ciudad");
+            $('#direccion').val('');
+          }
+        });
+      });
+    }
+  }
+
+  function set_drag_event(){
+    if(marker_interno){
+      marker_interno.on('dragend', function (e) {
+        var latLng = e.target.getLatLng();
+        $('#latitude').val(latLng.lat);
+        $('#longitude').val(latLng.lng);
+        $.post("/crue/eventos_ambulatorios/reverse_geocode",
+          {
+            latitude:latLng.lat,
+            longitude:latLng.lng,
+          },function(result){
+            result = JSON.parse(result);
+            if(!is_direccion_fixed()){
+              $('#direccion').val(result.address1);
+            }
+        }, "text");
+      });
+    }
+  }
+
+  function toggle_fixed_direccion(){
+    var class_name = $('#icon_direccion').attr('class');
+    if(class_name == 'fas fa-lock'){
+      $('#icon_direccion').removeClass();
+      $('#icon_direccion').addClass('fas fa-unlock');
+    }else{
+      $('#icon_direccion').removeClass();
+      $('#icon_direccion').addClass('fas fa-lock');
+    }
+  }
+
+  function is_direccion_fixed(){
+    return $('#icon_direccion').attr('class') == 'fas fa-lock';
+  }
+
+  function init_validation(){
+    $('#tipo_documento,#numero_documento').on('change textInput input', function () {
+      var tipo_documento = $('#tipo_documento').val();
+      var numero_documento = $('#numero_documento').val();
+      if($('#tipo_documento_saved').val() != "" && $('#numero_documento').val() != "" &&
+        tipo_documento == $('#tipo_documento_saved').val() && numero_documento == $('#numero_documento_saved').val()){
+        $('#ya_existe').addClass("d-none");
+        return
+      }
+      if(tipo_documento != "" && numero_documento != "" && numero_documento.length > 3){
+        $.get("/crue/caso_salud_publicas/existe?tipo_documento=" + tipo_documento + "&numero_documento=" + numero_documento,
+          {
+          },function(result){
+            result = JSON.parse(result);
+            if(result.result){
+              $('#ya_existe').removeClass("d-none");
+            }else{
+              $('#ya_existe').addClass("d-none");
+            }
+        }, "text");
+      }
+    });
+  }
+
+</script>

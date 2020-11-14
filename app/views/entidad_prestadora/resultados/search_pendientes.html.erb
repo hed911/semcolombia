@@ -1,0 +1,25 @@
+<% if @muestras.any? -%>
+  <% @muestras.each do |muestra| -%>
+    <% caso = muestra.caso_salud_publica -%>
+    <% next if caso.nil? -%>
+    <tr class='<%= caso.table_value_enfermedad %>'>
+      <td class="text-right">
+        <%= "#{caso.numero_oficial}" %>
+      </td>
+      <td class="text-right">
+        <%= "#{caso.id}" %>
+      </td>
+      <td><%= caso.nombre_completo.upcase %></td>
+      <td><%= caso.edad_value %> <%= caso.unidad_medida_value %></td>
+      <td><%= caso.tipo_documento %>-<%= caso.numero_documento %></td>
+      <td><%= caso.entidad_prestadora.nombre if caso.entidad_prestadora %></td>
+      <td><%= caso.institucion.nombre if caso.institucion %></td>
+      <td><%= muestra.fecha.strftime('%I:%M:%S%p %d-%m-%Y') if muestra.fecha %></td>
+    </tr>
+  <% end -%>
+<% else -%>
+
+<% end -%>
+
+<%= hidden_field_tag :cantidad_registros, @cantidad_registros %>
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

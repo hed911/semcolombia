@@ -1,0 +1,122 @@
+<%= form_tag(create_extended_institucion_usuario_path, method: "post",  :multipart => true, "data-ajax" => "false" ) do %>
+<div class="container">
+	<h1>Creacion Usuario Hospital <small><%= @hospital["nombre"] %></small></h1>
+
+	<ol class="breadcrumb">
+	  <li class="active"><%= link_to "Usuarios", all_institucion_usuarios_path %></li>
+	</ol>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:primer_nombre, "Primer Nombre:") %>
+			<div class="input">
+				<%= text_field_tag(:primer_nombre) %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:segundo_nombre, "Segundo Nombre:") %>
+			<div class="input">
+				<%= text_field_tag(:segundo_nombre) %>
+			</div>
+		</div>
+	</fieldset>
+
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:primer_apellido, "Primer Apellido:") %>
+			<div class="input">
+				<%= text_field_tag(:primer_apellido) %>
+			</div>
+		</div>
+	</fieldset>
+
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:segundo_apellido, "Segundo Apellido:") %>
+			<div class="input">
+				<%= text_field_tag(:segundo_apellido) %>
+			</div>
+		</div>
+	</fieldset>
+
+	<div class="row">
+		<div class="col-lg-3">
+			<%= label_tag(:telefono, "Telefono:") %>
+			</br>
+			<%= text_field_tag(:telefono) %>
+		</div>
+	</div>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:email, "Email:") %>
+			<div class="input">
+				<%= text_field_tag(:email) %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:password, "Contraseña:") %>
+			<div class="input">
+				<%= text_field_tag(:password, nil, :minlength => 8, class:"form-control") %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:password_again, "Repita su Contraseña:") %>
+			<div class="input">
+				<%= text_field_tag(:password_again, nil, :minlength => 8, class:"form-control") %>
+			</div>
+		</div>
+	</fieldset>
+
+	<%= submit_tag("Crear") %>
+
+</div>
+
+<% end %>
+
+
+<script type="text/javascript">
+
+	var email = new LiveValidation( "email", { validMessage: " ", wait: 500 } );
+	email.add( Validate.Presence,
+              { failureMessage: "Campo Requerido" } );
+	email.add( Validate.Email );
+
+	var primer_nombre = new LiveValidation( "primer_nombre", { validMessage: " ", wait: 500 } );
+	primer_nombre.add( Validate.Presence,
+              { failureMessage: "Campo Requerido" } );
+	primer_nombre.add( Validate.Length, { minimum: 3 } );
+	primer_nombre.add( Validate.Length, { maximun: 20 } );
+
+	var primer_apellido = new LiveValidation( "primer_apellido", { validMessage: " ", wait: 500 } );
+	primer_apellido.add( Validate.Presence,
+              { failureMessage: "Campo Requerido" } );
+	primer_apellido.add( Validate.Length, { minimum: 3 } );
+	primer_apellido.add( Validate.Length, { maximun: 20 } );
+
+	var segundo_nombre = new LiveValidation( "segundo_nombre", { validMessage: " ", wait: 500 } );
+	segundo_nombre.add( Validate.Length, { minimum: 3 } );
+	segundo_nombre.add( Validate.Length, { maximun: 20 } );
+
+	var segundo_apellido = new LiveValidation( "segundo_apellido", { validMessage: " ", wait: 500 } );
+	segundo_apellido.add( Validate.Length, { minimum: 3 } );
+	segundo_apellido.add( Validate.Length, { maximun: 20 } );
+
+	var password = new LiveValidation( "password", { validMessage: " ", wait: 500 } );
+	password.add( Validate.Presence,
+              { failureMessage: "Campo Requerido" } );
+	password.add( Validate.Length, { minimum: 6 } );
+	password.add( Validate.Length, { maximun: 40 } );
+
+</script>

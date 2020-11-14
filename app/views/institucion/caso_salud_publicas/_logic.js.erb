@@ -1,0 +1,416 @@
+function show_edit_caso(id){
+  $.get("/institucion/caso_salud_publicas/" + id + "/edit",
+    {
+    },function(result){
+      $("#detalle-caso").modal('hide');
+      setTimeout(function() {
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#edit-caso").modal('show');
+      }, 500);
+  }, "text");
+}
+
+function show_cerrar_caso(id){
+  $.get("/institucion/caso_salud_publicas/" + id + "/cerrar",
+    {
+    },function(result){
+      $("#detalle-caso").modal('hide');
+      setTimeout(function() {
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#cerrar-caso").modal('show');
+      }, 500);
+  }, "text");
+}
+
+function show_detalle_caso(id){
+  $.get("/institucion/caso_salud_publicas/" + id,
+    {
+    },function(result){
+      $('#modal').empty();
+      $('#modal').append($.parseHTML( result ));
+      $("#detalle-caso").modal('show');
+  }, "text");
+}
+
+function show_detalle_evento(id){
+  $.get("/institucion/eventos_ambulatorios/" + id,
+    {
+    },function(result){
+      $('#modal').empty();
+      $('#modal').append($.parseHTML( result ));
+      $("#detalle-evento").modal('show');
+  }, "text");
+}
+
+function show_seguimientos(id){
+  $.get("/institucion/caso_salud_publicas/" + id + "/seguimiento_casos",
+    {
+    },function(result){
+      $("#detalle-evento").modal('hide');
+      $("#detalle-caso").modal('hide');
+      setTimeout(function() {
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        var channel = pusher.subscribe("caso_" + id);
+      	channel.bind('owned', function(data) {
+      		if(data.id != user_id){
+      			alert("EL USUARIO " + data.nombre + " SE ENCUENTRA VISUALIZANDO ESTA PRESCRIPCION");
+      			$('#seguimientos').modal('hide');
+      		}
+        });
+        $.ajax({
+          url: '/institucion/caso_salud_publicas/' + id + '/owned',
+          type: 'PUT',
+          success: function(response) {
+
+          }
+        });
+        $("#seguimientos").modal('show');
+      }, 500);
+  }, "text");
+}
+
+function show_contactos(id){
+  $.get("/institucion/caso_salud_publicas/" + id + "/contactos",
+    {
+    },function(result){
+      $('#modal').empty();
+      $('#modal').append($.parseHTML( result ));
+      $("#contactos").modal('show');
+  }, "text");
+}
+
+function show_muestras(id){
+  $.get("/institucion/caso_salud_publicas/" + id + "/muestras",
+    {
+    },function(result){
+      $("#detalle-evento").modal('hide');
+      $("#detalle-caso").modal('hide');
+      setTimeout(function() {
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#muestras").modal('show');
+      }, 500);
+  }, "text");
+}
+
+function show_detalle_ingreso(id){
+  $.get("/institucion/ingresos/" + id,
+    {
+    },function(result){
+      $("#detalle-evento").modal('hide');
+      $("#detalle-caso").modal('hide');
+      setTimeout(function() {
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#detalle-ingreso").modal('show');
+      }, 500);
+  }, "text");
+}
+
+function load_new(){
+  $.get("/institucion/caso_salud_publicas/new",
+    {
+    },function(result){
+      $('#modal').empty();
+      $('#modal').append($.parseHTML( result ));
+      $("#departamentos_select").on("change", function() {
+        return $.ajax({
+          url: "/departamentos/" + $('#departamentos_select option:selected').val() + "/get_municipios",
+          type: "GET",
+          dataType: "script"
+        });
+      });
+      $("#municipios_select").on("change", function() {
+        return $.ajax({
+          url: "/municipios/" + $('#municipios_select option:selected').val() + "/get_barrios",
+          type: "GET",
+          dataType: "script"
+        });
+      });
+      $("#departamentos_contacto_uno_select").on("change", function() {
+        return $.ajax({
+          url: "/departamentos/" + $('#departamentos_contacto_uno_select option:selected').val() + "/get_municipios?component_id=municipios_contacto_uno_select",
+          type: "GET",
+          dataType: "script"
+        });
+      });
+      show_covid_fields();
+      init_validation();
+      $("#new-caso").modal('show');
+  }, "text");
+}
+
+function load_edit(id){
+  $.get("/institucion/caso_salud_publicas/" + id + "/edit",
+    {
+    },function(result){
+      $('#modal').empty();
+      $('#modal').append($.parseHTML( result ));
+      $("#departamentos_select").on("change", function() {
+        return $.ajax({
+          url: "/departamentos/" + $('#departamentos_select option:selected').val() + "/get_municipios",
+          type: "GET",
+          dataType: "script"
+        });
+      });
+      $("#municipios_select").on("change", function() {
+        return $.ajax({
+          url: "/municipios/" + $('#municipios_select option:selected').val() + "/get_barrios",
+          type: "GET",
+          dataType: "script"
+        });
+      });
+      $("#departamentos_contacto_uno_select").on("change", function() {
+        return $.ajax({
+          url: "/departamentos/" + $('#departamentos_contacto_uno_select option:selected').val() + "/get_municipios?component_id=municipios_contacto_uno_select",
+          type: "GET",
+          dataType: "script"
+        });
+      });
+      show_covid_fields();
+      init_validation();
+      $("#edit-caso").modal('show');
+  }, "text");
+}
+
+function show_covid_fields(){
+  $('.covid_confirmed').removeClass("invisible");
+  $('.covid_confirmed').addClass("visible");
+}
+
+function hide_covid_fields(){
+  $('.covid_confirmed').removeClass("visible");
+  $('.covid_confirmed').addClass("invisible");
+}
+
+function show_edit_ubicacion(id, flag){
+  var url = "/institucion/caso_salud_publicas/" + id + "/edit_ubicacion";
+  if(flag == true){
+    url = url + "?close=true";
+  }
+  $.get(url,
+    {
+    },function(result){
+      setTimeout(function() {
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#edit-ubicacion").modal('show');
+        init_mapa_interno();
+        $('#direccion,#barrio').on('change textInput input', function () {
+          search_implementation(this.value, false);
+        });
+        $('#edit-ubicacion').on('shown.bs.modal', function (e) {
+          setTimeout(function() {
+            mymap_interno.invalidateSize();
+
+            var latitude = $('#latitude').val();
+            var longitude = $('#longitude').val();
+            if(latitude != null && longitude != null){
+              if(marker_interno){
+                mymap_interno.removeLayer(marker_interno);
+              }
+              point = new L.LatLng(latitude, longitude);
+              marker_interno = L.marker(point, {draggable:'true'}).addTo(mymap_interno);
+              set_drag_event_v1();
+              mymap_interno.setView(point, 16);
+            }
+            if(latitude == "" && longitude == ""){
+              search_implementation($('#direccion').val(), false);
+            }
+          }, 10);
+        });
+
+      }, 500);
+  }, "text");
+}
+
+
+
+
+
+
+
+
+
+
+var mymap_interno = null;
+function init_mapa_interno(){
+  mymap_interno = L.map('map_interno').setView([<%= "#{current_city_point[0]}, #{current_city_point[1]}" %>], 16);
+  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: 'hedu911.22cnjci9', //'your.mapbox.project.id',
+    accessToken: 'pk.eyJ1IjoiaGVkdTkxMSIsImEiOiJjaXY5cTlwaWEwMGpoMnptODgzMjE4MDF3In0.lvUD1nWuzyTqt5KspZhHug'
+  }).addTo(mymap_interno);
+}
+
+function search_implementation(value, without_validation){
+  var val = value;
+  if (without_validation || val !== oldValueDireccion /*&& $('#barrio').val() != "" && $('#barrio').val() != null*/) {
+    oldValueDireccion = val;
+    search_address();
+  }
+}
+
+function search_address_v1(){
+  var current_uuid = last_uuid + "";
+  googleGeocodeProvider.GetLocations($('#municipio').val() + ' ' + $('#barrio').val() + ' ' + $('#direccion').val(), function ( data ) {
+    //console.log("EL ACTUAL ES:" + current_uuid + ", ULTIMO: " + last_uuid);
+    if(current_uuid != last_uuid){
+      //console.log("ups se descarto un punto");
+      return;
+    }
+    if(data.length > 0){
+      var latitude = data[0].Y;
+      var longitude = data[0].X;
+      if(marker_interno){
+        mymap_interno.removeLayer(marker_interno);
+      }
+      point = new L.LatLng(latitude, longitude);
+      marker_interno = L.marker(point, {draggable:'true'}).addTo(mymap_interno);
+      set_drag_event_v1();
+      mymap_interno.setView(point, 16);
+      $('#latitude').val(latitude);
+      $('#longitude').val(longitude);
+    }
+  });
+}
+
+var oldValueDireccion;
+var last_uuid = null;
+var googleGeocodeProvider = new L.GeoSearch.Provider.Google(),
+     addressText = '';
+var geocodeService = L.esri.Geocoding.geocodeService();
+var marker_interno = null;
+
+function search_address(){
+  last_uuid = new Date().getTime().toString();
+  $.post("/institucion/eventos_ambulatorios/geocode",
+    {
+      direccion:$('#direccion').val(),
+      uuid:last_uuid
+    },function(result){
+      result = JSON.parse(result);
+      var latitude = parseFloat(result.latitude);
+      var longitude = parseFloat(result.longitude);
+      //console.log("EL ULTIMO ES:" + last_uuid + ", OBTENIDO: " + result.uuid);
+      if(result.uuid != last_uuid)
+      {
+        //console.log("ups se descarto un punto");
+        return;
+      }
+      if(latitude == 0 || longitude == 0){
+        search_address_v1();
+        return
+      }
+
+      if(marker_interno){
+        mymap_interno.removeLayer(marker_interno);
+      }
+      point = new L.LatLng(latitude, longitude);
+      marker_interno = L.marker(point, {draggable:'true'}).addTo(mymap_interno);
+      set_drag_event_v1();
+      mymap_interno.setView(point, 16);
+      $('#latitude').val(latitude);
+      $('#longitude').val(longitude);
+  }, "text").fail(function(response) {
+    search_address_v1();
+  });
+}
+
+function set_drag_event_v1(){
+  if(marker_interno){
+    marker_interno.on('dragend', function (e) {
+      var latLng = e.target.getLatLng();
+      $('#latitude').val(latLng.lat);
+      $('#longitude').val(latLng.lng);
+      geocodeService.reverse().latlng(latLng).run(function(error, result) {
+        if(result.address.CountryCode == "COL" && result.address.City.toLowerCase() == $('#municipio').val().toLowerCase()){
+          if(!is_direccion_fixed()){
+            $('#direccion').val(result.address.Address);
+          }
+        }else{
+          alert("Direccion no valida, solo se aceptan direcciones dentro de la ciudad");
+          $('#direccion').val('');
+        }
+      });
+    });
+  }
+}
+
+function set_drag_event(){
+  if(marker_interno){
+    marker_interno.on('dragend', function (e) {
+      var latLng = e.target.getLatLng();
+      $('#latitude').val(latLng.lat);
+      $('#longitude').val(latLng.lng);
+      $.post("/institucion/eventos_ambulatorios/reverse_geocode",
+        {
+          latitude:latLng.lat,
+          longitude:latLng.lng,
+        },function(result){
+          result = JSON.parse(result);
+          if(!is_direccion_fixed()){
+            $('#direccion').val(result.address1);
+          }
+      }, "text");
+    });
+  }
+}
+
+function toggle_fixed_direccion(){
+  var class_name = $('#icon_direccion').attr('class');
+  if(class_name == 'fas fa-lock'){
+    $('#icon_direccion').removeClass();
+    $('#icon_direccion').addClass('fas fa-unlock');
+  }else{
+    $('#icon_direccion').removeClass();
+    $('#icon_direccion').addClass('fas fa-lock');
+  }
+}
+
+function is_direccion_fixed(){
+  return $('#icon_direccion').attr('class') == 'fas fa-lock';
+}
+
+function init_validation(){
+  $('#tipo_documento,#numero_documento').on('change textInput input', function () {
+    var tipo_documento = $('#tipo_documento').val();
+    var numero_documento = $('#numero_documento').val();
+    if($('#tipo_documento_saved').val() != "" && $('#numero_documento').val() != "" &&
+      tipo_documento == $('#tipo_documento_saved').val() && numero_documento == $('#numero_documento_saved').val()){
+      $('#ya_existe').addClass("d-none");
+      return
+    }
+    if(tipo_documento != "" && numero_documento != "" && numero_documento.length > 3){
+      $.get("/institucion/caso_salud_publicas/existe?tipo_documento=" + tipo_documento + "&numero_documento=" + numero_documento,
+        {
+        },function(result){
+          result = JSON.parse(result);
+          if(result.result){
+            $('#ya_existe').removeClass("d-none");
+            $('#ya_existe_institucion').html(result.institucion);
+            $('#caso_repetido_id').val(result.id);
+          }else{
+            $('#ya_existe').addClass("d-none");
+          }
+      }, "text");
+    }
+  });
+}
+
+function reasignar_ips(caso_salud_publica_id, institucion_id){
+  $.get("/institucion/caso_salud_publicas/" + caso_salud_publica_id + "/reasignar_ips?institucion_id=" + institucion_id,
+    {
+    },function(result){
+      $("#new-caso").modal('hide');
+      setTimeout(function() {
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#reasignar-ips").modal('show');
+      }, 500);
+  }, "text");
+}

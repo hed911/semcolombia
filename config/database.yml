@@ -1,0 +1,33 @@
+#DEVELOPMENT
+development:
+  adapter: postgis
+  encoding: unicode
+  database: "dfqluasn43hbv6"
+  host: "ec2-54-152-175-141.compute-1.amazonaws.com"
+  pool: 5
+  timeout: 5000
+  username: "kezjeaizwqbksu"
+  password: "bfcb4fb7066973cd9910a39a4d5bb4dacaab1387099935908826e9957900318f"
+  port: 5432
+
+test:
+  adapter: postgis
+  encoding: unicode
+  database: "dfqluasn43hbv6"
+  host: "ec2-54-152-175-141.compute-1.amazonaws.com"
+  pool: 5
+  timeout: 5000
+  username: "kezjeaizwqbksu"
+  password: "bfcb4fb7066973cd9910a39a4d5bb4dacaab1387099935908826e9957900318f"
+  port: 5432
+
+production:
+  adapter: postgis
+  encoding: unicode
+  database: "dfqluasn43hbv6"
+  host: "ec2-54-152-175-141.compute-1.amazonaws.com"
+  pool: 5
+  timeout: 5000
+  username: "kezjeaizwqbksu"
+  password: "bfcb4fb7066973cd9910a39a4d5bb4dacaab1387099935908826e9957900318f"
+  port: 5432

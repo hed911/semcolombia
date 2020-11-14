@@ -1,0 +1,69 @@
+function show_muestras(id){
+  $.get("/entidad_prestadora/caso_salud_publicas/" + id + "/muestras",
+    {
+    },function(result){
+      $("#detalle-evento").modal('hide');
+      $("#detalle-caso").modal('hide');
+      setTimeout(function() {
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#muestras").modal('show');
+      }, 500);
+  }, "text");
+}
+
+function cerrar_muestra(caso_salud_publica_id, id){
+  $.get("/entidad_prestadora/caso_salud_publicas/" + caso_salud_publica_id + "/muestras/" + id + "/cerrar",
+    {
+    },function(result){
+      $("#muestras").modal('hide');
+      setTimeout(function() {
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#cerrar-muestra").modal('show');
+      }, 500);
+  }, "text");
+}
+
+function show_detalle_caso(id){
+  $.get("/entidad_prestadora/caso_salud_publicas/" + id,
+    {
+    },function(result){
+      $('#modal').empty();
+      $('#modal').append($.parseHTML( result ));
+      $("#detalle-caso").modal('show');
+  }, "text");
+}
+
+function show_detalle_muestra(caso_salud_publica_id, id){
+  $.get("/entidad_prestadora/caso_salud_publicas/" + caso_salud_publica_id + "/muestras/" + id,
+    {
+    },function(result){
+      $("#muestras").modal('hide');
+      setTimeout(function() {
+        $('#modal').empty();
+        $('#modal').append($.parseHTML( result ));
+        $("#detalle-muestra").modal('show');
+      }, 500);
+  }, "text");
+}
+
+function show_recibir_muestra(id){
+  $.get("/entidad_prestadora/tests/" + id + "/recibir",
+    {
+    },function(result){
+      $('#modal').empty();
+      $('#modal').append($.parseHTML( result ));
+      $("#recibir-muestra").modal('show');
+  }, "text");
+}
+
+function show_despachar_muestra(id){
+  $.get("/entidad_prestadora/tests/" + id + "/despachar",
+    {
+    },function(result){
+      $('#modal').empty();
+      $('#modal').append($.parseHTML( result ));
+      $("#despachar-muestra").modal('show');
+  }, "text");
+}

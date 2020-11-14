@@ -1,0 +1,81 @@
+<div class="modal fade" id="modal-edit" tabindex="-1" role="dialog" aria-labelledby="add-edit-Label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title text-center" id="add-table-Label">Actualizar Urgencias <%= @institucion.nombre %></h4>
+      </div>
+      <div class="modal-body">
+        <%= form_tag(historial_urgencia_path(@institucion.id), method: "patch",  :multipart => true, "data-ajax" => "false") do %>
+          <div id="panel_pintas_sangre" class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title"></h3>
+            </div>
+            <div class="panel-body">
+
+              <div class="row">
+
+                <div class="col-lg-3">
+        					<%= label_tag(:heridos_arma_fuego, "Heridos arma de fuego:") %>
+        					</br>
+        					<%= text_field_tag(:heridos_arma_fuego, @historial.nil? ? nil : @historial.heridos_arma_fuego, class:'bind-keyup-event', size: 3) %>
+        				</div>
+
+                <div class="col-lg-3">
+        					<%= label_tag(:heridos_arma_blanca, "Heridos arma blanca:") %>
+        					</br>
+        					<%= text_field_tag(:heridos_arma_blanca, @historial.nil? ? nil : @historial.heridos_arma_blanca, class:'bind-keyup-event', size: 3) %>
+        				</div>
+
+                <div class="col-lg-3">
+        					<%= label_tag(:heridos_arma_contundente, "Heridos arma contundente:") %>
+        					</br>
+        					<%= text_field_tag(:heridos_arma_contundente, @historial.nil? ? nil : @historial.heridos_arma_contundente, class:'bind-keyup-event', size: 3) %>
+        				</div>
+
+                <div class="col-lg-3">
+        					<%= label_tag(:heridos_accidente_transito, "Heridos en accidente de transito:") %>
+        					</br>
+        					<%= text_field_tag(:heridos_accidente_transito, @historial.nil? ? nil : @historial.heridos_accidente_transito, class:'bind-keyup-event', size: 3) %>
+        				</div>
+
+                <div class="col-lg-3">
+        					<%= label_tag(:urgencias_totales_atendidas, "Urgencias totales atendidas:") %>
+        					</br>
+        					<%= text_field_tag(:urgencias_totales_atendidas, @historial.nil? ? nil : @historial.urgencias_totales_atendidas, class:'bind-keyup-event', size: 3) %>
+        				</div>
+
+                <div class="col-lg-3">
+        					<%= label_tag(:pacientes_observacion, "Pacientes en observacion:") %>
+        					</br>
+        					<%= text_field_tag(:pacientes_observacion, @historial.nil? ? nil : @historial.pacientes_observacion, class:'bind-keyup-event', size: 3) %>
+        				</div>
+
+                <div class="col-lg-3">
+        					<%= label_tag(:cirugias_urgencias, "Cirugias de urgencia:") %>
+        					</br>
+        					<%= text_field_tag(:cirugias_urgencias, @historial.nil? ? nil : @historial.cirugias_urgencias, class:'bind-keyup-event', size: 3) %>
+        				</div>
+
+                <div class="col-lg-6">
+        					<%= label_tag(:fecha, "Fecha:") %>
+        					</br>
+        					<%= date_field_tag(:fecha, Date.today)%>
+        				</div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <%= submit_tag("Guardar Cambios", class: "btn btn-primary form-control") %>
+
+        <% end %>
+
+      </div>
+    </div>
+  </div>
+</div>

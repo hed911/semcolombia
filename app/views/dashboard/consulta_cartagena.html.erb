@@ -1,0 +1,118 @@
+
+<%= form_tag(do_consulta_cartagena_path, method: :post, :multipart => true, "data-ajax" => "false" ) do %>
+
+  <div class="container">
+    <div class="text-center">
+
+    	<%= image_tag("logo.png", width:"50%") %>
+      <div class="container card-group">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Consulta de resultados</h3>
+            <% if @muestras.any? -%>
+              <div class="table-responsive">
+                <table id="table-result" class="table table-hover tablesorter">
+                  <thead>
+                    <tr>
+                      <th data-sort="string">Tipo</th>
+                      <th data-sort="string">Estado</th>
+                      <th data-sort="string">Nombre</th>
+                      <th data-sort="string"># Documento</th>
+                      <th data-sort="string">EAPB</th>
+                      <th data-sort="string">IPS</th>
+                      <th data-sort="string">Servicio</th>
+                      <th data-sort="string">Laboratorio</th>
+                      <th data-sort="string">Resultado</th>
+                      <th data-sort="string">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody id="table-result-body">
+                    <% @muestras.each do |muestra| -%>
+                      <% caso = muestra.caso_salud_publica -%>
+                      <% next if caso.nil? -%>
+                      <tr class='<%= muestra.table_value%>'>
+                        <td><%= muestra.tipo_value %></td>
+                        <td><%= muestra.estado_value %></td>
+                        <td><%= caso.nombre_completo.upcase %></td>
+                        <td><%= caso.tipo_documento %>-<%= caso.numero_documento %></td>
+                        <td><%= caso.entidad_prestadora.nombre if caso.entidad_prestadora %></td>
+                        <td><%= caso.institucion.nombre if caso.institucion %></td>
+                        <td><%= caso.servicio_value %></td>
+                        <td><%= muestra.laboratorio.nombre if muestra.laboratorio %></td>
+                        <td><%= muestra.resultado_value %></td>
+                        <td>
+                          <% if muestra.archivos.any? -%>
+                            <%= link_to archivo_path(muestra.archivos.first.uuid), :method => :get, :class => "btn btn-primary btn-xs", :title => "Descargar" do %>
+                              <i class="fas fa-file-download"></i> Descargar
+                            <% end %>
+                          <% end %>
+                        </td>
+                      </tr>
+                    <% end -%>
+                  </tbody>
+                </table>
+              </div>
+            <% elsif @buscando_resultados && !@muestras.any? -%>
+              </br>
+              </br>
+              </br>
+              <h4>No se encontraron registros con los datos suministrados.</h4>
+            <% end -%>
+            <% if @error -%>
+              </br>
+              </br>
+              </br>
+              <h4><%= @error %></h4>
+            <% end -%>
+            <div>
+              <div class="text-left">
+                <div class="form-group">
+                  <label for="tipo_documento">Tipo de documento</label>
+                  <select id="tipo_documento" required name="tipo_documento" class="form-control">
+                    <option disabled selected value>Seleccione una opción</option>
+                    <option <%= "selected" if params[:tipo_documento] == "CC" %> value="CC">Cédula de Ciudadania</option>
+                    <option <%= "selected" if params[:tipo_documento] == "RC" %> value="RC">Registro Civil</option>
+                    <option <%= "selected" if params[:tipo_documento] == "TI" %> value="TI">Tarjeta de Identidad</option>
+                    <option <%= "selected" if params[:tipo_documento] == "CE" %> value="CE">Cédula de Extranjeria</option>
+                    <option <%= "selected" if params[:tipo_documento] == "PA" %> value="PA">Pasaporte</option>
+                    <option <%= "selected" if params[:tipo_documento] == "NV" %> value="NV">Nacido Vivo</option>
+                    <option <%= "selected" if params[:tipo_documento] == "CD" %> value="CD">Carnet Diplomatico</option>
+                    <option <%= "selected" if params[:tipo_documento] == "SC" %> value="SC">Salvoconducto de Permanencia</option>
+                    <option <%= "selected" if params[:tipo_documento] == "PR" %> value="PR">Pasaporte de la ONU</option>
+                    <option <%= "selected" if params[:tipo_documento] == "AS" %> value="AS">Adulto sin Identificación</option>
+                    <option <%= "selected" if params[:tipo_documento] == "MS" %> value="MS">Menor sin Identificación</option>
+                    <option <%= "selected" if params[:tipo_documento] == "PE" %> value="PE">Permiso Especial</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="numero_documento">Número de documento</label>
+                  <%= text_field_tag(:numero_documento, params[:numero_documento], placeholder:"", required:true, class:'form-control') %>
+                </div>
+                <% if false -%>
+                  <div class="form-group">
+                    <label for="numero_documento">Fecha de nacimiento</label>
+                    <%= date_field_tag(:fecha_nacimiento, params[:fecha_nacimiento], placeholder:"", required:true, class:'form-control') %>
+                  </div>
+                <% end -%>
+              </div>
+            </div>
+
+            <div>
+              <% if Rails.env.production? -%>
+                <%= recaptcha_tags %>
+              <% end -%>
+              <%= submit_tag("Buscar", class:"btn btn-primary btn-lg") %>
+              <% if @buscando_resultados -%>
+                <button type="button" class="btn btn-danger btn-lg" onclick="window.location.href = '/consulta_cartagena';">
+              		Limpiar Consulta
+              	</button>
+              <% end -%>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+<% end -%>

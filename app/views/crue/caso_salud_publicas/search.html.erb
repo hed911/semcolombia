@@ -1,0 +1,132 @@
+<% @registros.each do |registro| -%>
+  <tr class='<%= registro['caso_table_value'] %>'>
+    <td class="text-right">
+      <%= registro['caso_numero_oficial'] %>
+    </td>
+    <td class="text-right">
+      <%= registro['caso_id'] %>
+    </td>
+    <td><%= registro['caso_nombre_completo'].upcase %></td>
+    <td><%= registro['caso_nivel'] %></td>
+    <td><%= registro['caso_cantidad_contactos'] %></td>
+    <td><%= registro['caso_cantidad_muestras'] %></td>
+    <td><%= registro['caso_fecha_investigacion'] %></td>
+    <td><%= registro['caso_fecha_actualizacion_iec'] %></td>
+    <td><%= registro['caso_edad_value'] %> <%= registro['caso_unidad_medida_value'] %></td>
+    <td><%= registro['caso_tipo_documento'] %>-<%= registro['caso_numero_documento'] %></td>
+    <td><%= registro['caso_sexo_value'] %></td>
+    <td><%= registro['entidad_prestadora_nombre'] %></td>
+    <td><%= registro['caso_servicio_value'] %></td>
+    <td><%= registro['caso_servicio_crue_value'] %></td>
+    <td><%= registro['caso_origen_value'] %></td>
+    <td><%= registro['usuario_nombre_completo'] %></td>
+    <td><%= registro['caso_estado_value'] %></td>
+    <td><%= registro['caso_estado_seguimiento_value'] %></td>
+    <td><%= registro['caso_fallecido_value'] %></td>
+    <td><%= registro['caso_iec_realizado_value'] %></td>
+    <td>
+      <% if @registros.count == 1 -%>
+        <div class="btn-group dropleft">
+          <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Opciones 1
+          </button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="#" onclick="show_detalle_caso(<%= registro['caso_id'] %>);"><i class="fas fa-info-circle"></i> Detalle</a>
+            <% if !current_usuario.roles_array.include?(ROLES[5]) && !current_usuario.roles_array.include?(ROLES[7]) -%>
+              <a class="dropdown-item" href="#" onclick="load_edit(<%= registro['caso_id'] %>);"><i class="fas fa-edit"></i> Editar</a>
+            <% end -%>
+            <a class="dropdown-item" href="#" onclick="load_edit_iec(<%= registro['caso_id'] %>);"><i class="fas fa-edit"></i> IEC</a>
+            <%= link_to pdf_iec_crue_caso_salud_publica_path(registro['caso_id']), :method => :get, target:"_blank", :class => "dropdown-item", :title => "Exportar IEC", :data => { } do %>
+               <i class="far fa-file-pdf"></i> Exportar IEC
+            <% end %>
+            <%= link_to download_iec_v2_crue_caso_salud_publica_path(registro['caso_id']), :method => :get, target:"_blank", :class => "dropdown-item", :title => "Exportar IEC", :data => { } do %>
+               <i class="fas fa-file-csv"></i> Exportar IEC
+            <% end %>
+            <a class="dropdown-item" href="#" onclick="load_edit_crue(<%= registro['caso_id'] %>);"><i class="fas fa-edit"></i> Editar CRUE</a>
+          </div>
+        </div>
+
+        <div class="btn-group dropleft">
+          <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Opciones 2
+          </button>
+          <div class="dropdown-menu">
+            <% if !current_usuario.roles_array.include?(ROLES[5]) && !current_usuario.roles_array.include?(ROLES[7]) -%>
+              <a class="dropdown-item" href="#" onclick="show_edit_ubicacion(<%= registro['caso_id'] %>);"><i class="fas fa-map-marker-alt"></i> Editar ubicacion</a>
+            <% end -%>
+            <a class="dropdown-item" href="#" onclick="show_contactos(<%= registro['caso_id'] %>);"><i class="fas fa-users"></i> Editar contactos</a>
+            
+            <a class="dropdown-item" href="#" onclick="show_seguimientos(<%= registro['caso_id'] %>);"><i class="fas fa-list-ol"></i> Seguimiento</a>
+            <% if true -%>
+              <a class="dropdown-item" href="#" onclick="show_muestras(<%= registro['caso_id'] %>);"><i class="fas fa-vial"></i> Muestras</a>
+            <% end -%>
+          </div>
+        </div>
+
+        <div class="btn-group dropleft">
+          <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Opciones 3
+          </button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="#" onclick="load_gestacion(<%= registro['caso_id'] %>);"><i class="fa fa-child"></i> Encuesta gestación</a>
+            <% if !current_usuario.roles_array.include?(ROLES[5]) && !current_usuario.roles_array.include?(ROLES[7]) -%>
+              <% if registro['caso_estado'] == ESTADO_SP_VIGENTE -%>
+                <a class="dropdown-item" href="#" onclick="show_cerrar_caso(<%= registro['caso_id'] %>);"><i class="fas fa-door-open"></i> Cerrar caso</a>
+              <% end -%>
+              <div class="dropdown-divider"></div>
+              <% if current_usuario.roles_array.include?(ROLES[6]) -%>
+                <%= link_to crue_caso_salud_publica_path(registro['caso_id']), :method => :delete, :remote => true, :class => "dropdown-item", style:"color:red;", :title => "Borrar", :data => { :confirm => 'Estas seguro? Este cambio no se puede revertir' } do %>
+                   <i class="fas fa-trash-alt"></i> Borrar
+                <% end %>
+              <% end %>
+            <% end -%>
+          </div>
+        </div>
+      <% else -%>
+        <div class="btn-group dropleft">
+          <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Opciones
+          </button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="#" onclick="show_detalle_caso(<%= registro['caso_id'] %>);"><i class="fas fa-info-circle"></i> Detalle</a>
+            <% if !current_usuario.roles_array.include?(ROLES[5]) && !current_usuario.roles_array.include?(ROLES[7]) -%>
+              <a class="dropdown-item" href="#" onclick="load_edit(<%= registro['caso_id'] %>);"><i class="fas fa-edit"></i> Editar</a>
+            <% end -%>
+            <a class="dropdown-item" href="#" onclick="load_edit_iec(<%= registro['caso_id'] %>);"><i class="fas fa-edit"></i> IEC</a>
+            <%= link_to pdf_iec_crue_caso_salud_publica_path(registro['caso_id']), :method => :get, target:"_blank", :class => "dropdown-item", :title => "Exportar IEC", :data => { } do %>
+               <i class="far fa-file-pdf"></i> Exportar IEC
+            <% end %>
+            <%= link_to download_iec_v2_crue_caso_salud_publica_path(registro['caso_id']), :method => :get, target:"_blank", :class => "dropdown-item", :title => "Exportar IEC", :data => { } do %>
+               <i class="fas fa-file-csv"></i> Exportar IEC
+            <% end %>
+            <a class="dropdown-item" href="#" onclick="load_edit_crue(<%= registro['caso_id'] %>);"><i class="fas fa-edit"></i> Editar CRUE</a>
+            <% if !current_usuario.roles_array.include?(ROLES[5]) && !current_usuario.roles_array.include?(ROLES[7]) -%>
+              <a class="dropdown-item" href="#" onclick="show_edit_ubicacion(<%= registro['caso_id'] %>);"><i class="fas fa-map-marker-alt"></i> Editar ubicacion</a>
+            <% end -%>
+              <a class="dropdown-item" href="#" onclick="show_contactos(<%= registro['caso_id'] %>);"><i class="fas fa-users"></i> Editar contactos</a>
+              <a class="dropdown-item" href="#" onclick="show_seguimientos(<%= registro['caso_id'] %>);"><i class="fas fa-list-ol"></i> Seguimiento</a>
+            <% if true -%>
+              <a class="dropdown-item" href="#" onclick="show_muestras(<%= registro['caso_id'] %>);"><i class="fas fa-vial"></i> Muestras</a>
+            <% end -%>
+            <a class="dropdown-item" href="#" onclick="load_gestacion(<%= registro['caso_id'] %>);"><i class="fa fa-child"></i> Encuesta gestación</a>
+            <% if !current_usuario.roles_array.include?(ROLES[5]) && !current_usuario.roles_array.include?(ROLES[7]) -%>
+              <% if registro['caso_estado'] == ESTADO_SP_VIGENTE -%>
+                <a class="dropdown-item" href="#" onclick="show_cerrar_caso(<%= registro['caso_id'] %>);"><i class="fas fa-door-open"></i> Cerrar caso</a>
+              <% end -%>
+              <div class="dropdown-divider"></div>
+              <% if current_usuario.roles_array.include?(ROLES[6]) -%>
+                <%= link_to crue_caso_salud_publica_path(registro['caso_id']), :method => :delete, :remote => true, :class => "dropdown-item", style:"color:red;", :title => "Borrar", :data => { :confirm => 'Estas seguro? Este cambio no se puede revertir' } do %>
+                   <i class="fas fa-trash-alt"></i> Borrar
+                <% end %>
+              <% end %>
+            <% end -%>
+          </div>
+        </div>
+      <% end -%>
+
+
+    </td>
+  </tr>
+<% end -%>
+
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

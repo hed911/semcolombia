@@ -1,0 +1,55 @@
+<% @casos.each do |caso| -%>
+  <tr class='<%= caso.table_value %>'>
+    <td class="text-right">
+      <%= "#{caso.numero_oficial}" %>
+    </td>
+    <td class="text-right">
+      <%= "#{caso.id}" %>
+    </td>
+    <td><%= caso.nombre_completo.upcase %></td>
+    <td><%= caso.nivel + 1 if caso.nivel %></td>
+    <td><%= caso.contactos.count %></td>
+    <td><%= caso.muestras.count %></td>
+    <td><%= caso.created_at.strftime('%m/%d/%Y %l:%M %p') if caso.created_at %></td>
+    <td><%= caso.edad_value %> <%= caso.unidad_medida_value %></td>
+    <td><%= caso.tipo_documento %>-<%= caso.numero_documento %></td>
+    <td><%= caso.sexo_value %></td>
+    <td><%= caso.entidad_prestadora.nombre if caso.entidad_prestadora %></td>
+    <td><%= caso.servicio_value %></td>
+    <td><%= caso.servicio_crue_value %></td>
+    <td><%= caso.origen_value %></td>
+    <td><%= caso.usuario.nombre_completo if caso.usuario %></td>
+    <td><%= caso.estado_value %></td>
+    <td><%= caso.estado_seguimiento_value %></td>
+    <td><%= caso.fallecido ? "FALLECIDO" : "VIVO" %></td>
+    <td><%= caso.responsable_investigacion ? "REALIZADO" : "PENDIENTE" %></td>
+    <td>
+      <div class="btn-group dropleft">
+        <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Opciones
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#" onclick="show_detalle_caso(<%= caso.id %>);"><i class="fas fa-info-circle"></i> Detalle</a>
+          <% if true -%>
+            <a class="dropdown-item" href="#" onclick="load_edit(<%= caso.id %>);"><i class="fas fa-edit"></i> Editar</a>
+          <% end -%>
+          <a class="dropdown-item" href="#" onclick="show_edit_ubicacion(<%= caso.id %>);"><i class="fas fa-map-marker-alt"></i> Editar ubicacion</a>
+          <a class="dropdown-item" href="#" onclick="show_contactos(<%= caso.id %>);"><i class="fas fa-users"></i> Editar contactos</a>
+          <a class="dropdown-item" href="#" onclick="load_edit_crue(<%= caso.id %>);"><i class="fas fa-edit"></i> Editar CRUE</a>
+          <a class="dropdown-item" href="#" onclick="show_seguimientos(<%= caso.id %>);"><i class="fas fa-list-ol"></i> Seguimiento</a>
+          <% if false %>
+            <a class="dropdown-item" href="#" onclick="show_muestras(<%= caso.id %>);"><i class="fas fa-vial"></i> Muestras</a>
+          <% end %>
+          <% if false %>
+            <div class="dropdown-divider"></div>
+            <%= link_to entidad_prestadora_caso_salud_publica_path(caso.id), :method => :delete, :remote => true, :class => "dropdown-item", style:"color:red;", :title => "Borrar", :data => { :confirm => 'Estas seguro? Este cambio no se puede revertir' } do %>
+               <i class="fas fa-trash-alt"></i> Borrar
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </td>
+  </tr>
+<% end -%>
+
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

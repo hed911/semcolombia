@@ -1,0 +1,46 @@
+<% @casos.each do |caso| -%>
+  <% first_date = caso.seguimiento_casos.where(crue:false).order('created_at ASC').first.created_at.to_date if caso.seguimiento_casos.where(crue:false).any? -%>
+  <% last_date = caso.seguimiento_casos.where(crue:false).order('created_at DESC').first.created_at.to_date if caso.seguimiento_casos.where(crue:false).any? -%>
+  <tr class='<%= caso.table_value_llamada_pendiente(current_usuario) %>'>
+    <td class="text-right">
+      <%= "#{caso.numero_oficial}" %>
+    </td>
+    <td class="text-right">
+      <%= "#{caso.id}" %>
+    </td>
+    <td><%= caso.nombre_completo.upcase %></td>
+    <td><%= caso.nivel + 1 if caso.nivel %></td>
+    <td><%= caso.contactos.count %></td>
+    <td><%= caso.muestras.count %></td>
+    <td><%= caso.created_at.strftime('%m/%d/%Y %l:%M %p') if caso.created_at %></td>
+    <td><%= caso.edad_value %> <%= caso.unidad_medida_value %></td>
+    <td><%= caso.tipo_documento %>-<%= caso.numero_documento %></td>
+    <td><%= caso.sexo_value %></td>
+    <td><%= caso.entidad_prestadora.nombre if caso.entidad_prestadora %></td>
+    <td><%= caso.servicio_value %></td>
+    <td><%= caso.servicio_crue_value %></td>
+    <td><%= caso.origen_value %></td>
+    <td><%= caso.usuario.nombre_completo if caso.usuario %></td>
+    <td><%= caso.usuario_seguimiento ? caso.usuario_seguimiento.nombre_completo : nil %></td>
+    <td><%= caso.estado_value %></td>
+    <td><%= caso.estado_seguimiento_value %></td>
+    <td><%= caso.fallecido ? "FALLECIDO" : "VIVO" %></td>
+
+    <td>
+      <div class="btn-group dropleft">
+        <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Opciones
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#" onclick="show_detalle_caso(<%= caso.id %>);"><i class="fas fa-info-circle"></i> Detalle</a>
+          <a class="dropdown-item" href="#" onclick="show_seguimientos(<%= caso.id %>);"><i class="fas fa-list-ol"></i> Seguimiento</a>
+          <% if caso.estado == ESTADO_SP_VIGENTE -%>
+            <a class="dropdown-item" href="#" onclick="show_cerrar_caso(<%= caso.id %>);"><i class="fas fa-door-open"></i> Cerrar caso</a>
+          <% end -%>
+        </div>
+      </div>
+    </td>
+  </tr>
+<% end -%>
+
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

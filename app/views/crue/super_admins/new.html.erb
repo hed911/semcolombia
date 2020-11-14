@@ -1,0 +1,156 @@
+<%= form_tag(crue_super_admins_path, method: "post",  :multipart => true, "data-ajax" => "false" ) do %>
+<div class="container">
+	<h1>Creacion Admin</h1>
+
+	<ol class="breadcrumb">
+	  <li class="active"><%= link_to "Usuarios", crue_super_admins_path %></li>
+	</ol>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:primer_nombre, "Primer Nombre:") %>
+			<div class="input">
+				<%= text_field_tag(:primer_nombre, nil, :required => true, :class => 'form-control') %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:segundo_nombre, "Segundo Nombre:") %>
+			<div class="input">
+				<%= text_field_tag(:segundo_nombre, nil, :class => 'form-control') %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:primer_apellido, "Primer Apellido:") %>
+			<div class="input">
+				<%= text_field_tag(:primer_apellido, nil, :required => true, :class => 'form-control') %>
+			</div>
+		</div>
+	</fieldset>
+
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:segundo_apellido, "Segundo Apellido:") %>
+			<div class="input">
+				<%= text_field_tag(:segundo_apellido, nil, :required => true, :class => 'form-control') %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:telefono, "Telefono:") %>
+			<div class="input">
+				<%= text_field_tag(:telefono, nil, :class => 'form-control') %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:celular, "Celular:") %>
+			<div class="input">
+				<%= text_field_tag(:celular, nil, :class => 'form-control') %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:email, "Email:") %>
+			<div class="input">
+				<%= email_field_tag(:email, nil, :required => true, :class => 'form-control') %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:identificacion, "Identificacion:") %>
+			<div class="input">
+				<%= text_field_tag(:identificacion, nil, :class => 'form-control') %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:cargo, "Cargo:") %>
+			<div class="input">
+				<%= text_field_tag(:cargo, nil, :class => 'form-control') %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:fecha_vigencia, "Fecha de Vigencia:") %>
+			<div class="input">
+				<%= date_field_tag(:fecha_vigencia, nil, :class => 'form-control') %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:password_dinamica, "Password Dinamica:") %>
+			<div class="input">
+				<%= check_box_tag :password_dinamica, 'true', true, onchange:"passwordDinamicaChanged();", class:'form-control' %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset id="password_container">
+		<div class="clearfix">
+			<%= label_tag(:password, "Contraseña:") %>
+			<div class="input">
+				<%= password_field_tag(:password, nil, :minlength => 8, :required => true, :class => 'form-control') %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset id="repeat_password_container">
+		<div class="clearfix">
+			<%= label_tag(:repeat_password, "Repita Contraseña:") %>
+			<div class="input">
+				<%= password_field_tag(:repeat_password, nil, :minlength => 8, :required => true, :class => 'form-control') %>
+			</div>
+		</div>
+	</fieldset>
+
+	<%= submit_tag("Crear") %>
+
+</div>
+
+<% end %>
+
+
+<script type="text/javascript">
+
+	$("#password_container").hide();
+	$("#repeat_password_container").hide();
+	$("#password").removeAttr('required');
+	$("#repeat_password").removeAttr('required');
+
+	function passwordDinamicaChanged(){
+		if(!$('#password_dinamica').is(":checked")){
+			$("#password_container").show();
+			$("#repeat_password_container").show();
+			$("#password").attr('required','');
+			$("#repeat_password").attr('required','');
+		}
+		else{
+			$("#password_container").hide();
+			$("#repeat_password_container").hide();
+			$("#password").removeAttr('required');
+			$("#repeat_password").removeAttr('required');
+		}
+	}
+
+</script>

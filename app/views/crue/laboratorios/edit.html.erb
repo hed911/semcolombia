@@ -1,0 +1,56 @@
+<%= form_tag(crue_laboratorio_path, method: "patch",  :multipart => true, "data-ajax" => "false" ) do %>
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title"></h3>
+	</div>
+	<div class="panel-body">
+		<h1>Edicion Usuario</h1>
+
+		<ol class="breadcrumb">
+		  <li class="active"><%= link_to "Usuarios", crue_laboratorios_path %></li>
+		</ol>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:nombre, "Nombre:") %>
+				</br>
+				<%= text_field_tag(:nombre, @laboratorio.nombre, required:true) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:direccion, "Direccion:") %>
+				</br>
+				<%= text_field_tag(:direccion, @laboratorio.direccion) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:telefono, "Telefono:") %>
+				</br>
+				<%= text_field_tag(:telefono, @laboratorio.telefono) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:nit, "NIT:") %>
+				</br>
+				<%= text_field_tag(:nit, @laboratorio.nit, :required => false) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<%= label_tag(:coordinacion, "Rol coordinacion:") %>
+				</br>
+				<%= check_box_tag :coordinacion, '1', @laboratorio.coordinacion, class:'form-control' %>
+			</div>
+		</div>
+
+		<%= submit_tag("Guardar Cambios") %>
+	</div>
+</div>
+<% end %>

@@ -1,0 +1,38 @@
+<% if @muestras.any? -%>
+  <% @muestras.each do |muestra| -%>
+    <% caso = muestra.caso_salud_publica -%>
+    <tr class='<%= muestra.table_value %>'>
+      <td class="text-right">
+        <%= "#{caso.numero_oficial}" %>
+      </td>
+      <td class="text-right">
+        <%= "#{caso.id}" %>
+      </td>
+      <td><%= caso.nombre_completo.upcase %></td>
+      <td><%= caso.edad_value %> <%= caso.unidad_medida_value %></td>
+      <td><%= caso.tipo_documento %>-<%= caso.numero_documento %></td>
+      <td><%= caso.entidad_prestadora.nombre if caso.entidad_prestadora %></td>
+      <td><%= caso.institucion.nombre if caso.institucion %></td>
+      <td><%= muestra.laboratorio.nombre if muestra.laboratorio %></td>
+      <td><%= muestra.resultado_value %></td>
+      <td><%= muestra.fecha.strftime('%I:%M:%S%p %d-%m-%Y') if muestra.fecha %></td>
+      <td><%= muestra.fecha_realizacion.strftime('%I:%M:%S%p %d-%m-%Y') if muestra.fecha_realizacion %></td>
+      <td>
+        <% if muestra.archivos.any? -%>
+          <%= link_to archivo_path(muestra.archivos.first.uuid), :method => :get, :class => "btn btn-primary", :title => "Descargar" do %>
+            <i class="fas fa-file-download"></i> Descargar
+          <% end %>
+        <% elsif muestra.resultado == 2 || muestra.resultado == 3 %>
+          <%= link_to generate_and_download_archivo_path(muestra.id), :method => :get, :class => "btn btn-warning btn-lg #{'disabled' if !PDF_ENABLED}", :title => "Descargar" do %>
+            <i class="fas fa-file-download"></i> Descargar
+          <% end %> 
+        <% end %>
+      </td>
+    </tr>
+  <% end -%>
+<% else -%>
+  <p>No se encontraron registros</p>
+<% end -%>
+
+<%= hidden_field_tag :cantidad_registros, @cantidad_registros %>
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

@@ -1,0 +1,12 @@
+{
+  "name": "Crue Quilla",
+    "short_name": "crue-quilla",
+    "start_url": "/",
+    "icons": [
+    {
+      "src": "https://images-na.ssl-images-amazon.com/images/G/01/payments-portal/r1/issuer-images/sprite-map._CB332026835_.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+    ]
+}

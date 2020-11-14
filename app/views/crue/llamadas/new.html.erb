@@ -1,0 +1,121 @@
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL AGREGAR EAPB =-=-=-=-=-=-=-=-=-=-========== -->
+	<div class="modal fade" id="new-llamada" tabindex="-1" role="dialog" aria-labelledby="add-edit-Label" aria-hidden="true">
+	  <div class="modal-dialog modal-lg">
+	    <div class="modal-content">
+	      <div class="modal-header">
+					<h3 class='col-12 modal-title text-center'>
+		        Datos llamada
+		        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+		          <span aria-hidden='true'>&times;</span>
+		        </button>
+		      </h3>
+	      </div>
+	      <div class="modal-body">
+	        <%= form_tag(crue_llamadas_path, method: "post", :remote => true, :multipart => true, "data-ajax" => "false" ) do %>
+
+	          <div class="row">
+
+							<div class="container card-group">
+			          <div class="card">
+			            <div class="card-body">
+			              <h5 class="card-title">Datos del llamante</h5>
+			              <div>
+											<div class="form-group">
+			                  <p class="control-label">Intencionalidad</p>
+			                  <%= select_tag :intension_id, options_for_select(@intensions.collect{ |intension| ["#{"*" if intension.crea_casos}#{intension.nombre}", intension.id] }, nil), { include_blank: "Escoja una opcion", id: 'intension_select', class:"form-control", required:true, disabled:false } %>
+			                </div>
+											<div class="form-group row">
+												<div class="col-sm-6">
+													<label for="tipo_documento">Tipo de documento</label>
+													<select required id="tipo_documento" name="tipo_documento" class="form-control">
+														<option value="CC">Cédula de Ciudadania</option>
+														<option value="RC">Registro Civil</option>
+														<option value="TI">Tarjeta de Identidad</option>
+														<option value="CE">Cédula de Extranjeria</option>
+														<option value="PA">Pasaporte</option>
+														<option value="NV">Nacido Vivo</option>
+														<option value="CD">Carnet Diplomatico</option>
+														<option value="SC">Salvoconducto de Permanencia</option>
+														<option value="PR">Pasaporte de la ONU</option>
+														<option value="AS">Adulto sin Identificación</option>
+														<option value="MS">Menor sin Identificación</option>
+														<option value="PE">Permiso Especial</option>
+													</select>
+												</div>
+												<div class="col-sm-6">
+													<label for="numero_documento">Numero de documento</label>
+													<%= text_field_tag(:numero_documento, "", :required => true, :class =>"form-control") %>
+												</div>
+											</div>
+											<div class="form-group row">
+												<div class="col-sm-6">
+													<label for="primer_nombre">Primer nombre</label>
+													<%= text_field_tag(:primer_nombre, "", :required => true, :class =>"form-control") %>
+												</div>
+												<div class="col-sm-6">
+													<label for="segundo_nombre">Segundo nombre</label>
+													<%= text_field_tag(:segundo_nombre, "", :required => false, :class =>"form-control") %>
+												</div>
+											</div>
+											<div class="form-group row">
+												<div class="col-sm-6">
+													<label for="primer_apellido">Primer apellido</label>
+													<%= text_field_tag(:primer_apellido, "", :required => false, :class =>"form-control") %>
+												</div>
+												<div class="col-sm-6">
+													<label for="segundo_apellido">Segundo apellido</label>
+													<%= text_field_tag(:segundo_apellido, "", :required => false, :class =>"form-control") %>
+												</div>
+											</div>
+											<div class="form-group">
+			                  <p class="control-label">Email</p>
+			                  <%= email_field_tag(:email, nil, :required => false, :class =>"form-control") %>
+			                </div>
+											<div class="form-group row">
+												<div class="col-sm-6">
+													<label for="telefono_fijo">Telefono fijo</label>
+													<%= text_field_tag(:telefono_fijo, nil, :required => false, :class =>"form-control") %>
+												</div>
+												<div class="col-sm-6">
+													<label for="celular">Celular</label>
+													<%= text_field_tag(:celular, nil, :required => false, :class =>"form-control") %>
+												</div>
+											</div>
+											<div class="form-group row">
+												<div class="col-sm-6">
+													<label for="departamento_id">Departamento</label>
+													<%= select_tag "departamento_id", options_for_select(@departamentos.collect{ |departamento| [departamento.nombre, departamento.id] }, current_municipio.departamento.id), { include_blank:true, id:'departamentos_select', disabled:false, required:true, class:'form-control' } %>
+												</div>
+												<div class="col-sm-6">
+													<label for="celular">Municipio</label>
+													<%= select_tag "municipio_id", options_for_select(@municipios.collect{ |municipio| [municipio.nombre, municipio.id] }, current_municipio.id), { id:'municipios_select', disabled:false, required:true, class:'form-control'} %>
+												</div>
+											</div>
+											<div class="form-group">
+			                  <p class="control-label">Descripcion</p>
+			                  <%= text_area_tag(:descripcion, nil, size: "30x4", class:'form-control') %>
+			                </div>
+											<div class="form-group">
+			                  <p class="control-label">Autoriza informacion habea data?</p>
+			                  <%= check_box_tag :autoriza, '1', true, class:'form-control' %>
+			                </div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+	            <div class="col-md-12">
+	              <div class="text-center">
+									<%= submit_tag "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Crear&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".html_safe, :class => "btn btn-lg btn-primary" %>
+	              </div>
+	            </div>
+
+	          </div>
+
+	        <% end %>
+
+	      </div>
+	    </div>
+	  </div>
+	</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== /MODAL AGREGAR EAPB ==========-=-=-=-=-=-=-=-=-=-= -->

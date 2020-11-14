@@ -1,0 +1,172 @@
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<h3 class="panel-title">Dashboard muestras</h3>
+	</div>
+	<div class="panel-body">
+		<div class="row">
+
+			<div class="col-lg-3">
+				<%= label_tag(:start_date, "Fecha Inicio:") %>
+				</br>
+				<input value="<%= @start_date %>" name="start_date" id="start_date" class="form-control" type="date">
+			</div>
+
+			<div class="col-lg-3">
+				<%= label_tag(:end_date, "Fecha Fin:") %>
+				</br>
+				<input value="<%= @end_date %>" name="end_date" id="end_date" class="form-control" type="date">
+			</div>
+		</div>
+		<button onclick="change_url();" type="button" class="btn btn-primary">Buscar</button>
+	</div>
+</div>
+</br>
+</br>
+<h3>Muestras recibidas</h3>
+<table class="table table-bordered table-hover table-striped tablesorter">
+	<thead>
+		<tr>
+		</tr>
+	</thead>
+	<tbody>
+    <% start_date = DateTime.parse(@start_date) -%>
+    <% end_date = DateTime.parse(@end_date) -%>
+    <% total = 0 -%>
+
+    <% count = Muestra.where(fecha_recepcion_interna:start_date.beginning_of_day..end_date.end_of_day).includes([:emisor]).where.not('usuarios.institucion_id':nil).count -%>
+    <tr>
+      <td>IPS</td>
+      <td><%= count %></td>
+    </tr>
+    <% total += count -%>
+
+		<% @laboratorios_cordinacion.each do |laboratorio| -%>
+      <% count = Muestra.where(fecha_recepcion_interna:start_date.beginning_of_day..end_date.end_of_day).includes([:emisor]).where.not('usuarios.laboratorio_id':nil).count -%>
+			<tr>
+				<td><%= laboratorio.nombre.upcase if laboratorio.nombre %></td>
+				<td><%= count %></td>
+			</tr>
+      <% total += count -%>
+		<% end -%>
+		<tr class="warning">
+			<td>TOTAL GENERAL</td>
+			<td><%= total %></td>
+		</tr>
+	</tbody>
+</table>
+
+<h3>Muestras enviadas</h3>
+<table class="table table-bordered table-hover table-striped tablesorter">
+	<thead>
+		<tr>
+		</tr>
+	</thead>
+	<tbody>
+    <% start_date = DateTime.parse(@start_date) -%>
+    <% end_date = DateTime.parse(@end_date) -%>
+    <% total = 0 -%>
+		<% @laboratorios.each do |laboratorio| -%>
+      <% count = Muestra.where(laboratorio:laboratorio, fecha_despacho_interna:start_date.beginning_of_day..end_date.end_of_day).count -%>
+			<tr>
+				<td><%= laboratorio.nombre.upcase if laboratorio.nombre %></td>
+				<td><%= count %></td>
+			</tr>
+      <% total += count -%>
+		<% end -%>
+		<tr class="warning">
+			<td>TOTAL GENERAL</td>
+			<td><%= total %></td>
+		</tr>
+	</tbody>
+</table>
+
+<h3>Por resultado</h3>
+<table class="table table-bordered table-hover table-striped tablesorter">
+	<thead>
+		<tr>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Casos negativos</td>
+			<td><%= @casos_negativos %></td>
+		</tr>
+		<tr>
+			<td>Casos positivos</td>
+			<td><%= @casos_positivos %></td>
+		</tr>
+		<tr>
+			<td>Casos recuperados</td>
+			<td><%= @casos_recuperados %></td>
+		</tr>
+		<tr>
+			<td>Casos recuperados</td>
+			<td><%= @casos_por_confirmar %></td>
+		</tr>
+	</tbody>
+</table>
+
+<h3>Por servicio</h3>
+<table class="table table-bordered table-hover table-striped tablesorter">
+	<thead>
+		<tr>
+		</tr>
+	</thead>
+	<tbody>
+		<% @casos_por_servicio.each do |item| -%>
+			<tr>
+				<td><%= item[:nombre] %></td>
+				<td><%= item[:count] %></td>
+			</tr>
+		<% end -%>
+	</tbody>
+</table>
+
+<h3>Por usuario</h3>
+<table class="table table-bordered table-hover table-striped tablesorter">
+	<thead>
+		<tr>
+			<th data-sort="int">Nombre completo</th>
+			<th data-sort="string"># Recibidas</th>
+			<th data-sort="string"># Entregadas</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% @usuarios.each do |usuario| -%>
+			<% count_recibe = Muestra.where(quien_recibe:usuario, fecha_recepcion_interna:start_date.beginning_of_day..end_date.end_of_day).count -%>
+      <% count_despacho = Muestra.where(quien_despacha:usuario, fecha_despacho_interna:start_date.beginning_of_day..end_date.end_of_day).count -%>
+			<tr>
+				<td><%= usuario.nombre_completo %></td>
+				<td><%= count_recibe %></td>
+				<td><%= count_despacho %></td>
+			</tr>
+		<% end -%>
+	</tbody>
+</table>
+
+<script>
+
+	function change_url(){
+		var start_date = $('#start_date').val();
+		var end_date = $('#end_date').val();
+    var is_null_start_date = start_date == null || start_date == "";
+		var is_null_end_date = end_date == null || end_date == "";
+		var are_null_dates = is_null_start_date || is_null_end_date
+		if(are_null_dates) return;
+		var url = '/crue/caso_salud_publicas/dashboard_v3';
+		if(start_date != null && start_date != "" && end_date != null && end_date != ""){
+			url += "?start_date=" + start_date + "&end_date=" + end_date;
+		}
+		location.href = url;
+	}
+
+	var original_class = document.getElementsByTagName('body')[0].className;
+  function show_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className += " loading";
+  }
+  function hide_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className = original_class;
+  }
+</script>

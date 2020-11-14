@@ -1,0 +1,26 @@
+<div class="modal fade" id="modal-edit" tabindex="-1" role="dialog" aria-labelledby="add-edit-Label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title text-center" id="add-table-Label">Actualizar Recursos urgencias <%= @institucion.nombre %></h4>
+      </div>
+      <div class="modal-body">
+        <%= form_tag(historial_recurso_urgencia_path(@institucion.id), method: "patch",  :multipart => true, "data-ajax" => "false") do %>
+          <div id="panel_pintas_sangre" class="panel panel-<%= @institucion.estado_urgencia == 1 ? 'success' : 'danger' %>">
+            <div class="panel-heading">
+              <h3 class="panel-title"></h3>
+            </div>
+            <div class="panel-body">
+              <p>La IPS <%= @institucion.nombre %> posee la urgencia en estado <%= @institucion.estado_urgencia_value %> para atender URGENCIAS</p>
+            </div>
+          </div>
+          <% text = @institucion.estado_urgencia == 1 ? "Cambiar a COLAPSADO" : "Cambiar a Disponible" %>
+          <%= submit_tag(text, class: "btn btn-#{@institucion.estado_urgencia == 1 ? 'success' : 'danger'} form-control") %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

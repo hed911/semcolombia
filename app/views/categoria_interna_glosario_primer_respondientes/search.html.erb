@@ -1,0 +1,11 @@
+<% @categorias.each do |categoria| -%>
+  <tr>
+    <td><%= categoria.nombre %></td>
+    <td><%= categoria.descripcion %></td>
+    <td>
+      <%= link_to '<i class="fa fa-edit"></i> Editar'.html_safe, "#", html_options = {:onclick => "load_edit(#{categoria.id});", :class => "btn btn-default", :title => "Editar"} %>
+      <%= link_to '<i class="fa fa-times"></i> Borrar'.html_safe, categoria_interna_glosario_primer_respondiente_path(categoria.id), html_options = {:remote => true, :class => "btn btn-default", :title => "Borrar", :method => "delete", :confirm => 'Estas seguro, se borraran todos los datos asociados a esta categoria?'} %>
+    </td>
+  </tr>
+<% end -%>
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

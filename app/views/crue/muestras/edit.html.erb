@@ -1,0 +1,122 @@
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL AGREGAR EAPB =-=-=-=-=-=-=-=-=-=-========== -->
+	<div class="modal fade" id="edit-muestra" tabindex="-1" role="dialog" aria-labelledby="add-edit-Label" aria-hidden="true">
+	  <div class="modal-dialog modal-xl">
+	    <div class="modal-content">
+	      <div class="modal-header">
+					<h3 class='col-12 modal-title text-center'>
+		        Edicion muestra
+		        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+		          <span aria-hidden='true'>&times;</span>
+		        </button>
+		      </h3>
+	      </div>
+	      <div class="modal-body">
+	        <%= form_tag(crue_caso_salud_publica_muestra_path(caso_salud_publica_id:@caso.id, id:@muestra.id), method: "put", :remote => true, :multipart => true, "data-ajax" => "false" ) do %>
+
+	          <div class="row">
+
+							<div class="container card-group">
+			          <div class="card">
+			            <div class="card-body">
+			              <h5 class="card-title">Toma de muestra</h5>
+										<div>
+											<div class="form-group">
+	                      <p class="control-label">Fecha</p>
+	                      <%= date_field_tag(:fecha, (@muestra.fecha.nil? ? nil : @muestra.fecha.strftime('%Y-%m-%d')), :required => false, :class =>"form-control") %>
+	                    </div>
+	                    <div class="form-group">
+	                      <p class="control-label">Tipo</p>
+	                      <select id="tipo" class="form-control" name="tipo">
+	                        <option value></option>
+	                        <option <%= "selected" if @muestra.tipo == 1 %> value="1">ASPIRADO TRAQUEAL</option>
+	                        <option <%= "selected" if @muestra.tipo == 2 %> value="2">LAVADO BRONCOALVEOLAR</option>
+	                        <option <%= "selected" if @muestra.tipo == 3 %> value="3">HISOPADO NASOFARINGEO</option>
+	                        <option <%= "selected" if @muestra.tipo == 4 %> value="4">ASPIRADO NASOFARINGEO</option>
+	                        <option <%= "selected" if @muestra.tipo == 5 %> value="5">OTRO</option>
+	                      </select>
+	                    </div>
+	                    <div class="form-group">
+	                      <p class="control-label">Otro</p>
+	                      <%= text_field_tag(:otro_tipo, @muestra.otro_tipo, :required => false, :class =>"form-control") %>
+	                    </div>
+										</div>
+									</div>
+								</div>
+
+								<div class="card">
+			            <div class="card-body">
+			              <h5 class="card-title">Recepcion de muestra</h5>
+			              <div>
+											<div class="form-group">
+	                      <p class="control-label">Fecha recepcion</p>
+	                      <input id="fecha_recepcion" name="fecha_recepcion" type="datetime-local" value="<%= @datetime_recepcion %>" class="form-control" step="1" />
+	                    </div>
+											<div class="form-group">
+	                      <p style="color:red;" class="control-label">Estado</p>
+	                      <select id="estado" class="form-control" name="estado">
+													<option <%= "selected" if @muestra.estado == 1 %> value="1">MUESTRA TOMADA</option>
+	                        <option <%= "selected" if @muestra.estado == 2 %> value="2">MUESTRA RECIBIDA POR COORDINADOR</option>
+													<option <%= "selected" if @muestra.estado == 4 %> value="4">MUESTRA RECHAZADA POR COORDINADOR</option>
+	                        <option <%= "selected" if @muestra.estado == 3 %> value="3">MUESTRA ASIGNADA A LABORATORIO</option>
+													<option <%= "selected" if @muestra.estado == 5 %> value="5">MUESTRA PROCESADA</option>
+	                      </select>
+	                    </div>
+											<div class="form-group">
+	                      <p style="color:red;" class="control-label">Resultado</p>
+	                      <select id="resultado" class="form-control" name="resultado">
+													<option <%= "selected" if @muestra.resultado == 1 %> value="1">POR DEFINIR</option>
+	                        <option <%= "selected" if @muestra.resultado == 2 %> value="2">POSITIVO</option>
+													<option <%= "selected" if @muestra.resultado == 3 %> value="3">NEGATIVO</option>
+	                        <option <%= "selected" if @muestra.resultado == 4 %> value="4">SE SOLICITA NUEVA MUESTRA</option>
+	                      </select>
+	                    </div>
+											<div class="form-group">
+	                      <p class="control-label">IPS</p>
+	                      <%= select_tag :institucion_id, options_for_select(@instituciones.collect{ |institucion| ["#{institucion.nombre}", institucion.id] }, (@muestra.institucion ? @muestra.institucion.id : nil)), {required:false, include_blank:true, id: 'institucion_select', :disabled => false, class:'form-control'} %>
+	                    </div>
+											<% archivo = @muestra.archivos.first %>
+											<div class="form-group">
+	                      <p class="control-label"><%= archivo.nil? ? "Subir soporte PDF" : "<i class='fas fa-2x fa-file-pdf'></i> Reemplazar soporte PDF(#{archivo.real_name})".html_safe %></p>
+	                      <%= file_field_tag(:archivo, accept: 'application/pdf', required:false, class:'form-control') %>
+	                    </div>
+										</div>
+									</div>
+								</div>
+
+								<div class="card">
+			            <div class="card-body">
+			              <h5 class="card-title">Entrega de muestra</h5>
+			              <div>
+											<div class="form-group">
+	                      <p class="control-label">Fecha envio</p>
+	                      <input id="fecha_despacho" name="fecha_despacho" type="datetime-local" value="<%= @datetime_despacho %>" class="form-control" step="1" />
+	                    </div>
+	                    <div class="form-group">
+	                      <p class="control-label">Laboratorio</p>
+	                      <%= select_tag :laboratorio_id, options_for_select(@laboratorios.collect{ |laboratorio| ["#{laboratorio.nombre}", laboratorio.id] }, (@muestra.laboratorio ? @muestra.laboratorio.id : nil)), {required:false, include_blank:true, id: 'laboratorio_select', :disabled => false, class:'form-control'} %>
+	                    </div>
+	                    <div class="form-group">
+	                      <p class="control-label">Observaciones</p>
+	                      <%= text_area_tag(:observaciones, @muestra.observaciones, size: "30x4", class:'form-control') %>
+	                    </div>
+										</div>
+									</div>
+								</div>
+
+							</div>
+
+	            <div class="col-md-12">
+	              <div class="text-center">
+									<%= submit_tag "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Guardar cambios&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".html_safe, :class => "btn btn-lg btn-primary" %>
+	              </div>
+	            </div>
+
+	          </div>
+
+	        <% end %>
+
+	      </div>
+	    </div>
+	  </div>
+	</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== /MODAL AGREGAR EAPB ==========-=-=-=-=-=-=-=-=-=-= -->

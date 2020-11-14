@@ -1,0 +1,58 @@
+<%= form_tag(usuario_apis_path, method: "post",  :multipart => true, "data-ajax" => "false" ) do %>
+	<div class="panel panel-danger">
+		<div class="panel-heading">
+			<h3 class="panel-title"></h3>
+		</div>
+		<div class="panel-body">
+			<h1>Nueva cuenta API</h1>
+
+			<ol class="breadcrumb">
+			  <li class="active"><%= link_to "Cuentas API", usuario_apis_path %></li>
+			</ol>
+
+			<div class="col-md-12">
+				<div class="form-group">
+					<p class="control-label">Nombre</p>
+					<%= text_field_tag(:nombre, nil, required:true, class:'form-control') %>
+				</div>
+			</div>
+
+			<div class="col-md-12">
+				<div class="form-group">
+					<p class="control-label">Version</p>
+					<select id="version" class="form-control" name="version">
+						<option value="1">1</option>
+						<option value="2">2</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="col-md-12">
+				<div class="form-group">
+					<p class="control-label">Departamento</p>
+					<%= select_tag "departamento_id", options_for_select(@departamentos.collect{ |departamento| [departamento.nombre, departamento.id] }, nil), { include_blank:true, id:'departamentos_select', disabled:false, required:true, class:'form-control' } %>
+				</div>
+			</div>
+
+			<div class="col-md-12">
+				<div class="form-group">
+					<p class="control-label">Municipio</p>
+					<%= select_tag "municipio_id", options_for_select(@municipios.collect{ |municipio| [municipio.nombre, municipio.id] }, nil), { id:'municipios_select', disabled:false, required:true, class:'form-control'} %>
+				</div>
+			</div>
+
+			<%= submit_tag("Guardar Cambios") %>
+		</div>
+	</div>
+<% end %>
+
+
+<script>
+	$("#departamentos_select").on("change", function() {
+		return $.ajax({
+			url: "/departamentos/" + $('#departamentos_select option:selected').val() + "/get_municipios",
+			type: "GET",
+			dataType: "script"
+		});
+	});
+</script>

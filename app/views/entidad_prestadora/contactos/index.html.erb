@@ -1,0 +1,207 @@
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL SEGUIMIENTOS =-=-=-=-=-=-=-=-=-=-========== -->
+<div class="modal fade" id="contactos" tabindex="-1" role="dialog" aria-labelledby="seguimientos" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class='col-12 modal-title text-center'>
+          Datos contactos
+          <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+            <span aria-hidden='true'>&times;</span>
+          </button>
+        </h3>
+      </div>
+      <div class="modal-body">
+        <% if @caso.contactos.any? -%>
+          <div class="table-responsive" style="overflow:auto;">
+        		<table id="table-result" class="table table-hover tablesorter">
+              <thead>
+                <tr>
+                  <th data-sort="string">Nivel</th>
+                  <th data-sort="string"># Contactos</th>
+                  <th data-sort="string">Tipo de contacto</th>
+                  <th data-sort="string">Parentezco</th>
+                  <th data-sort="string">Nombre completo</th>
+                  <th data-sort="string">Fecha de nacimiento</th>
+                  <th data-sort="string">Sexo</th>
+                  <th data-sort="string"># Documento</th>
+                  <th data-sort="string">Direccion</th>
+                  <th data-sort="string">Telefono</th>
+                  <th data-sort="string">Edad</th>
+                  <th data-sort="string">EAPB</th>
+                  <th data-sort="string">Aseguradora</th>
+                  <th data-sort="string">Acción</th>
+                </tr>
+              </thead>
+
+              <tbody id="table-result-body">
+                <% @caso.contactos.order('created_at DESC').each do |contacto| -%>
+                  <% caso = contacto.son -%>
+                  <tr>
+                    <td><%= caso.nivel + 1 if caso.nivel %></td>
+                    <td><%= caso.contactos.count %></td>
+                    <td><%= contacto.tipo_contacto_value %></td>
+                    <td><%= contacto.parentezco %></td>
+                    <td><%= caso.nombre_completo.upcase %></td>
+                    <td><%= caso.fecha_nacimiento %></td>
+                    <td><%= caso.sexo_value %></td>
+                    <td><%= caso.tipo_documento %>-<%= caso.numero_documento %></td>
+                    <td><%= caso.direccion %></td>
+                    <td><%= caso.telefono %></td>
+                    <td><%= caso.edad %> <%= caso.unidad_medida_value %></td>
+                    <td><%= caso.entidad_prestadora.nombre if caso.entidad_prestadora %></td>
+                    <td><%= caso.aseguradora.nombre if caso.aseguradora %></td>
+                    <td>
+                      <% if true -%>
+                        <a class="dropdown-item" href="#" onclick="load_edit(<%= caso.id %>);"><i class="fas fa-edit"></i> Editar</a>
+                      <% end -%>
+                      <%= link_to "#{crue_caso_salud_publica_contacto_path(id:caso.id, caso_salud_publica_id:@caso.id)}", :method => :delete, :remote => true, :class => "dropdown-item", style:"color:red;", :title => "Borrar", :data => { :confirm => 'Estas seguro? Este cambio no se puede revertir' } do %>
+                         <i class="fas fa-trash-alt"></i> Borrar
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end -%>
+              </tbody>
+        		</table>
+        	</div>
+          </br>
+          </br>
+          </br>
+          </br>
+          </br>
+          </br>
+        <% end -%>
+        <%= form_tag(crue_caso_salud_publica_contactos_path(@caso.id), method: "post", :multipart => true, "data-ajax" => "false", :remote => true, id:'crear_caso_form' ) do %>
+
+          <div class="container card-group">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Nuevo registro</h5>
+                <div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="tipo_contacto">Tipo de contacto</label>
+                      <select required id="tipo_contacto" name="tipo_contacto" class="form-control">
+                        <option value="1">Familiares</option>
+                        <option value="2">De vuelo</option>
+                        <option value="3">Personal de salud o IPS</option>
+                        <option value="4">Sala de espera</option>
+                        <option value="5">Sociales</option>
+                      </select>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="segundo_apellido">Parentezco</label>
+                      <%= text_field_tag(:parentezco, "", :required => false, :class =>"form-control") %>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="primer_nombre">Primer nombre</label>
+                      <%= text_field_tag(:primer_nombre, "", :required => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="segundo_nombre">Segundo nombre</label>
+                      <%= text_field_tag(:segundo_nombre, "", :required => false, :class =>"form-control") %>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="primer_apellido">Primer apellido</label>
+                      <%= text_field_tag(:primer_apellido, "", :required => false, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="segundo_apellido">Segundo apellido</label>
+                      <%= text_field_tag(:segundo_apellido, "", :required => false, :class =>"form-control") %>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="primer_apellido">Fecha nacimiento</label>
+                      <%= date_field_tag(:fecha_nacimiento, Time.now.strftime('%Y-%m-%d'), class:"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="sexo">Sexo</label>
+                      <select id="sexo" name="sexo" class="form-control">
+                        <option value></option>
+                        <option value="1">Masculino</option>
+                        <option value="2">Femenino</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="tipo_documento">Tipo de documento</label>
+                      <select required id="tipo_documento" name="tipo_documento" class="form-control">
+                        <option value="CC">Cédula de Ciudadania</option>
+                        <option value="RC">Registro Civil</option>
+                        <option value="TI">Tarjeta de Identidad</option>
+                        <option value="CE">Cédula de Extranjeria</option>
+                        <option value="PA">Pasaporte</option>
+                        <option value="NV">Nacido Vivo</option>
+                        <option value="CD">Carnet Diplomatico</option>
+                        <option value="SC">Salvoconducto de Permanencia</option>
+                        <option value="PR">Pasaporte de la ONU</option>
+                        <option value="AS">Adulto sin Identificación</option>
+                        <option value="MS">Menor sin Identificación</option>
+                        <option value="PE">Permiso Especial</option>
+                      </select>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="numero_documento">Numero de documento</label>
+                      <%= text_field_tag(:numero_documento, "", :required => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="direccion">Direccion</label>
+                      <%= text_field_tag(:direccion, "", :required => false, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="telefono">Telefono</label>
+                      <%= text_field_tag(:telefono, "", :required => false, :class =>"form-control") %>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="segundo_apellido">Edad</label>
+                      <%= number_field_tag(:edad, nil, :required => false, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="unidad_medida">Unidad de medida</label>
+                      <select id="unidad_medida" name="unidad_medida" class="form-control">
+                        <option value="1">Años</option>
+                        <option value="2">Meses</option>
+                        <option value="3">Dias</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="entidad_prestadora_select">EAPB</label>
+                      <%= select_tag :entidad_prestadora_id, options_for_select(@entidades_prestadoras.collect{ |entidad_prestadora| ["#{entidad_prestadora.nombre}", entidad_prestadora.id] }, nil), {required:false, include_blank:true, id: 'entidad_prestadora_select', :disabled => false, class:'form-control'} %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="aseguradora_select">Aseguradora</label>
+                      <%= select_tag :aseguradora_id, options_for_select(@aseguradoras.collect{ |aseguradora| [aseguradora.nombre, aseguradora.id] }, (@aseguradora ? @aseguradora.id : nil)), {include_blank:true, id: 'aseguradora_select', :disabled => false, class:'form-control'} %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+
+            <div class="col-md-12">
+              <div class="text-center">
+                <%= submit_tag "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agregar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".html_safe, :class => "btn btn-lg btn-primary" %>
+              </div>
+            </div>
+
+          </div>
+        <% end %>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== MODAL SEGUIMIENTOS ==========-=-=-=-=-=-=-=-=-=-= -->

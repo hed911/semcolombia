@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "sem-colombia-v2",
+  "private_key_id": "3b9e1e7d5fe8a0ea8efc31efb79609d47b04eef4",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDEQ4RHuSOHIO91\n+KuvaCSxnoJ7/oC5z55O07GWuc1/Tqv9WQjDmHHvBXO9AGb7XPTvkk5vcoS5yefB\nyExV72hiSm7+JZQNdAudrfEgus7sasFZwKa5qr823NC0zT7m0srjxx6ADmCy5D4K\nMxkYDwRH1x8X76UVqrEPBzlAPc2T6SuksOhkklCGyoOKzQIZPlQ0hghlp6fK193q\n4AwxkcX36zib41VHZZa8O53lljQDw3EQIexSsLQZE7iZk3P7osGbwlw2lhjtHs8R\nDp2CAY07/uVHlrKdyZB0JkCsCAX+gxH0BmbPEZ19dMyjbG2oXh/Hy3xuiEl0GByA\nTkzlWRVLAgMBAAECggEAUtxCe9mBU2qnTsJHEc5BN7A5XMotZMVwC826e21Egkwf\ntt2hIps49vXxUElcMSGk04SMkubhfGLu8tRyzhE+m8jbJXeOE0P8J30pgWz9Mbk8\nmn0IpvictDfz8XF57g/u0s3dZaksUDqmqr26CXtFjmMXYI6vvv8Ks9KT7Dhrk9cu\nvMbqcPeECSv8Yy5gR14acUvj9gKylnCpvAU40YDmmls8r7c2GZvnYnpJVgqdI153\nCh++VSrxm658hcDTSeB7pyK41gKK5CCLj15hPfqWC2p75UPUQHpdgcMZbAk/dcRg\nx4FV4WJE79WCTtfjpL3B8aNoavOzh1l/tywI7BxKcQKBgQD0Ii0WMvSZckA4R6Tg\nkBpN+RuIdBWALxrEDA8dO6X0EOdevg4UcVCnrZYUt9UNyLbWCyAFdMXWxad69A4Q\nVfOuW/hn0rUeEz4LPzxPTwt7HEmHeIhJww4ZOdzjjWoANhV5D9JuKkBUrNNKR4sd\nZ8+ceh//vIfYWoWsr27DDaU5QwKBgQDNza7qe2TN/dzfzix5rMIedcHr9uAnncf2\nKOFzPgkhSL9y6toTTGY2+KXaJrbJAV2A1uyP3BU7i3jSa5SSX6yjD2VwTGvBSWjb\n4E+ha2khnw9/sVvyoGaHx1vnTOjES6UPLqn2HtzBFXHi/GePEamks0ZN3c9YUmrf\nppMFiMnPWQKBgQDqS6JZm62DVlKrsJZbrfCQxHHYExBPZOWbILegpo4uHcru8hcx\nJ07wnXdbitG92NMfuK2Sju8Pn8GMDo0wwEyNGVbczStlIbJ5uMZ4lrO+AvfOO68Q\nm1H8g7up5x3D9iPFe5nIgGQc34An2WF5ZxeoZMww8w6sZLPFdtgl+gKHYQKBgB1V\nTLIVJlgJ7/piS4qIKh7nT92PEYH0BjU6vG+NjwWUdd0uRijsAcGiDRmb3P+nVylu\n+MbEaq5TAcSUGtgGFPgk0KOB8PXavbxhK1hpk9F791yO7fkWDacarim4l5Cq63rP\nfuAapAJNSS8+JJCKxvA3sTSWAeCn1p3MAzaNuZ35AoGBAK9hLGI8KVPLuty578/5\nuM3HCtXShHRBHIdcWqQE4YItdiBTb0n6JRsiRp2wtmZn9Yj6LauH3Tz0t6dUbxtq\nPe0712R8mJVuiF+DjwtTM8E+LIw323poedDEuJqvJuLwke4AoygLkbrLfc12nNjf\n2V+RQfl88Hgwmzbi5SNSQulV\n-----END PRIVATE KEY-----\n",
+  "client_email": "sem-colombia-v2@sem-colombia-v2.iam.gserviceaccount.com",
+  "client_id": "105055537028747932635",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/sem-colombia-v2%40sem-colombia-v2.iam.gserviceaccount.com"
+}

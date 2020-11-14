@@ -1,0 +1,49 @@
+<div class="modal" id="new-categoria-interna" tabindex="-1" role="dialog" aria-labelledby="add-edit-Label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title text-center" id="add-table-Label">Nueva Categoria Interna</h4>
+      </div>
+      <div class="modal-body">
+        <%= form_tag(categoria_interna_glosarios_path, method: "post", remote:true, :multipart => true, "data-ajax" => "false" ) do %>
+
+          <div class="row">
+
+            <div class="col-md-12">
+              <div class="form-group">
+                <p class="control-label">Nombre</p>
+                <%= text_field_tag(:nombre, nil, :class =>"form-control", :placeholder => "", required:true, disabled:false) %>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="form-group">
+                <p class="control-label">Descripcion</p>
+                <%= text_area_tag(:descripcion, nil, size: "30x4", class:'form-control') %>
+              </div>
+            </div>
+
+						<div class="col-md-12">
+              <div class="form-group">
+                <p class="control-label">Categoria</p>
+                <%= select_tag :categoria_id, options_for_select(@categorias.collect{ |categoria| [categoria.nombre, categoria.id] }, @categorias.first.id), { include_blank: "Categoria", id: 'categoria_select', class:"form-control", disabled:false } %>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="form-group">
+                <%= submit_tag "Crear", :class => "btn btn-default form-control" %>
+              </div>
+            </div>
+
+          </div>
+
+        <% end %>
+
+      </div>
+    </div>
+  </div>
+</div>

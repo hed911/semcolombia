@@ -1,0 +1,459 @@
+<% if params[:action] == "version_crue_pdf" -%>
+  <%= yield %>
+<% else -%>
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <title>SEM Covid-19</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%= csrf_meta_tags %>
+    <%= stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => true%>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.4.3/morris.css">
+    <script src="https://js.pusher.com/4.3/pusher.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+    <script src="https://kit.fontawesome.com/5ad1448209.js" SameSite="none Secure" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.4.3/morris.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+    <meta property="og:site_name" content="SemCovid-19">
+    <meta property="og:title" content="Sistema Emergencias Medicas COVID-19" />
+    <meta property="og:description" content="Plataforma oficial para el registro de casos de covid a nivel nacional COLOMBIA" />
+    <meta property="og:image:secure_url" itemprop="image" content="https://ps.w.org/corona-virus-data/assets/icon-256x256.png?rev=2248214">
+    <meta property="og:image" content="https://ps.w.org/corona-virus-data/assets/icon-256x256.png?rev=2248214">
+    <meta property="og:type" content="website" />
+    <meta property="og:updated_time" content="<%= Date.today.to_time.to_i %>" />
+
+  </head>
+
+  <% if !usuario_signed_in? && params[:controller] == "devise/sessions" &&  (params[:action] == "new" || params[:action] == "create") -%>
+    <body onload="<%= params[:controller] == 'eventos_ambulatorios' && params[:action] == 'visor' ? 'init_sound();' : '' %>" >
+  <% else-%>
+    <body <%= ''.html_safe if params[:controller] == "dashboard" && params[:action] == "consulta" %> >
+  <% end -%>
+
+
+
+  <% if usuario_signed_in? -%>
+
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-info">
+      <a class="navbar-brand" href="#">
+        SEM Covid-19 <%= current_municipio.nombre if false && current_municipio %>
+        <%= current_usuario.laboratorio.nombre if current_usuario.laboratorio %>
+        <%= current_institucion.nombre if current_institucion %>
+        <%= current_usuario.entidad_prestadora.nombre if current_usuario.entidad_prestadora %></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav ml-auto">
+
+          <li id="notifications_panel" class="nav-item dropdown">
+            <a onclick="mark_as_read();" class="nav-link dropdown-toggle" href="#" id="navbarDropdownRecursos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Notificaciones <span id="notifications_count" class="badge badge-light">0</span>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownRecursos">
+              <%= link_to 'Ver todos'.html_safe, notificacion_emergentes_path, class:"dropdown-item" %>
+            </div>
+          </li>
+
+          <% if !current_usuario.activo %>
+
+          <% elsif current_institucion.nil? && current_usuario.entidad_prestadora.nil? && current_usuario.laboratorio.nil? %>
+
+            <% if current_usuario.es_super_admin || current_usuario.roles_array.include?(ROLES[0]) %>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownConfiguracion" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Configuracion
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownConfiguracion">
+                  <% if current_usuario.es_super_admin %>
+                    <%= link_to 'Administradores'.html_safe, crue_super_admins_path, class:"dropdown-item" %>
+                    <%= link_to 'Aseguradoras'.html_safe, crue_aseguradoras_path, class:"dropdown-item" %>
+                    <%= link_to 'Cuentas API'.html_safe, usuario_apis_path, class:"dropdown-item" %>
+                  <% else %>
+                    <%= link_to "IPS's".html_safe, crue_institucions_path, class:"dropdown-item" %>
+                    <%= link_to 'Intenciones'.html_safe, crue_intensions_path, class:"dropdown-item" %>
+                  <% end %>
+                  <%= link_to 'Usuarios'.html_safe, crue_usuarios_path, class:"dropdown-item" %>
+                  <%= link_to 'EAPBs'.html_safe, crue_entidad_prestadoras_path, class:"dropdown-item" %>
+                  <%= link_to 'Laboratorios'.html_safe, crue_laboratorios_path, class:"dropdown-item" %>
+                </div>
+              </li>
+            <% end %>
+
+            <% if false %>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUrgencias" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Urgencias
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownUrgencias">
+                  <%= link_to 'Datos'.html_safe, crue_historial_urgencias_path, class:"dropdown-item" %>
+                  <%= link_to 'Consulta'.html_safe, consulta_crue_historial_urgencias_path, class:"dropdown-item" %>
+                </div>
+              </li>
+            <% end %>
+
+            <% if false %>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownRecursos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Recursos
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownRecursos">
+                  <%= link_to 'Rec. Hospitalarios Datos'.html_safe, crue_historial_recursos_path, class:"dropdown-item" %>
+                  <%= link_to 'Rec. Hospitalarios Consulta'.html_safe, consulta_crue_historial_recursos_path, class:"dropdown-item" %>
+                  <%= link_to 'Rec. Urgencia Datos'.html_safe, crue_historial_recurso_urgencias_path, class:"dropdown-item" %>
+                </div>
+              </li>
+            <% end %>
+
+            <% if current_usuario.roles_array.include?(ROLES[3]) %>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownResultados" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Resultados
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownResultados">
+                  <%= link_to 'Consulta'.html_safe, crue_resultados_path, class:"dropdown-item" %>
+                  <% if false %>
+                    <%= link_to 'Consulta avanzada'.html_safe, index_v2_crue_resultados_path, class:"dropdown-item" %>
+                  <% end %>
+                  <%= link_to 'Pendientes por procesar'.html_safe, pendientes_crue_resultado_path(1), class:"dropdown-item" %>
+                  <%= link_to 'Hoy (positivos)'.html_safe, "#{hoy_crue_resultado_path(1)}?tipo=positivo&start_date=#{Time.now.strftime('%Y-%m-%d')}&end_date=#{Time.now.strftime('%Y-%m-%d')}", class:"dropdown-item" %>
+                  <%= link_to 'Hoy (negativos)'.html_safe, "#{hoy_crue_resultado_path(1)}?tipo=negativo&start_date=#{Time.now.strftime('%Y-%m-%d')}&end_date=#{Time.now.strftime('%Y-%m-%d')}", class:"dropdown-item" %>
+                  <%= link_to 'Hoy (Se solicita nueva muestra)'.html_safe, "#{hoy_crue_resultado_path(1)}?tipo=no_se_pudo&start_date=#{Time.now.strftime('%Y-%m-%d')}&end_date=#{Time.now.strftime('%Y-%m-%d')}", class:"dropdown-item" %>
+                </div>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownRecursos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Salud publica
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownRecursos">
+                  <%= link_to 'Seguimiento diario a contactos'.html_safe, pendientes_crue_llamada_path(1), class:"dropdown-item" %>
+                  <%= link_to 'Casos sin datos'.html_safe, sin_datos_crue_caso_salud_publica_path(1), class:"dropdown-item" %>
+                  <%= link_to 'Casos actuales'.html_safe, actuales_crue_caso_salud_publica_path(1), class:"dropdown-item" %>
+                  <%= link_to 'Consulta'.html_safe, crue_caso_salud_publicas_path, class:"dropdown-item" %>
+                  <%= link_to 'Notificadores'.html_safe, crue_operarios_path, class:"dropdown-item" %>
+                  <%= link_to 'Dashboard'.html_safe, dashboard_crue_caso_salud_publicas_path, class:"dropdown-item" %>
+                  <%= link_to 'Dashboard camas'.html_safe, dashboard_v2_crue_caso_salud_publicas_path, class:"dropdown-item" %>
+                  <%= link_to 'Dashboard muestras'.html_safe, "#{dashboard_v3_crue_caso_salud_publicas_path}?start_date=#{Time.now.strftime("%Y-%m-%d")}&end_date=#{Time.now.strftime("%Y-%m-%d")}", class:"dropdown-item" %>
+                  <%= link_to 'Dashboard IEC'.html_safe, "#{dashboard_v5_crue_caso_salud_publicas_path}?start_date=#{Time.now.strftime("%Y-%m-%d")}&end_date=#{Time.now.strftime("%Y-%m-%d")}", class:"dropdown-item" %>
+                  <%= link_to 'Mapa de calor'.html_safe, dashboard_v4_crue_caso_salud_publicas_path, class:"dropdown-item" %>
+                </div>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMuestras" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Muestras
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMuestras">
+                  <%= link_to 'Consulta'.html_safe, crue_tests_path, class:"dropdown-item" %>
+                  <%= link_to 'Pendientes'.html_safe, pendientes_v2_crue_test_path(1), class:"dropdown-item" %>
+                  <% if current_usuario.roles_array.include?(ROLES[6]) || current_usuario.roles_array.include?(ROLES[7]) %>
+                    <%= link_to 'Por aprobar'.html_safe, por_aprobar_crue_test_path(1), class:"dropdown-item" %>
+                  <% end %>
+                  <% if current_usuario.roles_array.include?(ROLES[6]) %>
+                    <%= link_to 'Cargue SISMUESTRA'.html_safe, crue_cargue_masivos_path, class:"dropdown-item" %>
+                    <%= link_to 'Cargue PDFs'.html_safe, crue_cargue_masivo_pdfs_path, class:"dropdown-item" %>
+                  <% end %>
+                  <%= link_to 'Recibidas hoy'.html_safe, recibidas_crue_test_path(1), class:"dropdown-item" %>
+                  <%= link_to 'Enviadas hoy'.html_safe, despachadas_crue_test_path(1), class:"dropdown-item" %>
+                  <%= link_to 'Inconsistencias PDF'.html_safe, inconsistencias_crue_test_path(1), class:"dropdown-item" %>
+                  <%= link_to 'Busqueda masiva'.html_safe, busqueda_masiva_crue_tests_path, class:"dropdown-item" %>
+                  <%= link_to 'Logs'.html_safe, sismuestra_logs_crue_tests_path, class:"dropdown-item" %>
+                </div>
+              </li>
+            <% end %>
+
+            <% if current_usuario.roles_array.include?(ROLES[8]) %>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownTeleconsultas" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Teleconsultas
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownTeleconsultas">
+                  <%= link_to 'Pendientes'.html_safe, pendientes_crue_caso_salud_publica_reunion_path(caso_salud_publica_id:0, id:1), class:"dropdown-item" %>
+                </div>
+              </li>
+            <% end %>
+
+            <% if current_usuario.roles_array.include?(ROLES[4]) %>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownLlamadas" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Llamadas
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownLlamadas">
+                  <%= link_to 'Llamadas entrantes'.html_safe, entrantes_crue_llamada_path(1), class:"dropdown-item" %>
+                  <%= link_to 'Consulta llamadas'.html_safe, crue_llamadas_path, class:"dropdown-item" %>
+                </div>
+              </li>
+            <% end %>
+
+          <% elsif !current_institucion.nil? %>
+            <% if can_chenge_institucion %>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownSede" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Cambiar sede
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownSede">
+                  <% current_usuario.institucion.sedes.order('nombre ASC').each do |institucion| -%>
+                    <%= link_to institucion.nombre, set_institucion_path(institucion.id), method: :put, class:"dropdown-item" %>
+                  <% end -%>
+                </div>
+              </li>
+            <% end %>
+            <% if current_usuario.roles_array.include?(ROLES_USUARIOS_INSTITUCIONES[2]) %>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownConfiguracion" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Configuracion
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownConfiguracion">
+                  <%= link_to 'Usuarios'.html_safe, institucion_usuarios_path, class:"dropdown-item" %>
+                </div>
+              </li>
+            <% end %>
+            <% if current_usuario.roles_array.include?(ROLES_USUARIOS_INSTITUCIONES[3]) %>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownResultados" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Resultados
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownResultados">
+                  <%= link_to 'Consulta'.html_safe, institucion_resultados_path, class:"dropdown-item" %>
+                  <%= link_to 'Pendientes por procesar'.html_safe, pendientes_institucion_resultado_path(1), class:"dropdown-item" %>
+                  <%= link_to 'Hoy (positivos)'.html_safe, "#{hoy_institucion_resultado_path(1)}?tipo=positivo&start_date=#{Time.now.strftime('%Y-%m-%d')}&end_date=#{Time.now.strftime('%Y-%m-%d')}", class:"dropdown-item" %>
+                  <%= link_to 'Hoy (negativos)'.html_safe, "#{hoy_institucion_resultado_path(1)}?tipo=negativo&start_date=#{Time.now.strftime('%Y-%m-%d')}&end_date=#{Time.now.strftime('%Y-%m-%d')}", class:"dropdown-item" %>
+                  <%= link_to 'Hoy (Se solicita nueva muestra)'.html_safe, "#{hoy_institucion_resultado_path(1)}?tipo=no_se_pudo&start_date=#{Time.now.strftime('%Y-%m-%d')}&end_date=#{Time.now.strftime('%Y-%m-%d')}", class:"dropdown-item" %>
+                </div>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownRecursos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Salud publica
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownRecursos">
+                  <%= link_to 'Casos actuales'.html_safe, actuales_institucion_caso_salud_publica_path(1), class:"dropdown-item" %>
+                  <%= link_to 'Consulta'.html_safe, institucion_caso_salud_publicas_path, class:"dropdown-item" %>
+                  <%= link_to 'Descarga seguimientos'.html_safe, descarga_institucion_caso_salud_publica_seguimiento_casos_path(0), class:"dropdown-item" %>
+                </div>
+              </li>
+            <% end %>
+          <% elsif !current_usuario.entidad_prestadora.nil? %>
+            <% if current_usuario.roles_array.include?(ROLES_USUARIOS_ENTIDADES_PRESTADORAS[2]) %>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownConfiguracion" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Configuracion
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownConfiguracion">
+                  <%= link_to 'Usuarios'.html_safe, entidad_prestadora_usuarios_path, class:"dropdown-item" %>
+                </div>
+              </li>
+            <% end %>
+            <% if current_usuario.entidad_prestadora.roles_array.include?(ROLES_ENTIDADES_PRESTADORAS[0]) && current_usuario.roles_array.include?(ROLES_USUARIOS_ENTIDADES_PRESTADORAS[3]) %>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownResultados" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Resultados
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownResultados">
+                  <%= link_to 'Consulta'.html_safe, entidad_prestadora_resultados_path, class:"dropdown-item" %>
+                  <%= link_to 'Pendientes por procesar'.html_safe, pendientes_entidad_prestadora_resultado_path(1), class:"dropdown-item" %>
+                  <%= link_to 'Hoy (positivos)'.html_safe, "#{hoy_entidad_prestadora_resultado_path(1)}?tipo=positivo&start_date=#{Time.now.strftime('%Y-%m-%d')}&end_date=#{Time.now.strftime('%Y-%m-%d')}", class:"dropdown-item" %>
+                  <%= link_to 'Hoy (negativos)'.html_safe, "#{hoy_entidad_prestadora_resultado_path(1)}?tipo=negativo&start_date=#{Time.now.strftime('%Y-%m-%d')}&end_date=#{Time.now.strftime('%Y-%m-%d')}", class:"dropdown-item" %>
+                  <%= link_to 'Hoy (Se solicita nueva muestra)'.html_safe, "#{hoy_entidad_prestadora_resultado_path(1)}?tipo=no_se_pudo&start_date=#{Time.now.strftime('%Y-%m-%d')}&end_date=#{Time.now.strftime('%Y-%m-%d')}", class:"dropdown-item" %>
+                </div>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownRecursos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Salud publica
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownRecursos">
+                  <%= link_to 'Casos actuales'.html_safe, actuales_entidad_prestadora_caso_salud_publica_path(1), class:"dropdown-item" %>
+                  <%= link_to 'Consulta'.html_safe, entidad_prestadora_caso_salud_publicas_path, class:"dropdown-item" %>
+                </div>
+              </li>
+            <% end %>
+          <% elsif !current_usuario.laboratorio.nil? %>
+            <% if !current_usuario.laboratorio.coordinacion %>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownConfiguracion" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Configuracion
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownConfiguracion">
+                  <%= link_to 'Usuarios'.html_safe, laboratorio_usuarios_path, class:"dropdown-item" %>
+                </div>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownResultados" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Resultados
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownResultados">
+                  <%= link_to 'Consulta'.html_safe, laboratorio_resultados_path, class:"dropdown-item" %>
+                  <%= link_to 'Pendientes por procesar'.html_safe, pendientes_laboratorio_resultado_path(1), class:"dropdown-item" %>
+                  <%= link_to 'Hoy (positivos)'.html_safe, "#{hoy_laboratorio_resultado_path(1)}?tipo=positivo&start_date=#{Time.now.strftime('%Y-%m-%d')}&end_date=#{Time.now.strftime('%Y-%m-%d')}", class:"dropdown-item" %>
+                  <%= link_to 'Hoy (negativos)'.html_safe, "#{hoy_laboratorio_resultado_path(1)}?tipo=negativo&start_date=#{Time.now.strftime('%Y-%m-%d')}&end_date=#{Time.now.strftime('%Y-%m-%d')}", class:"dropdown-item" %>
+                  <%= link_to 'Hoy (Se solicita nueva muestra)'.html_safe, "#{hoy_laboratorio_resultado_path(1)}?tipo=no_se_pudo&start_date=#{Time.now.strftime('%Y-%m-%d')}&end_date=#{Time.now.strftime('%Y-%m-%d')}", class:"dropdown-item" %>
+                </div>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMuestras" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Muestras
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMuestras">
+                  <%= link_to 'Consulta'.html_safe, laboratorio_tests_path, class:"dropdown-item" %>
+                </div>
+              </li>
+            <% else %>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownRecursos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Salud publica
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownRecursos">
+                  <%= link_to 'Casos actuales'.html_safe, actuales_laboratorio_caso_salud_publica_path(1), class:"dropdown-item" %>
+                  <%= link_to 'Consulta'.html_safe, laboratorio_caso_salud_publicas_path, class:"dropdown-item" %>
+                </div>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownResultados" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Resultados
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownResultados">
+                  <%= link_to 'Consulta'.html_safe, laboratorio_resultados_path, class:"dropdown-item" %>
+                  <%= link_to 'Hoy (positivos)'.html_safe, "#{hoy_laboratorio_resultado_path(1)}?tipo=positivo&start_date=#{Time.now.strftime('%Y-%m-%d')}&end_date=#{Time.now.strftime('%Y-%m-%d')}", class:"dropdown-item" %>
+                  <%= link_to 'Hoy (negativos)'.html_safe, "#{hoy_laboratorio_resultado_path(1)}?tipo=negativo&start_date=#{Time.now.strftime('%Y-%m-%d')}&end_date=#{Time.now.strftime('%Y-%m-%d')}", class:"dropdown-item" %>
+                  <%= link_to 'Hoy (Se solicita nueva muestra)'.html_safe, "#{hoy_laboratorio_resultado_path(1)}?tipo=no_se_pudo&start_date=#{Time.now.strftime('%Y-%m-%d')}&end_date=#{Time.now.strftime('%Y-%m-%d')}", class:"dropdown-item" %>
+                </div>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMuestras" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Muestras
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMuestras">
+                  <%= link_to 'Consulta'.html_safe, laboratorio_tests_path, class:"dropdown-item" %>
+                  <% if true %>
+                    <%= link_to 'Pendientes'.html_safe, pendientes_laboratorio_test_path(1), class:"dropdown-item" %>
+                  <% end %>
+                  <%= link_to 'Pendientes despacho'.html_safe, pendientes_v2_laboratorio_test_path(1), class:"dropdown-item" %>
+                  <%= link_to 'Dashboard'.html_safe, dashboard_laboratorio_tests_path, class:"dropdown-item" %>
+                  <%= link_to 'Dashboard muestras'.html_safe, "#{dashboard_v3_crue_caso_salud_publicas_path}?start_date=#{Time.now.strftime("%Y-%m-%d")}&end_date=#{Time.now.strftime("%Y-%m-%d")}", class:"dropdown-item" %>
+                  <%= link_to 'Recibidas hoy'.html_safe, recibidas_laboratorio_test_path(1), class:"dropdown-item" %>
+                  <%= link_to 'Enviadas hoy'.html_safe, despachadas_laboratorio_test_path(1), class:"dropdown-item" %>
+                </div>
+              </li>
+            <% end %>
+          <% end %>
+          <li class="nav-item dropdown <%= "active" if params[:controller] == "usuarios" %>">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Usuario
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownUser">
+              <%= link_to '<i class="fa fa-gear"></i> Perfil'.html_safe, profile_path, class:"dropdown-item" %>
+              <%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_usuario_session_path, :method => :delete, :class => "dropdown-item" %>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+
+  <div id="wrapper">
+
+    <div id="page-wrapper">
+      <% if flash[:notice] %>
+
+        <div id="flashModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 class="modal-title"></h3>
+              </div>
+              <div class="modal-body">
+                <h3><%= flash[:notice] %></h3>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">OK</button>
+              </div>
+
+            </div><!-- End of Modal content -->
+          </div><!-- End of Modal dialog -->
+        </div><!-- End of Modal -->
+
+        <script>
+          $('#flashModal').modal('show');
+        </script>
+
+      <% end %>
+      </br>
+      </br>
+      </br>
+      <script>
+        function init_sound(){
+          createjs.Sound.registerSound("<%= asset_path "jBeep.wav" %>", 'sonido');
+          createjs.Sound.registerSound("<%= asset_path "sonido_transmetro.wav" %>", 'sonido_transmetro');
+        }
+      	Pusher.logToConsole = true;
+      	var pusher_key = '<%= Pusher.key %>';
+      	var pusher = new Pusher(pusher_key, {
+      		cluster: 'us2',
+      		forceTLS: true
+      	});
+        var channel = pusher.subscribe('broadcast');
+        channel.bind('nuevo_servicio', function(data) {
+          createjs.Sound.play('sonido');
+        });
+      </script>
+      <%= yield %>
+    </div>
+  </div>
+  <% end -%>
+  <% if !usuario_signed_in? -%>
+    <%= yield %>
+  <% end -%>
+  <div class="modal-loading"><!-- Place at bottom of page --></div>
+  </body>
+  </html>
+<% end -%>
+
+
+<script>
+  $('.parentMenu li a').click(function() {
+    chlMnu = $(this).attr('href');
+    selectChildMenu = $(chlMnu);
+    if (!selectChildMenu.hasClass('show')) {
+      $('.childMenu.show').removeClass('show');
+      selectChildMenu.addClass('show');
+    }
+    else{
+      selectChildMenu.removeClass('show');
+    }
+    if (!$(this).parent().hasClass('active')) {
+      $('.parentMenu .active').removeClass('active');
+      $('.navbar-header .active').removeClass('active');
+      $(this).parent().addClass('active');
+    }
+  })
+
+  $('.childMenu li a').click(function() {
+    if (!$(this).parent().hasClass('active')) {
+      $('.childMenu .active').removeClass('active');
+      $(this).parent().addClass('active');
+    };
+  })
+
+  function fetch_notifications(){
+    
+  }
+
+  function mark_as_read(){
+    $.post("/mark_as_read",
+      {
+      },function(result){
+        $('#notifications_count').html("0");
+        //fetch_notifications();
+    }, "text");
+  }
+
+  fetch_notifications();
+
+</script>

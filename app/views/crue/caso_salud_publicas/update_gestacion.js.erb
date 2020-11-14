@@ -1,0 +1,6 @@
+<% if @error %>
+  alert("<%= @error %>");
+<% else %>
+  $('#gestacion').modal('hide');
+  do_search(currentPage);
+<% end %>

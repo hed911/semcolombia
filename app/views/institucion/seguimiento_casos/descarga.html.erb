@@ -1,0 +1,31 @@
+<div class="container-fluid">
+  <h1>Descarga <small>Seguimientos de pacientes</small></h1>
+  <div class="row">
+    <%= form_tag(do_descargar_institucion_caso_salud_publica_seguimiento_casos_path(0), :multipart => true, "data-ajax" => "false", class:"col-12" ) do %>
+      <div class="">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title"></h3>
+          </div>
+          <div class="panel-body">
+              <div>
+                <div class="option">
+                  <input value="" name="start_date" id="start_date" class="form-control" type="date">
+                </div>
+
+                <div class="option">
+                  <input value="" name="end_date" id="end_date" class="form-control" type="date">
+                </div>
+
+                <div class="text-center">
+                  <%= submit_tag "Descargar".html_safe, :class => "btn btn-warning", :name => "contactos" %>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    <% end -%>
+  </div>
+</div>
+<div id="container"></div>
+<div id="modal"></div>

@@ -1,0 +1,122 @@
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL SEGUIMIENTOS =-=-=-=-=-=-=-=-=-=-========== -->
+<div class="modal fade" id="reuniones" tabindex="-1" role="dialog" aria-labelledby="seguimientos" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class='col-12 modal-title text-center'>
+          Teleconsultas
+          <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+            <span aria-hidden='true'>&times;</span>
+          </button>
+        </h3>
+      </div>
+      <div class="modal-body">
+        <% if @caso.reunions.any? -%>
+          <div class="table-responsive" style="overflow:auto;">
+        		<table id="table-result" class="table table-hover tablesorter">
+              <thead>
+                <tr>
+                  <th data-sort="string">Medico asignado</th>
+                  <th data-sort="string">Creado por</th>
+                  <th data-sort="string">Titulo</th>
+                  <th data-sort="string">descripcion</th>
+                  <th data-sort="string">Fecha pactada</th>
+                  <th data-sort="string">Fecha creacion</th>
+                  <th data-sort="string">Link host</th>
+                  <th data-sort="string">Link participantes</th>
+                  <th data-sort="string">Password</th>
+                  <th data-sort="string">Acción</th>
+                </tr>
+              </thead>
+
+              <tbody id="table-result-body">
+                <% @caso.reunions.order('created_at DESC').each do |reunion| -%>
+                  <tr>
+                    <td><%= reunion.medico.nombre_completo if reunion.medico %></td>
+                    <td><%= reunion.usuario.nombre_completo if reunion.usuario %></td>
+                    <td><%= reunion.titulo %></td>
+                    <td><%= reunion.descripcion %></td>
+                    <td><%= reunion.fecha %></td>
+                    <td><%= reunion.created_at %></td>
+                    <td>
+                      <% if reunion.zoom_start_url -%>
+                        <a target="_blank" href="<%= reunion.zoom_start_url %>">link</a>
+                      <% end -%>
+                    </td>
+                    <td>
+                      <% if reunion.zoom_join_url -%>
+                        <a target="_blank" href="<%= reunion.zoom_join_url %>">link</a>
+                      <% end -%>
+                    </td>
+                    <td><%= reunion.zoom_password %></td>
+                    <td>
+
+                    </td>
+                  </tr>
+                <% end -%>
+              </tbody>
+        		</table>
+        	</div>
+          </br>
+          </br>
+          </br>
+          </br>
+          </br>
+          </br>
+        <% else -%>
+          <div class="jumbotron">
+            <h1>No hay datos</h1>
+            <p>Aun no se han agregado teleconsultas a <%= @caso.primer_nombre %>.
+            <p>Una vez crees registros aqui apareceran en forma de tabla</p>
+          </div>
+        <% end -%>
+
+        <% if !current_usuario.roles_array.include?(ROLES[5]) -%>
+          <%= form_tag(crue_caso_salud_publica_reunions_path(@caso.id), method: "post", :multipart => true, "data-ajax" => "false", :remote => true, id:'crear_caso_form' ) do %>
+
+          <div class="row">
+            <div class="container card-group">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title"></h5>
+                  <div>
+                    <div class="form-group">
+                      <p class="control-label">Fecha registro</p>
+                      <input id="created_at" name="fecha" type="datetime-local" value="<%= @datetime %>" step="1" />
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Titulo</p>
+                      <%= text_field_tag(:titulo, nil, class:"form-control") %>
+                    </div>
+                    <div class="form-group">
+                      <label for="observacion">Observacion</label>
+                      <%= text_area_tag(:descripcion, nil, size: "30x4", class:'form-control') %>
+                    </div>
+                    <div class="form-group">
+                      <label for="medico_select">Medico</label>
+                      <%= select_tag :medico_id, options_for_select(@usuarios.collect{ |usuario| ["#{usuario.nombre_completo}", usuario.id] }, nil), {required:true, include_blank:true, id: 'medico_select', :disabled => false, class:'form-control'} %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            </br>
+            </br>
+
+            <div class="col-md-12">
+              <div class="text-center">
+                <%= submit_tag "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Crear&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".html_safe, :class => "btn btn-lg btn-primary" %>
+              </div>
+            </div>
+
+          </div>
+          <% end -%>
+        <% end %>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== MODAL SEGUIMIENTOS ==========-=-=-=-=-=-=-=-=-=-= -->

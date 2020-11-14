@@ -1,0 +1,111 @@
+<div class="modal fade" id="modal-edit" tabindex="-1" role="dialog" aria-labelledby="add-edit-Label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title text-center" id="add-table-Label">Actualizar Recursos <%= @institucion.nombre %></h4>
+      </div>
+      <div class="modal-body">
+        <%= form_tag(historial_recurso_path(@institucion.id), method: "patch",  :multipart => true, "data-ajax" => "false") do %>
+          <div id="panel_pintas_sangre" class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Unidades de Sangre</h3>
+            </div>
+            <div class="panel-body">
+
+              <div class="row">
+
+                <div class="col-lg-3">
+        					<%= label_tag(:sueros_antiofilicos, "Ultima Actualizacion:") %>
+        					</br>
+        					<h5 style="color:red">
+                    <%= @historial.nil? ? nil : @historial.created_at_formatted %>
+                  </h5>
+        				</div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div id="panel_pintas_sangre" class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Unidades de Sangre</h3>
+            </div>
+            <div class="panel-body">
+
+              <div class="row">
+
+                <div class="col-lg-3">
+        					<%= label_tag(:sueros_antiofilicos, "Sueros Antiofidicos:") %>
+        					</br>
+        					<%= text_field_tag(:sueros_antiofilicos, @historial.nil? ? nil : @historial.sueros_antiofilicos, class:'bind-keyup-event', size: 3) %>
+        				</div>
+
+                <div class="col-lg-3">
+        					<%= label_tag(:sangres_ab_positivo, "AB Positivo:") %>
+        					</br>
+        					<%= text_field_tag(:sangres_ab_positivo, @historial.nil? ? nil : @historial.sangres_ab_positivo, class:'bind-keyup-event', size: 3) %>
+        				</div>
+
+                <div class="col-lg-3">
+        					<%= label_tag(:sangres_ab_negativo, "AB Negativo:") %>
+        					</br>
+        					<%= text_field_tag(:sangres_ab_negativo, @historial.nil? ? nil : @historial.sangres_ab_negativo, class:'bind-keyup-event', size: 3) %>
+        				</div>
+
+                <div class="col-lg-3">
+        					<%= label_tag(:sangres_b_positivo, "B Positivo:") %>
+        					</br>
+        					<%= text_field_tag(:sangres_b_positivo, @historial.nil? ? nil : @historial.sangres_b_positivo, class:'bind-keyup-event', size: 3) %>
+        				</div>
+
+                <div class="col-lg-3">
+        					<%= label_tag(:sangres_b_negativo, "B Negativo:") %>
+        					</br>
+        					<%= text_field_tag(:sangres_b_negativo, @historial.nil? ? nil : @historial.sangres_b_negativo, class:'bind-keyup-event', size: 3) %>
+        				</div>
+
+                <div class="col-lg-3">
+        					<%= label_tag(:sangres_o_positivo, "O Positivo:") %>
+        					</br>
+        					<%= text_field_tag(:sangres_o_positivo, @historial.nil? ? nil : @historial.sangres_o_positivo, class:'bind-keyup-event', size: 3) %>
+        				</div>
+
+                <div class="col-lg-3">
+        					<%= label_tag(:sangres_o_negativo, "O Negativo:") %>
+        					</br>
+        					<%= text_field_tag(:sangres_o_negativo, @historial.nil? ? nil : @historial.sangres_o_negativo, class:'bind-keyup-event', size: 3) %>
+        				</div>
+
+                <div class="col-lg-3">
+        					<%= label_tag(:sangres_a_positivo, "A Positivo:") %>
+        					</br>
+        					<%= text_field_tag(:sangres_a_positivo, @historial.nil? ? nil : @historial.sangres_a_positivo, class:'bind-keyup-event', size: 3) %>
+        				</div>
+
+                <div class="col-lg-3">
+        					<%= label_tag(:sangres_a_negativo, "A Negativo:") %>
+        					</br>
+        					<%= text_field_tag(:sangres_a_negativo, @historial.nil? ? nil : @historial.sangres_a_negativo, class:'bind-keyup-event', size: 3) %>
+        				</div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <%= submit_tag("Guardar Cambios", class: "btn btn-primary form-control") %>
+
+        <% end %>
+
+
+      </div>
+    </div>
+  </div>
+</div>

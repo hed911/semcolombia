@@ -1,0 +1,80 @@
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL SEGUIMIENTOS =-=-=-=-=-=-=-=-=-=-========== -->
+<div class="modal fade" id="edit-ubicacion" tabindex="-1" role="dialog" aria-labelledby="seguimientos" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class='col-12 modal-title text-center'>
+          Datos ubicacion
+          <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+            <span aria-hidden='true'>&times;</span>
+          </button>
+        </h3>
+      </div>
+      <div class="modal-body">
+        <%= form_tag(update_ubicacion_institucion_caso_salud_publica_path(@caso.id), method: "put", remote:true, :multipart => true, "data-ajax" => "false" ) do %>
+          <%= hidden_field_tag(:latitude, @caso.latitude) %>
+          <%= hidden_field_tag(:longitude, @caso.longitude) %>
+          <%= hidden_field_tag(:close, params[:close]) %>
+          <div class="row">
+
+            <div class="container card-group">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title"></h5>
+                  <div>
+                    <div class="form-group">
+                      <p class="control-label">Direccion</p>
+                      <div class="input-group">
+                        <div onclick="toggle_fixed_direccion();" class="input-group-prepend">
+                          <span class="input-group-text" id="basic-addon1">
+                            <i id="icon_direccion" class="fas fa-unlock"></i>
+                          </span>
+                        </div>
+                        <%= text_field_tag(:direccion, @caso.direccion, :class => "danger-text form-control", style:"text-transform:uppercase", disabled: false, required:true) %>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Referencia</p>
+                      <%= text_field_tag(:referencia, @caso.referencia, placeholder:"", :class =>"form-control") %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Departamento</p>
+                      <%= text_field_tag(:departamento, (@caso.departamento ? @caso.departamento.nombre : nil), placeholder:"", :class =>"form-control", disabled:true) %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Municipio</p>
+                      <%= text_field_tag(:municipio, (@caso.municipio ? @caso.municipio.nombre : nil), placeholder:"", :class =>"form-control", disabled:true) %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Barrio</p>
+                      <%= text_field_tag(:barrio, (@caso.barrio ? @caso.barrio.nombre : nil), placeholder:"", :class =>"form-control", disabled:true) %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title"></h5>
+                  <div style='width: 100%; height: 400px;'>
+                    <div id="map_interno" style='width: 100%; height: 400px;'></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="text-center">
+                <%= submit_tag "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Guardar Cambios&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".html_safe, :class => "btn btn-lg btn-primary" %>
+              </div>
+            </div>
+
+          </div>
+
+        <% end %>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== MODAL SEGUIMIENTOS ==========-=-=-=-=-=-=-=-=-=-= -->

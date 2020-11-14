@@ -1,0 +1,13 @@
+<% @operarios.each do |operario| -%>
+  <tr class="">
+    <td><%= operario.id %></td>
+    <td><%= operario.nombre %></td>
+    <td><%= operario.email %></td>
+    <td><%= operario.cedula %></td>
+    <td><%= operario.updated_position_at_formatted %></td>
+    <td>
+      <a class="btn-focus" data-btn-focus-id="<%= operario.id %>" onclick="focus_on_usuario(<%= operario.id %>);">Seguir</a>
+    </td>
+  </tr>
+<% end -%>
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

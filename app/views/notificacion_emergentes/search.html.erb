@@ -1,0 +1,12 @@
+<% @notificacions.each do |notificacion| -%>
+  <tr class=''>
+    <td class="text-right">
+      <%= "#{notificacion.id}" %>
+    </td>
+    <td><%= notificacion.titulo %></td>
+    <td><%= notificacion.descripcion %></td>
+    <td><%= notificacion.created_at %></td>
+  </tr>
+<% end -%>
+
+<%= hidden_field_tag :cantidad_paginas, @cantidad_paginas %>

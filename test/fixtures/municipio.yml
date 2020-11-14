@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# This model initially had no columns defined. If you add columns to the
+# model remove the '{}' from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
+barranquilla:
+  id: 4
+  nombre: Barranquilla
+  default_latitude: 10.9583295
+  default_longitude: -74.791163502
+  habilitado_remisiones:  false
+  habilitado_autorizaciones: false
+
+cartagena:
+  id: 5
+  nombre: Cartagena
+  default_latitude: 10.41999832
+  default_longitude: -75.536164522
+  habilitado_remisiones:  false
+  habilitado_autorizaciones: false

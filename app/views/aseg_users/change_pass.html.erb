@@ -1,0 +1,48 @@
+<%= form_tag(do_change_pass_aseguradora_aseg_user_path(:aseguradora_id => @aseguradora.id, :id => @usuario.id), method: "patch",  :multipart => true, "data-ajax" => "false" ) do %>
+<div class="container">
+	<h1>Cambiar Contraseña <small><%= @usuario.primer_nombre %></small></h1>
+
+	<ol class="breadcrumb">
+	  <li class="active"><%= link_to "Usuarios", aseguradora_aseg_users_path(@aseguradora.id) %></li>
+	</ol>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:password, "Contraseña:") %>
+			<div class="input">
+				<%= password_field_tag(:password, nil, required:true) %>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="clearfix">
+			<%= label_tag(:password_again, "Repita su Contraseña:") %>
+			<div class="input">
+				<%= password_field_tag(:password_again, nil, required:true) %>
+			</div>
+		</div>
+	</fieldset>
+
+	<%= submit_tag("Guardar Cambios") %>
+
+</div>
+
+<% end %>
+
+
+<script type="text/javascript">
+	var password = new LiveValidation( "password", { validMessage: " ", wait: 500 } );
+	password.add( Validate.Presence,
+              { failureMessage: "Campo Requerido" } );
+	password.add( Validate.Length, { minimum: 6 } );
+	password.add( Validate.Length, { maximum: 40 } );
+
+	var password_again = new LiveValidation( "password_again", { validMessage: " ", wait: 500 } );
+	password_again.add( Validate.Presence,
+              { failureMessage: "Campo Requerido" } );
+	password_again.add( Validate.Length, { minimum: 6 } );
+	password_again.add( Validate.Length, { maximum: 40 } );
+	password_again.add( Validate.Confirmation, { match: 'password' } );
+
+</script>

@@ -1,0 +1,195 @@
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL DETALLE TRASLADO =-=-=-=-=-=-=-=-=-=-========== -->
+	<div class="modal fade" id="detalle-institucion" tabindex="-1" role="dialog" aria-labelledby="add-edit-Label" aria-hidden="true">
+	  <div class="modal-dialog modal-xl">
+	    <div class="modal-content">
+	      <div class="modal-body">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          	<span aria-hidden="true">&times;</span>
+        	</button>
+					<div class="row">
+						<div class="col-md-6">
+							<div>
+								<div class="pull-left">
+									<h2>IPS-<%= @institucion.id %></h2>
+									<p>INSTITUCION</p>
+								</div>
+								<button style="margin-top:20px;" type="button" class="btn btn-<%= @institucion.activo ? "primary" : "danger" %> pull-right"><%= @institucion.activo ? "HABILITADA" : "DESHABILITADA" %></button>
+							</div>
+							<table class="table borderless">
+								<thead>
+					        <tr style="background-color:#f5f4f4;">
+					          <th data-sort="string">DATOS INICIALES</th>
+					          <th data-sort="string"></th>
+					        </tr>
+								</thead>
+								<tbody>
+                  <tr>
+                    <td>ROLES</td>
+                    <td class="text-right"><%= @institucion.roles_value %></td>
+                  </tr>
+                  <tr>
+                    <td>CODIGO</td>
+                    <td class="text-right"><%= @institucion.codigo %></td>
+                  </tr>
+                  <tr>
+                    <td>NUMERO SEDE</td>
+                    <td class="text-right"><%= @institucion.numero_sede %></td>
+                  </tr>
+                  <tr>
+                    <td>NOMBRE</td>
+                    <td class="text-right"><%= @institucion.nombre.upcase if @institucion.nombre %></td>
+                  </tr>
+                  <tr>
+                    <td>DIRECCION</td>
+                    <td class="text-right"><%= @institucion.direccion %></td>
+                  </tr>
+                  <tr>
+                    <td>TELEFONO</td>
+                    <td class="text-right"><%= @institucion.telefono %></td>
+                  </tr>
+                  <tr>
+                    <td>EMAIL</td>
+                    <td class="text-right"><%= @institucion.email %></td>
+                  </tr>
+							  </tbody>
+							</table>
+
+							<table class="table borderless">
+								<thead>
+					        <tr style="background-color:#f5f4f4;">
+					          <th data-sort="string">RESPUESTA AMBULANCIA</th>
+					          <th data-sort="string"></th>
+					        </tr>
+								</thead>
+								<tbody>
+                  <tr>
+                    <td>NIT</td>
+                    <td class="text-right"><%= @institucion.nit %></td>
+                  </tr>
+                  <tr>
+                    <td>DV</td>
+                    <td class="text-right"><%= @institucion.dv %></td>
+                  </tr>
+                  <tr>
+                    <td>CLASE PERSONA</td>
+                    <td class="text-right"><%= @institucion.clase_persona %></td>
+                  </tr>
+                  <tr>
+                    <td>NAJU NOMBRE</td>
+                    <td class="text-right"><%= @institucion.naju_nombre %></td>
+                  </tr>
+                  <tr>
+                    <td>ESE</td>
+                    <td class="text-right"><%= @institucion.ese ? "SI" : "NO" %></td>
+                  </tr>
+                  <tr>
+                    <td>CARACTER</td>
+                    <td class="text-right"><%= @institucion.caracter %></td>
+                  </tr>
+									<tr>
+                    <td>GRSE NOMBRE</td>
+                    <td class="text-right"><%= @institucion.grse_nombre %></td>
+                  </tr>
+									<tr>
+                    <td>SERV NOMBRE</td>
+                    <td class="text-right"><%= @institucion.serv_nombre %></td>
+                  </tr>
+							  </tbody>
+							</table>
+
+						</div>
+
+						<div class="col-md-6">
+
+
+							<table class="table borderless">
+								<thead>
+					        <tr style="background-color:#f5f4f4;">
+					          <th data-sort="string">DETALLE RECOGIDA DE PACIENTE</th>
+					          <th data-sort="string"></th>
+					        </tr>
+								</thead>
+								<tbody>
+
+                  <tr>
+                    <td>AMBULATORIO</td>
+                    <td class="text-right"><%= @institucion.ambulatorio ? "SI" : "NO" %></td>
+                  </tr>
+                  <tr>
+                    <td>HOSPITALARIO</td>
+                    <td class="text-right"><%= @institucion.hospitalario ? "SI" : "NO" %></td>
+                  </tr>
+                  <tr>
+                    <td>UNIDAD MOVIL</td>
+                    <td class="text-right"><%= @institucion.unidad_movil ? "SI" : "NO" %></td>
+                  </tr>
+                  <tr>
+                    <td>DOMICILIARIO</td>
+                    <td class="text-right"><%= @institucion.domiciliario ? "SI" : "NO" %></td>
+                  </tr>
+                  <tr>
+                    <td>OTRAS EXTRAMURAL</td>
+                    <td class="text-right"><%= @institucion.otras_extramural ? "SI" : "NO" %></td>
+                  </tr>
+                  <tr>
+                    <td>CENTRO REFERENCIA</td>
+                    <td class="text-right"><%= @institucion.centro_referencia ? "SI" : "NO" %></td>
+                  </tr>
+                  <tr>
+                    <td>INSTITUCION EMISORA</td>
+                    <td class="text-right"><%= @institucion.institucion_remisora ? "SI" : "NO" %></td>
+                  </tr>
+							  </tbody>
+							</table>
+
+							<table class="table borderless">
+								<thead>
+									<tr style="background-color:#f5f4f4;">
+										<th data-sort="string">ADJUNTOS</th>
+										<th data-sort="string"></th>
+									</tr>
+								</thead>
+								<tbody>
+                  <tr>
+                    <td>FECHA APERTURA</td>
+                    <td class="text-right"><%= @institucion.fecha_apertura %></td>
+                  </tr>
+                  <tr>
+                    <td>FECHA CIERRE</td>
+                    <td class="text-right"><%= @institucion.fecha_cierre %></td>
+                  </tr>
+                  <tr>
+                    <td>NUMERO DISTINTIVO</td>
+                    <td class="text-right"><%= @institucion.numero_distintivo %></td>
+                  </tr>
+                  <tr>
+                    <td>NUMERO DISTINTIVO</td>
+                    <td class="text-right"><%= @institucion.numero_sede_principal %></td>
+                  </tr>
+									<% municipio = @institucion.municipio_alterno ? @institucion.municipio_alterno : @institucion.municipio -%>
+								  <% departamento = municipio.departamento -%>
+                  <tr>
+                    <td>DEPARTAMENTO</td>
+                    <td class="text-right"><%= departamento.nombre if departamento %></td>
+                  </tr>
+                  <tr>
+                    <td>MUNICIPIO</td>
+                    <td class="text-right"><%= municipio.nombre if municipio %></td>
+                  </tr>
+                  <tr>
+                    <td>LATITUDE</td>
+                    <td class="text-right"><%= @institucion.latitude %></td>
+                  </tr>
+                  <tr>
+                    <td>LONGITUDE</td>
+                    <td class="text-right"><%= @institucion.longitude %></td>
+                  </tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== /MODAL DETALLE INSTITUCION ==========-=-=-=-=-=-=-=-=-=-= -->

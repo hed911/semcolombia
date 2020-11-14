@@ -1,0 +1,56 @@
+<!-- ==========-=-=-=-=-=-=-=-=-=-= MODAL SEGUIMIENTOS =-=-=-=-=-=-=-=-=-=-========== -->
+<div class="modal fade" id="despachar-muestra" tabindex="-1" role="dialog" aria-labelledby="seguimientos" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class='col-12 modal-title text-center'>
+          Despachar muestra <%= @muestra.id %>
+          <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+            <span aria-hidden='true'>&times;</span>
+          </button>
+        </h3>
+      </div>
+      <div class="modal-body">
+        <%= form_tag(do_despachar_laboratorio_test_path(@muestra.id), method: "put", remote:true, :multipart => true, "data-ajax" => "false" ) do %>
+          <div class="row">
+            <div class="container card-group">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title"></h5>
+                  <div>
+                    <div class="form-group">
+                      <p class="control-label">Fecha envio</p>
+                      <input id="fecha_despacho" name="fecha_despacho" type="datetime-local" value="<%= @datetime %>" class="form-control" step="1" />
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Laboratorio</p>
+                      <%= select_tag :laboratorio_id, options_for_select(@laboratorios.collect{ |laboratorio| ["#{laboratorio.nombre}", laboratorio.id] }, (@muestra.laboratorio ? @muestra.laboratorio.id : nil)), {required:true, include_blank:true, id: 'laboratorio_select', :disabled => false, class:'form-control'} %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label"><b>Confirme laboratorio</b></p>
+                      <%= select_tag :laboratorio_confirmacion_id, options_for_select(@laboratorios.collect{ |laboratorio| ["#{laboratorio.nombre}", laboratorio.id] }, (@muestra.laboratorio ? @muestra.laboratorio.id : nil)), {required:true, include_blank:true, id: 'laboratorio_confirmacion_select', :disabled => false, class:'form-control'} %>
+                    </div>
+                    <div class="form-group">
+                      <p class="control-label">Observaciones</p>
+                      <%= text_area_tag(:observaciones, @muestra.observaciones, size: "30x4", class:'form-control') %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="text-center">
+                <%= submit_tag "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Guardar Cambios&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".html_safe, :class => "btn btn-lg btn-primary" %>
+              </div>
+            </div>
+
+          </div>
+
+        <% end %>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- =-=-=-=-=-=-=-=-=-=-========== MODAL SEGUIMIENTOS ==========-=-=-=-=-=-=-=-=-=-= -->

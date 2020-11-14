@@ -1,0 +1,144 @@
+<%= form_tag(crue_laboratorio_lab_users_path(@laboratorio.id), method: "post",  :multipart => true, "data-ajax" => "false" ) do %>
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title"></h3>
+	</div>
+	<div class="panel-body">
+		<h1>Nuevo Usuario</h1>
+
+		<ol class="breadcrumb">
+		  <li class="active"><%= link_to "Usuarios", crue_laboratorio_lab_users_path(@laboratorio.id) %></li>
+		</ol>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:primer_nombre, "Primer Nombre:") %>
+				</br>
+				<%= text_field_tag(:primer_nombre, nil, required:true) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:segundo_nombre, "Segundo Nombre:") %>
+				</br>
+				<%= text_field_tag(:segundo_nombre, nil) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:primer_apellido, "Primer Apellido:") %>
+				</br>
+				<%= text_field_tag(:primer_apellido, nil, required:true) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:segundo_apellido, "Segundo Apellido:") %>
+				</br>
+				<%= text_field_tag(:segundo_apellido, nil, required:true) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:telefono, "Telefono:") %>
+				</br>
+				<%= text_field_tag(:telefono, nil) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:identificacion, "Identificacion:") %>
+				</br>
+				<%= text_field_tag(:identificacion, nil) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:email, "Email:") %>
+				</br>
+				<%= email_field_tag(:email, nil, required:true) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:password_dinamica, "Password Dinamica:") %>
+				</br>
+				<%= check_box_tag :password_dinamica, 'true', true, onchange:"passwordDinamicaChanged();", class:'form-control' %>
+			</div>
+		</div>
+
+		<div id="password_container" class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:password_dinamica, "Contraseña:") %>
+				</br>
+				<%= password_field_tag(:password, "", :minlength => 8, :class =>"form-control", :placeholder => "", required:true) %>
+			</div>
+		</div>
+
+		<div id="password_again_container" class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:repeat_password, "Repita Contraseña:") %>
+				</br>
+				<%= password_field_tag(:repeat_password, "", :minlength => 8, :class =>"form-control", :placeholder => "", required:true) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:cargo, "Cargo:") %>
+				</br>
+				<%= text_field_tag(:cargo, nil) %>
+			</div>
+		</div>
+
+    <div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:fecha_vigencia, "Fecha de Vigencia:") %>
+				</br>
+				<%= date_field_tag(:fecha_vigencia, nil) %>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<%= label_tag(:activo, "Activado:") %>
+				</br>
+				<%= check_box_tag 'activo', '1', true %>
+			</div>
+		</div>
+
+		<%= submit_tag("Crear") %>
+	</div>
+</div>
+<% end %>
+
+<script>
+
+	$("#password_container").hide();
+	$("#password_again_container").hide();
+	$("#password").removeAttr('required');
+	$("#repeat_password").removeAttr('required');
+
+	function passwordDinamicaChanged(){
+    if(!$('#password_dinamica').is(":checked")){
+			$("#password_container").show();
+			$("#password_again_container").show();
+			$("#password").attr('required','');
+			$("#password_again").attr('required','');
+		}
+    else{
+			$("#password_container").hide();
+			$("#password_again_container").hide();
+			$("#password").removeAttr('required');
+			$("#password_again").removeAttr('required');
+		}
+  }
+
+</script>

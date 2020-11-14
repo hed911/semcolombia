@@ -1,0 +1,70 @@
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<h3 class="panel-title">Dashboard IEC</h3>
+	</div>
+	<div class="panel-body">
+		<div class="row">
+
+			<div class="col-lg-3">
+				<%= label_tag(:start_date, "Fecha Inicio:") %>
+				</br>
+				<input value="<%= @start_date %>" name="start_date" id="start_date" class="form-control" type="date">
+			</div>
+
+			<div class="col-lg-3">
+				<%= label_tag(:end_date, "Fecha Fin:") %>
+				</br>
+				<input value="<%= @end_date %>" name="end_date" id="end_date" class="form-control" type="date">
+			</div>
+		</div>
+		<button onclick="change_url();" type="button" class="btn btn-primary">Buscar</button>
+	</div>
+</div>
+</br>
+</br>
+<% start_date = DateTime.parse(@start_date) -%>
+<% end_date = DateTime.parse(@end_date) -%>
+<h3>Por usuario</h3>
+<table class="table table-bordered table-hover table-striped tablesorter">
+	<thead>
+		<tr>
+			<th data-sort="int">Nombre completo</th>
+			<th data-sort="string"># Registros</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% @usuarios_v2.sort_by { |u| u[:count] }.reverse.each do |item| -%>
+			<tr>
+				<td><%= item[:usuario].nombre_completo %></td>
+				<td><%= item[:count] %></td>
+			</tr>
+		<% end -%>
+	</tbody>
+</table>
+
+<script>
+
+	function change_url(){
+		var start_date = $('#start_date').val();
+		var end_date = $('#end_date').val();
+    var is_null_start_date = start_date == null || start_date == "";
+		var is_null_end_date = end_date == null || end_date == "";
+		var are_null_dates = is_null_start_date || is_null_end_date
+		if(are_null_dates) return;
+		var url = '/crue/caso_salud_publicas/dashboard_v5';
+		if(start_date != null && start_date != "" && end_date != null && end_date != ""){
+			url += "?start_date=" + start_date + "&end_date=" + end_date;
+		}
+		location.href = url;
+	}
+
+	var original_class = document.getElementsByTagName('body')[0].className;
+  function show_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className += " loading";
+  }
+  function hide_loading_indicator(){
+    var body = document.getElementsByTagName('body')[0];
+    body.className = original_class;
+  }
+</script>

@@ -1,0 +1,7 @@
+<% if @error %>
+  alert("<%= @error %>");
+<% else %>
+  $('#new-caso').modal('hide');
+  do_search(currentPage);
+  show_edit_ubicacion(<%= @caso.id %>, false);
+<% end %>
