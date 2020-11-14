@@ -19,9 +19,9 @@ Rails.application.configure do
     config.logger = ActiveSupport::TaggedLogging.new(logger)
   end
   config.active_record.dump_schema_after_migration = false
-  config.action_mailer.default_url_options = { :host => "sem-barranquilla.herokuapp.com" }
+  config.action_mailer.default_url_options = { :host => ENV['host'] }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
-  config.cache_store = :redis_store, (ENV["REDIS_URL"] || "redis://h:pab1d46f89ee750fa73be608306865756164e225d4f76eb1dbfa525ab49e162dd@ec2-3-224-53-9.compute-1.amazonaws.com:14329"), { expires_in: 5.minutes }
+  config.cache_store = :redis_store, (ENV["REDIS_URL"]), { expires_in: 5.minutes }
   config.force_ssl = true
 end

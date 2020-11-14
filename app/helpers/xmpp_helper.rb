@@ -6,7 +6,7 @@ module XmppHelper
       nickname:username
     }
     puts "PARAMS:#{params.to_json}"
-    response = HTTParty.post("http://156.67.221.152:3000/api/usuarios",
+    response = HTTParty.post("#{ENV['xmpp_url']}/api/usuarios",
     {
       body: params.to_json.to_s,
       headers: {
@@ -22,7 +22,7 @@ module XmppHelper
     params = {
       id:id
     }
-    response = HTTParty.post("http://156.67.221.152:3000/api/grupos",
+    response = HTTParty.post("#{ENV['xmpp_url']}/api/grupos",
     {
       body: params.to_json.to_s,
       headers: {
@@ -33,11 +33,11 @@ module XmppHelper
     response.code == 200
   end
 
-  def self.agregar_miembro_grupo(id, username)
+  def self.agregar_miembro_grupo(id, username) 
     params = {
       nickname:username
     }
-    response = HTTParty.put("http://156.67.221.152:3000/api/grupos/#{id}/agregar_miembro",
+    response = HTTParty.put("#{ENV['xmpp_url']}/api/grupos/#{id}/agregar_miembro",
     {
       body: params.to_json.to_s,
       headers: {
@@ -50,7 +50,7 @@ module XmppHelper
 
   def self.borrar_grupo(id)
     params = {}
-    response = HTTParty.delete("http://156.67.221.152:3000/api/grupos/#{id}",
+    response = HTTParty.delete("#{ENV['xmpp_url']}/api/grupos/#{id}",
     {
       body: params.to_json.to_s,
       headers: {
@@ -65,7 +65,7 @@ module XmppHelper
     params = {
       username:username_to
     }
-    response = HTTParty.put("http://156.67.221.152:3000/api/usuarios/#{username_from}/agregar_contacto",
+    response = HTTParty.put("#{ENV['xmpp_url']}/api/usuarios/#{username_from}/agregar_contacto",
     {
       body: params.to_json.to_s,
       headers: {

@@ -19,6 +19,6 @@ Rails.application.configure do
   config.assets.debug = true
   config.assets.quiet = true
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
-  config.action_mailer.default_url_options = { :host => "sem-barranquilla.herokuapp.com" }
-  config.cache_store = :redis_store, (ENV["REDIS_URL"] || "redis://h:pab1d46f89ee750fa73be608306865756164e225d4f76eb1dbfa525ab49e162dd@ec2-3-224-53-9.compute-1.amazonaws.com:14329"), { expires_in: 5.minutes }
+  config.action_mailer.default_url_options = { :host => ENV['domain'] }
+  config.cache_store = :redis_store, (ENV["REDIS_URL"]), { expires_in: 5.minutes }
 end

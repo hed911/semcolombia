@@ -1,19 +1,21 @@
 ---
 development:
-  cloud_name: sem-barranquisha
-  api_key: '669334989421817'
-  api_secret: 6DyRYR04sNMQAbuvFyB06rbYq-o
+  cloud_name: "<%= ENV["cloudinary_development_cloud_name"] %>"
+  api_key: "<%= ENV["cloudinary_development_api_key"] %>"
+  api_secret: "<%= ENV["cloudinary_development_api_secret"] %>"
   enhance_image_tag: true
   static_image_support: false
 production:
-  cloud_name: sem-barranquisha
-  api_key: '669334989421817'
-  api_secret: 6DyRYR04sNMQAbuvFyB06rbYq-o
+  cloud_name: "<%= ENV["cloudinary_production_cloud_name"] %>"
+  api_key: "<%= ENV["cloudinary_production_api_key"] %>"
+  api_secret: "<%= ENV["cloudinary_production_api_secret"] %>"
   enhance_image_tag: true
   static_image_support: true
 test:
-  cloud_name: sem-barranquisha
-  api_key: '669334989421817'
-  api_secret: 6DyRYR04sNMQAbuvFyB06rbYq-o
+  cloud_name: "<%= ENV["cloudinary_test_cloud_name"] %>"
+  api_key: "<%= ENV["cloudinary_test_api_key"] %>"
+  api_secret: "<%= ENV["cloudinary_test_api_secret"] %>"
   enhance_image_tag: true
   static_image_support: false
+
+

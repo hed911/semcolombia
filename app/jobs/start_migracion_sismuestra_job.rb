@@ -6,7 +6,7 @@ class StartMigracionSismuestraJob
   @queue = :default
   @loner = true
   def self.perform()
-    url = "https://apps.ins.gov.co/SisMuestrasApi/api/resultados"
+    url = "#{ENV['url_sismuestra_api']}/SisMuestrasApi/api/resultados"
     USUARIOS_WS_SISMUESTRA.each do |usuario_ws|
       municipio = Municipio.find(usuario_ws[:municipio_id])
       token = Base64.encode64("#{usuario_ws[:username]}:#{usuario_ws[:password]}")

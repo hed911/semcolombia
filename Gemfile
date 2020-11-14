@@ -1,12 +1,5 @@
 source 'https://rubygems.org'
 
-
-#EMAIL FOR GMAIL
-#semcolombiav2@gmail.com
-
-#PASSWORD FOR GMAIL
-# Viatransdelcaribe1977
-
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
   "https://github.com/#{repo_name}.git"
@@ -16,9 +9,7 @@ gem 'xmlhasher'
 gem "opentok", "~> 4.0.0"
 gem 'pdf-reader'
 gem 'jwt'
-# Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
-#gem 'conversejs-rails'
 gem 'kmeans-clusterer'
 gem "recaptcha"
 gem 'remotipart', '~> 1.2'
@@ -70,6 +61,7 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails', '5.0.5'
 gem 'jquery-fileupload-rails'
 gem 'savon', '~> 2.12.0'
+gem "figaro" #TO SET ENV VARIABLES IN DEVELOPMENT
 
 gem 'rails', '~> 5.1.4'
 gem 'puma', '~> 3.7'

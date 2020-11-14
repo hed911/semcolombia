@@ -823,24 +823,24 @@ class Crue::CasoSaludPublicasController < ApplicationController
     @registros_negativos = CasoSaludPublica.where(municipio: current_municipio, estado_enfermedad: 3).where.not(latitude: nil, longitude: nil).to_json(only: %i[id edad numero_documento telefono direccion latitude longitude], methods: [:nombre_completo, :edad_value])
     @registros_por_confirmar = CasoSaludPublica.where(municipio: current_municipio, estado_enfermedad: 1).where.not(latitude: nil, longitude: nil).to_json(only: %i[id edad numero_documento telefono direccion latitude longitude], methods: [:nombre_completo, :edad_value])
 
-    @response = HTTParty.get("https://sem-barranquilla-api.herokuapp.com/ambulancia/recursos",
+    @response = HTTParty.get(ENV['url_api_sem'],
                              {
       body: {},
       headers: {
         'Content-Type': "application/json",
-        'Authentication': "sqMq#RR^7HZEM^T%DbpFGhzP^f*SQUlmMIGdeRCy**3m1FVTKb",
+        'Authentication': ENV['token_api_sem'],
       },
     })
     @response = @response.parsed_response["data"]
   end
 
   def dashboard_v2
-    @response = HTTParty.get("https://sem-barranquilla-api.herokuapp.com/ambulancia/recursos",
+    @response = HTTParty.get(ENV['url_api_sem'],
                              {
       body: {},
       headers: {
         'Content-Type': "application/json",
-        'Authentication': "sqMq#RR^7HZEM^T%DbpFGhzP^f*SQUlmMIGdeRCy**3m1FVTKb",
+        'Authentication': ENV['token_api_sem'],
       },
     })
     @response = @response.parsed_response["data"]

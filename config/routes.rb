@@ -652,8 +652,6 @@ Rails.application.routes.draw do
   post "/api/auth/login" => "api/authentication#login", as: :auth_login
   mount ExtraExtra::Engine, at: "/release_notes"
 
-  get "/.well-known/pki-validation/725CBC59BE102B7BE22E6B3CC48EF43B.txt" => "dashboard#cosa_ssl", :as => "cosa_ssl"
-
   authenticate :usuario do
     mount Resque::Server, at: "/resque"
   end

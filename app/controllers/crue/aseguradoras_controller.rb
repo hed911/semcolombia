@@ -1,4 +1,4 @@
-class Crue::AseguradorasController < ApplicationController #REVISADO
+class Crue::AseguradorasController < ApplicationController
   require 'net/http'
   before_action :authenticate_usuario!
 

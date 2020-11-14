@@ -1,0 +1,23 @@
+# Add configuration values here, as shown below.
+#
+# pusher_app_id: "2954"
+# pusher_key: 7381a978f7dd7f9a1117
+# pusher_secret: abdc3b896a0ffb85d373
+# stripe_api_key: sk_test_2J0l093xOyW72XUYJHE4Dv2r
+# stripe_publishable_key: pk_test_ro9jV5SNwGb1yYlQfzG17LHK
+#
+# production:
+#   stripe_api_key: sk_live_EeHnL644i6zo4Iyq4v1KdV9H
+#   stripe_publishable_key: pk_live_9lcthxpSIHbGwmdO941O1XVU
+
+production_database_host: "ec2-34-225-162-157.compute-1.amazonaws.com"
+production_database_name: "ddq4kld9b6f3pt"
+production_database_username: "bwnvcrkcejrcsk"
+production_database_port: "5432"
+production_database_password: "20942584b79dbc302b15bad10b64667fa3201244c9301c32a861bb04c30f2d56"
+
+test_database_host: "ec2-18-211-48-247.compute-1.amazonaws.com"
+test_database_name: "djiooo8gqjab6"
+test_database_username: "cslxcwxypqbept"
+test_database_port: "5432"
+test_database_password: "6b328d296773674c3af1d34ad39c02a82ea9086a5779519195c2de23a82af5f0"

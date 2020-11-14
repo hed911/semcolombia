@@ -1,8 +1,8 @@
 CURRENT_APP_VERSION = "0.0.1".freeze
-CURRENT_APP_DATE = "2017/12/29".freeze
+CURRENT_APP_DATE = "2020/10/04".freeze
 
-PUBLIC_KEY_VAPID_CRUE = "BGu2CS13ame7HbmwWnwc7mf5ZW-ZtB5DG9JWDbLxUhhtfUATQ0LVbm6sm1x0ZyMDv7F4LkTzh8mrjf5gqBet-JQ=".freeze
-PRIVATE_KEY_VAPID_CRUE = "he1eBBF7kKysmBIWALX4CSFXrI1w14OfuvMTbZpkccU=".freeze
+PUBLIC_KEY_VAPID_CRUE = ENV['public_vapid'].freeze
+PRIVATE_KEY_VAPID_CRUE = ENV['private_vapid'].freeze
 
 MUNICIPIO_ID = 27
 TIMEOUT_CANCELAR_EVENTO = 1
@@ -20,18 +20,18 @@ COMPLEJIDAD_ALTA = 3
 MAX_MINUTOS_INACTIVIDAD = 5
 MAX_DISTANCE_BETWEEN_AMBULANCE_AND_PATIENT = 5000 #METROS
 MUNICIPIO_PROYECTO_ID = 27 #CARTAGENA ID
-MUNICIPIO_PROYECTO_NOMBRE = "cartagena"
+MUNICIPIO_PROYECTO_NOMBRE = ENV['nombre_proyecto']
 DOMINIO_PROYECTO_URL = ""
-DOMINIO_PROYECTO_ALCALDIA_URL = "http://www.cartagena.gov.co/"
-EMAIL_PROYECTO_CRUE = "solicitudsem@cartagena.gov.co"
-DOMINIO_PROYECTO_CRUE = "https://sem-colombia-v2.herokuapp.com"
-DOMINIO_PROYECTO_HOSPITAL = "https://sem-colombia-v2.herokuapp.com"
+DOMINIO_PROYECTO_ALCALDIA_URL = ENV['dominio_alcaldia']
+EMAIL_PROYECTO_CRUE = ENV['email_contacto']
+DOMINIO_PROYECTO_CRUE = ENV['dominio']
+DOMINIO_PROYECTO_HOSPITAL = ENV['dominio_alterno']
 DOMINIO_PROYECTO_CRUE_V2 = DOMINIO_PROYECTO_CRUE[8..(DOMINIO_PROYECTO_CRUE.length - 1)]
 DOMINIO_PROYECTO_HOSPITAL_V2 = DOMINIO_PROYECTO_HOSPITAL[8..(DOMINIO_PROYECTO_HOSPITAL.length - 1)]
-EMAILS_NOTIFICACION_COVID = ["hedu911@gmail.com", "at_salud@barranquilla.gov.co", "director@barranquillasegura.com"]
+EMAILS_NOTIFICACION_COVID = ENV['emails_notificacion'].split(',')
 
-JWT_ZOOM = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6InZtczBNeGpUUXUtTjlmcGVtQ3hwZVEiLCJleHAiOjE3MzU3MDc2MDAsImlhdCI6MTU5MDI3Njc4NX0.zgScGnhGTObCcfAUJp09iZRn7wazNdExBT2iApL24Sc"
-ZOOM_USER_ID = "9-dGQNgRSwOaZ0ErLIB8Mg"
+JWT_ZOOM = ENV['jwt_zoom'] 
+ZOOM_USER_ID = ENV['jwt_zoom_user_id'] 
 
 COLORFUL_THS = %w[
   F6722B
@@ -157,19 +157,19 @@ ESTADO_SP_CERRADO = 2
 
 USUARIOS_WS_SISMUESTRA = [
   {
-    municipio_id: 4,
-    username: "wsbarranquilla@ws",
-    password: "YM4YAqJQuR94schg",
+    municipio_id: ENV['municipio_one_id'],
+    username: ENV['municipio_one_username'],
+    password: ENV['municipio_one_password'],
   },
   {
-    municipio_id: 27,
-    username: "wscartagena@ws",
-    password: "hE5EHhQXtUQnFXuz",
+    municipio_id: ENV['municipio_two_id'],
+    username: ENV['municipio_two_username'],
+    password: ENV['municipio_two_password'],
   },
   {
-    municipio_id: 1988,
-    username: "wsatlantico@ws",
-    password: "gqxUE6Fvs9JP6G7H",
+    municipio_id: ENV['municipio_three_id'],
+    username: ENV['municipio_three_username'],
+    password: ENV['municipio_three_password'],
   },
 ]
 

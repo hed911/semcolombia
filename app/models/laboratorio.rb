@@ -4,3 +4,5 @@ class Laboratorio < ActiveRecord::Base
   belongs_to :municipio, optional:true
   has_many :usuarios
 end
+
+
