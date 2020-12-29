@@ -1,5 +1,4 @@
-class Localidad < ActiveRecord::Base
-  self.table_name = 'localidads'
-  #attr_accessible :nombre,
-  has_many :barrios
+class Locality < ActiveRecord::Base
+  self.table_name = 'localities'
+  has_many :neighborhoods
 end

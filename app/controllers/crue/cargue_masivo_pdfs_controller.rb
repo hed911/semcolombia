@@ -15,15 +15,15 @@ class Crue::CargueMasivoPdfsController < ApplicationController
 
   def create
     file = params[:file]
-    raise "No adjunt\u00F3 un archivo" unless file
+    raise "Attachment not found" unless file
     if (File.size(file.path).to_f / 2 ** 20) > 20
-      flash[:notice] = "El tama\u00F1o del archivo no debe superar los 20mb, intente hacer que el archivo tenga menos registros"
+      flash[:notice] = "The size must be lower than 20mb"
       redirect_to crue_cargue_masivo_pdfs_path
       return
     end
     cargue_masivo = CargueMasivoPdf.new
     cargue_masivo.estado = 1
-    cargue_masivo.archivo = file
+    cargue_masivo.attachment = file
     cargue_masivo.usuario = current_usuario
     cargue_masivo.municipio = current_municipio
     cargue_masivo.laboratorio = Laboratorio.find_by_id(params[:laboratorio_id])
@@ -71,7 +71,7 @@ class Crue::CargueMasivoPdfsController < ApplicationController
     @caso = CasoSaludPublica.where(numero_documento: @registro.numero_documento).first
     @muestras = @caso.muestras.where(resultado: [1, 2, 3], laboratorio: @registro.cargue_masivo_pdf.laboratorio).to_a
     @muestras.each do |muestra|
-      @muestras.delete(muestra) if muestra.archivos.any?
+      @muestras.delete(muestra) if muestra.attachments.any?
     end
     render layout: false
   end
@@ -79,7 +79,7 @@ class Crue::CargueMasivoPdfsController < ApplicationController
   def do_resolver
     registro = RegistroPdf.find_by_id params[:id]
     muestra = Muestra.find_by_id params[:muestra_id]
-    muestra.archivos = [registro.archivo]
+    muestra.attachments = [registro.attachment]
     muestra.resultado = registro.resultado
     muestra.estado = 5
     muestra.fecha_procesado_interna = Time.now

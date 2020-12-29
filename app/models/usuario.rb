@@ -1,34 +1,28 @@
-class Usuario < ActiveRecord::Base
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
+class User < ActiveRecord::Base
+  include Common
+  
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
-  # attr_accessible :es_super_admin, :activo, :telefono, :celular, :identificacion, :cargo, :fecha_vigencia, :roles, :primer_nombre, :segundo_nombre, :primer_apellido, :segundo_apellido, :email, :password, :encrypted_password, :reset_password_token, :reset_password_sent_at, :remember_created_at, :sign_in_count, :last_sign_in_at, :current_sign_in_ip, :last_sign_in_ip
-  belongs_to :municipio, optional:true
-  belongs_to :departamento, optional:true
-  belongs_to :municipio_alterno, :class_name => 'Municipio', :foreign_key => 'municipio_alterno_id', optional:true
-  belongs_to :departamento_alterno, :class_name => 'Departamento', :foreign_key => 'departamento_alterno_id', optional:true
-
-  belongs_to :laboratorio, optional:true
-  belongs_to :institucion, optional:true
-  belongs_to :entidad_prestadora, optional:true
-  belongs_to :creado_por, :class_name => 'Usuario', :foreign_key => 'usuario_id', optional:true
-  has_many :usuarios_creados, :class_name => 'Usuario', :foreign_key => 'usuario_id'
-  has_many :reunions
-
-  def nombre_completo
-    "#{primer_nombre} #{segundo_nombre} #{primer_apellido} #{segundo_apellido}"
-  end
+  belongs_to :city, optional:true
+  belongs_to :department, optional:true
+  belongs_to :alternative_city, :class_name => 'City', :foreign_key => 'alternative_city_id', optional:true
+  belongs_to :alternative_department, :class_name => 'Department', :foreign_key => 'alternative_department_id', optional:true
+  belongs_to :laboratory, optional:true
+  belongs_to :institution, optional:true
+  belongs_to :health_entity, optional:true
+  belongs_to :created_by, :class_name => 'User', :foreign_key => 'user_id', optional:true
+  has_many :crated_users, :class_name => 'User', :foreign_key => 'user_id'
+  has_many :meetings
 
   def roles_value
-    array = ROLES if institucion.nil? && entidad_prestadora.nil?
-    array = ROLES_USUARIOS_ENTIDADES_PRESTADORAS if entidad_prestadora
-    array = ROLES_USUARIOS_INSTITUCIONES if institucion
+    array = ROLES if institution.nil? && health_entity.nil?
+    array = ROLES_HEALTH_ENTITY_USERS if health_entity
+    array = ROLES_INSTITUTION_USERS if institution
     parsed_roles = []
     if roles
       roles.split(',').each do |rol|
         rol_found = array.find { |r| r[:id] == rol.to_i }
-        parsed_roles << rol_found[:nombre]
+        parsed_roles << rol_found[:name]
       end
       parsed_roles.join(',')
     else
@@ -37,9 +31,9 @@ class Usuario < ActiveRecord::Base
   end
 
   def roles_array
-    array = ROLES if institucion.nil? && entidad_prestadora.nil?
-    array = ROLES_USUARIOS_ENTIDADES_PRESTADORAS if entidad_prestadora
-    array = ROLES_USUARIOS_INSTITUCIONES if institucion
+    array = ROLES if institution.nil? && health_entity.nil?
+    array = ROLES_HEALTH_ENTITY_USERS if health_entity
+    array = ROLES_INSTITUTION_USERS if institution
     parsed_roles = []
     if roles
       roles.split(',').each do |rol|

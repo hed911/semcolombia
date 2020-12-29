@@ -1,9 +1,9 @@
-class EntidadPrestadora < ActiveRecord::Base
-  self.table_name = 'entidad_prestadoras'
-  #attr_accessible :codigo, :nombre, :especial
-  has_many :usuarios
-  has_many :institucions
-  has_and_belongs_to_many :municipios
+class HealtEntity < ActiveRecord::Base
+  self.table_name = 'health_entities'
+
+  has_many :users
+  has_many :institutions
+  has_and_belongs_to_many :cities, class_name:"City", join_table: "cities"
 
   def roles_value
     parsed_roles = []

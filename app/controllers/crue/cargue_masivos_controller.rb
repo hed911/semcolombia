@@ -15,15 +15,15 @@ class Crue::CargueMasivosController < ApplicationController
 
   def create
     file = params[:file]
-    raise "No adjunt\u00F3 un archivo" unless file
-    if (File.size(file.path).to_f / 2 ** 20) > 1
-      flash[:notice] = "El tama\u00F1o del archivo no debe superar los 1mb, intente hacer que el archivo tenga menos registros"
+    raise "Attachment not found" unless file
+    if (File.size(file.path).to_f / 2 ** 20) > MAX_FILE_SIZE
+      flash[:notice] = "The size must be lower than #{MAX_FILE_SIZE}mb"
       redirect_to crue_cargue_masivos_path
       return
     end
     cargue_masivo = CargueMasivo.new
     cargue_masivo.estado = 1
-    cargue_masivo.archivo = file
+    cargue_masivo.attachment = file
     cargue_masivo.usuario = current_usuario
     cargue_masivo.municipio = current_municipio
     cargue_masivo.save!

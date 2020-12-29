@@ -1,10 +1,10 @@
-class ArchivosController < ApplicationController
+class FilesController < ApplicationController
   require "net/http"
   before_action :authenticate_usuario!, except: [:show, :generate_and_download]
   protect_from_forgery except: [:create]
 
   def show
-    archivo = Archivo.find_by_uuid params[:id]
+    archivo = Attachment.find_by_uuid params[:id]
     config_str = "config_drive.json"
     session = GoogleDrive::Session.from_service_account_key(File.join(Rails.root, "config", config_str))
     file = session.file_by_title(archivo.full_name)
