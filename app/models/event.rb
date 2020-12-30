@@ -101,40 +101,48 @@ class Event < ActiveRecord::Base
     }[tracking_status]
   end
 
+  enum state_tracking_crue: [
+    :in_tracking, 
+    :resolved,
+    :not_well_defined,
+    :isolated_home,
+  ]
+
   def state_tracking_crue_value
-    if state_tracking_crue == 1
-      "EN SEGUIMIENTO"
-    elsif state_tracking_crue == 3
-      "RESUELTO SATISFACTORIAMENTE"
-    elsif state_tracking_crue == 4
-      "NO CUMPLE CON DEFINICION DE CASO"
-    elsif state_tracking_crue == 5
-      "AISLAMIENTO EN CASA"
-    end
+    {
+      :in_tracking => 'EN SEGUIMIENTO', 
+      :resolved => 'RESUELTO SATISFACTORIAMENTE', 
+      :not_well_defined => 'NO CUMPLE CON DEFINICION DE CASO', 
+      :isolated_home => 'AISLAMIENTO EN CASA'
+    }[state_tracking_crue]
   end
 
+  enum service_crue: [
+    :type_one, 
+    :type_two,
+    :type_three,
+    :type_four,
+    :type_five, 
+    :type_six,
+    :type_seven,
+    :type_eight,
+    :type_nine,
+    :type_ten,
+  ]
+
   def service_crue_value
-    if service_crue == 1
-      "GENERAL PEDÍATRICA"
-    elsif service_crue == 2
-      "GENERAR ADULTOS"
-    elsif service_crue == 3
-      "UCI 1/2 ADULTOS"
-    elsif service_crue == 4
-      "UCI 1/2 NEONATAL"
-    elsif service_crue == 5
-      "UCI 1/2 PEDIÁTRICO"
-    elsif service_crue == 6
-      "UCI ADULTOS"
-    elsif service_crue == 7
-      "UCI NEONATAL"
-    elsif service_crue == 8
-      "UCI PEDIÁTRICO"
-    elsif service_crue == 9
-      "EN CASA"
-    elsif service_crue == 10
-      "FALLECIDO"
-    end
+    {
+      :type_one => 'GENERAL PEDÍATRICA', 
+      :type_two  => 'GENERAR ADULTOS', 
+      :type_three  => 'UCI 1/2 ADULTOS', 
+      :type_four  => 'UCI 1/2 NEONATAL', 
+      :type_five  => 'UCI 1/2 PEDIÁTRICO', 
+      :type_six  => 'UCI ADULTOS', 
+      :type_seven  => 'UCI NEONATAL', 
+      :type_eight  => 'UCI PEDIÁTRICO', 
+      :type_nine  => 'EN CASA', 
+      :type_ten  => 'FALLECIDO'
+    }[service_crue]
   end
 
   def origin_value
@@ -153,23 +161,16 @@ class Event < ActiveRecord::Base
   end
 
   def table_value
-    return ""
-    if triage == 1
-      "table-success"
-    elsif triage == 2
-      "table-warning"
-    elsif triage == 3
-      "table-danger"
-    end
+    {
+      :1 => 'table-success', 
+      :2 => 'table-warning', 
+      :3 => 'table-danger', 
+    }[triage]
   end
 
   def table_value_enfermedad
-    if estado_enfermedad == 1
-      ""
-    elsif estado_enfermedad == 2 && publico
+    if estado_enfermedad == 2 && publico
       "table-success"
-    elsif estado_enfermedad == 2 && !publico
-      ""
     elsif estado_enfermedad == 3
       "table-danger"
     elsif estado_enfermedad == 4
@@ -178,14 +179,8 @@ class Event < ActiveRecord::Base
   end
 
   def table_value_llamada_pendiente(usuario)
-    if usuario_seguimiento == usuario
-      "table-warning"
-    else
-      ""
-    end
-  end
-
-  
+    usuario_seguimiento == usuario ? "table-warning" : ""
+  end  
 
   def edad_value
     return edad unless edad.nil?
@@ -195,28 +190,36 @@ class Event < ActiveRecord::Base
     age
   end
 
-  def unidad_medida_value
-    if unidad_medida == 1
-      "Años"
-    elsif unidad_medida == 2
-      "Meses"
-    elsif unidad_medida == 3
-      "Dias"
-    end
+  enum measure_units: [
+    :years, 
+    :months,
+    :days
+  ]
+
+  def measure_units_value
+    {
+      :years => 'Años', 
+      :months  => 'Meses', 
+      :days  => 'Dias'
+    }[measure_units]
   end
 
-  def regimen_value
-    if regimen == 1
-      "Subsidiado"
-    elsif regimen == 2
-      "Contributivo"
-    elsif regimen == 3
-      "Especial"
-    elsif regimen == 4
-      "P. Excepcion"
-    elsif regimen == 5
-      "No asegurado"
-    end
+  enum regime: [
+    :type_one, 
+    :type_two,
+    :type_three,
+    :type_four, 
+    :type_five
+  ]
+
+  def regime_value
+    {
+      :type_one => 'Subsidiado', 
+      :type_two  => 'Contributivo', 
+      :type_three  => 'Especial',
+      :type_four => 'P. Excepcion', 
+      :type_five  => 'No asegurado'
+    }[regime]
   end
 
   def calculate_triage
@@ -225,67 +228,67 @@ class Event < ActiveRecord::Base
       self.save!
       return
     end
-    suma = 0
-    factor_fuerte = 10 * 4
-    factor_medio = 10 * 2
-    factor_leve = 1
-    suma += factor_medio if sintoma_covid_fiebre
-    suma += factor_medio if sintoma_covid_tos
-    suma += factor_medio if sintoma_covid_dificultad_respiratoria
-    suma += factor_leve   if sintoma_covid_secrecion_nasal
-    suma += factor_leve  if sintoma_covid_malestar_general
-    suma += factor_leve  if sintoma_covid_dolor_muscular
-    suma += factor_leve   if sintoma_covid_diarrea
-    suma += factor_leve   if sintoma_covid_dolor_abdominal
-    suma += factor_leve   if sintoma_covid_dolor_toraxico
-    suma += factor_leve   if sintoma_covid_vomito
-    suma += factor_fuerte if relacionamiento_con_infectados
-    suma += factor_medio if ha_estado_fuera_del_pais
-    if suma >= factor_fuerte
-      self.triage = 3
+    hash = {
+      :sintoma_covid_fiebre => MEDIUM_FACTOR,
+      :sintoma_covid_tos => MEDIUM_FACTOR,
+      :sintoma_covid_dificultad_respiratoria => MEDIUM_FACTOR,
+      :sintoma_covid_secrecion_nasal => LOW_FACTOR,
+      :sintoma_covid_malestar_general => LOW_FACTOR,
+      :sintoma_covid_dolor_muscular => LOW_FACTOR,
+      :sintoma_covid_diarrea => LOW_FACTOR,
+      :sintoma_covid_dolor_abdominal => LOW_FACTOR,
+      :sintoma_covid_dolor_toraxico => LOW_FACTOR,
+      :sintoma_covid_vomito => LOW_FACTOR,
+      :relacionamiento_con_infectados => HIGH_FACTOR,
+      :ha_estado_fuera_del_pais => MEDIUM_FACTOR
+    }
+    sum = hash.keys.select{ |e| self[e] == true }.inject(0){ |a, e| a + hash[e] }
+    if suma >= HIGH_FACTOR
+      self.triage = HIGH_LEVEL
     elsif suma >= 21
-      self.triage = 2
+      self.triage = MID_LEVEL
     else
-      self.triage = 1
+      self.triage = LOW_LEVEL
     end
     self.save!
   end
 
+  enum service: [
+    :type_one, 
+    :type_two,
+    :type_three,
+    :type_four, 
+    :type_five,
+    :type_six
+  ]
+
   def service_value
-    if service == 1
-      "Hospitalizacion"
-    elsif service == 2
-      "Urgencia"
-    elsif service == 3
-      "UCI plena"
-    elsif service == 4
-      "UCI intermedia"
-    elsif service == 0
-      "No tiene"
-    elsif service == 5
-      "Ambulatorio"
-    end
+    {
+      :type_one => 'Hospitalizacion', 
+      :type_two  => 'Urgencia', 
+      :type_three  => 'UCI plena',
+      :type_four => 'UCI intermedia', 
+      :type_five  => 'No tiene', 
+      :type_six  => 'Ambulatorio'
+    }[service_value]
   end
 
+  enum infection_type: [
+    :imported, 
+    :related,
+    :in_study
+  ]
+
   def infection_type_value
-    if infection_type == 1
-      "Importado"
-    elsif infection_type == 2
-      "Relacionado"
-    elsif infection_type == 3
-      "En estudio"
-    else
-      ""
-    end
+    {
+      :imported => 'Importado', 
+      :related  => 'Relacionado', 
+      :in_study  => 'En estudio'
+    }[infection_type]
   end
 
   def generate_indexes
-    index = 1
-    samples.order("id ASC").each do |m|
-      m.level = index
-      m.save!
-      index += 1
-    end
+    samples.order('id ASC').each_with_index{ |m, i| m.update_attribute(:level, i + 1) }
   end
 
 end
