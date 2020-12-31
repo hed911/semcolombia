@@ -8,7 +8,9 @@ class Institution < ActiveRecord::Base
   belongs_to :alternate_city, class_name: 'City', foreign_key: 'alternate_city_id', optional:true
   belongs_to :health_entity, optional:true
   belongs_to :parent, class_name: 'Institution', foreign_key: 'parent_id', optional:true
-  has_many :sedes, class_name: 'Institution', foreign_key: 'parent_id'
+  has_many :sites, class_name: 'Institution', foreign_key: 'parent_id'
+
+  validates :name, :address presence: true
 
   geocoded_by :full_street_address
   after_validation :geocode

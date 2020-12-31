@@ -5,6 +5,8 @@ class HealtEntity < ActiveRecord::Base
   has_many :institutions
   has_and_belongs_to_many :cities, class_name:"City", join_table: "cities"
 
+  validates :name, presence: true
+
   def roles_value
     parsed_roles = []
     if roles

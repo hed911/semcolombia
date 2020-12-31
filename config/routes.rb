@@ -1,25 +1,16 @@
 require "resque/server"
 Rails.application.routes.draw do
-  devise_for :usuarios, controllers: { passwords: "passwords" }
+  devise_for :users, controllers: { passwords: "passwords" }
 
   namespace :api do
-    resources :casos do
+    resources :events do
     end
   end
+  resources :api_users
 
-  resources :usuario_apis do
-  end
-
-  # RUTAS GLOBALES
-  resources :nacionalidads do
+  resources :diagnostics do
     collection do
-      get "search"
-    end
-  end
-
-  resources :diagnosticos do
-    collection do
-      get "search"
+      get "fetch"
       post "export_xls"
     end
   end

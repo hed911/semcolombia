@@ -1,15 +1,15 @@
-class Api::CasosController < ApplicationController #REVISADO
+class Api::EventsController < ApplicationController #REVISADO
   require 'net/http'
   before_action :authorize_request
   include ApiHelper
 
   def index
-    if @current_usuario.municipio.id == 4
-      result = ApiHelper.fetch_casos_barranquilla(params)
-    elsif @current_usuario.municipio.id == 27
-      result = ApiHelper.fetch_casos_cartagena(params)
+    if @current_user.city.id == BARRANQUILLA_ID
+      result = ApiHelper.fetch_events_barranquilla(params)
+    elsif @current_user.city.id == CARTAGENA_ID
+      result = ApiHelper.fetch_events_cartagena(params)
     else
-      result = ApiHelper.fetch_casos(params)
+      result = ApiHelper.fetch_events(params)
     end
     if result[:errors].any?
       render json: {

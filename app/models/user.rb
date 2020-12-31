@@ -14,6 +14,10 @@ class User < ActiveRecord::Base
   has_many :crated_users, :class_name => 'User', :foreign_key => 'user_id'
   has_many :meetings
 
+  validates :name, :email, presence: true
+  validates :email, confirmation: { case_sensitive: false }
+  validates :email, uniqueness: true
+
   def roles_value
     array = ROLES if institution.nil? && health_entity.nil?
     array = ROLES_HEALTH_ENTITY_USERS if health_entity

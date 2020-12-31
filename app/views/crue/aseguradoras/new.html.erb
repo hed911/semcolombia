@@ -4,7 +4,7 @@
       <h3 class="panel-title"></h3>
     </div>
     <div class="panel-body">
-      <h1>Edicion Aseguradora</h1>
+      <h1>Creacion Aseguradora</h1>
 
       <ol class="breadcrumb">
         <li class="active"><%= link_to "Aseguradoras", crue_insurance_carriers_path %></li>
@@ -16,7 +16,7 @@
         <div class="col-lg-3">
           <%= form.label :code %>:
           </br>
-          <%= form.text_field :code, class:'form-control', required:true %>
+          <%= form.text_field :code, class:'form-control', required:false %>
         </div>
       </div>
 
@@ -24,11 +24,11 @@
         <div class="col-lg-3">
           <%= form.label :name %>:
           </br>
-          <%= form.text_field :name, class:'form-control', required:true %>
+          <%= form.text_field :name, class:'form-control', required:false %>
         </div>
       </div>
 
-      <%= form.submit("Guardar Cambios") %>
+      <%= form.submit("Crear") %>
     </div>
   </div>
 <% end %>

@@ -4,7 +4,7 @@ class Sample < ActiveRecord::Base
   belongs_to :laboratory, optional:true
   belongs_to :assigned_laboratory, class_name: 'Laboratory', foreign_key: 'assigned_laboratory_id', optional:true
   belongs_to :batch, optional:true
-  belongs_to :institution, optional:true
+  belongs_to :institution
   belongs_to :event, optional:true
   belongs_to :sender, class_name: 'User', foreign_key: 'sender_user_id', optional:true
   belongs_to :finisher, class_name: 'User', foreign_key: 'finisher_id', optional:true
