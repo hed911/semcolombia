@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 class EntidadPrestadora::CasoSaludPublicasController < ApplicationController
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
 
   def index
     #OJO FALTA ASOCIAR QUE EL ARRAY DE ABAJO SOLO LLEVE LAS INSTITUCIONES DE LA EAPB ACTUAL

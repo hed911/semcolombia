@@ -1,6 +1,6 @@
 class Crue::InstitucionsController < ApplicationController #ACTUALIZADA
   require 'net/http'
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
 
   def sedes
     @institucion = Institucion.find_by_id params[:id]

@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 class Crue::LlamadasController < ApplicationController
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
 
   def entrantes
 

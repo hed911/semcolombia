@@ -1,6 +1,6 @@
 class Crue::ContactosController < ApplicationController
   require "net/http"
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
 
   def index
     @datetime_object = Time.now

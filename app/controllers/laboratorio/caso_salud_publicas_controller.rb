@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 class Laboratorio::CasoSaludPublicasController < ApplicationController
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
 
   def index
     @laboratorios = Laboratorio.where(municipio: current_municipio).order("nombre ASC")

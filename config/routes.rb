@@ -6,30 +6,20 @@ Rails.application.routes.draw do
     resources :events do
     end
   end
+
   resources :api_users
 
-  resources :diagnostics do
-    collection do
-      get "fetch"
-      post "export_xls"
-    end
-  end
+  resources :diagnostics, , only: [:index]
 
-  resources :departamentos, only: [:index] do
+  resources :departamentos, only: [] do
     member do
-      get "get_municipios"
+      get "cities"
     end
   end
 
-  resources :municipios, only: [] do
+  resources :cities, only: [] do
     member do
-      get "get_barrios"
-    end
-  end
-
-  resources :notificacion_emergentes do
-    collection do
-      post "search"
+      get "neighborhoods"
     end
   end
 
@@ -226,12 +216,9 @@ Rails.application.routes.draw do
         post "export_xls"
       end
       member do
-        get "all"
-        get "new_extended"
-        post "create_extended"
-        get "change_pass"
-        patch "do_change_pass"
-        patch "reset_password"
+        get 'change_pass', to: 'change_pass'
+        put 'do_change_pass', as: 'do_change_pass', path: 'change_pass'
+        put "reset_password"
       end
     end
   end
@@ -323,16 +310,9 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :municipios, only: [:show] do
-      collection do
-        post "export_xls"
-      end
+    resources :municipios, only: [] do
       member do
-        put "set"
-        get "edit_cobertura"
-        put "update_zonas"
-        put "toggle_habilitacion_autorizacion"
-        put "toggle_habilitacion_remision"
+        get "neighborhoods"
       end
       resources :usuarios do
         collection do
@@ -602,7 +582,7 @@ Rails.application.routes.draw do
   end
 
   get "custom_change_pass" => "static#custom_change_pass"
-  root to: "inicio#index"
+  
   put "/set_institucion/:id" => "dashboard#set_institucion", :as => "set_institucion"
   get "/custom_route/sedes_json/:id" => "hospitals#sedes_json", as: :sedes_json
   get "dashboard" => "dashboard#index", :as => "dashboard"
@@ -615,8 +595,7 @@ Rails.application.routes.draw do
   get "dashboard_por_ips_ambulancia" => "dashboard#dashboard_por_ips_ambulancia", :as => "dashboard_por_ips_ambulancia"
   get "dashboard_por_ips_categoria_evento" => "dashboard#dashboard_por_ips_categoria_evento", :as => "dashboard_por_ips_categoria_evento"
   get "dashboard_conexiones" => "dashboard#dashboard_conexiones", :as => "dashboard_conexiones"
-  get "inicio" => "inicio#index", :as => "inicio"
-  get "crack" => "inicio#crack", :as => "crack"
+  get "start" => "start#blank", :as => "blank"
   get "profile" => "dashboard#profile", :as => "profile"
 
   get "consulta" => "dashboard#consulta", :as => "consulta"
@@ -642,6 +621,8 @@ Rails.application.routes.draw do
 
   post "/api/auth/login" => "api/authentication#login", as: :auth_login
   mount ExtraExtra::Engine, at: "/release_notes"
+
+  root to: "start#blank"
 
   authenticate :usuario do
     mount Resque::Server, at: "/resque"

@@ -3,7 +3,7 @@ module NotificationHelper
   def self.notificar_email(evento_, hospital_users)
     emails = hospital_users.select{ |h| h.envio_correo }.map { |h| h.email }
     return if emails.empty?
-    RemisionMailer.new_evento_ambulatorio(
+    UserMailer.new_evento_ambulatorio(
       evento_,
       emails
     ).deliver
@@ -34,7 +34,7 @@ module NotificationHelper
 
   def self.notificar_emails_alerta_roja(alerta, emails)
     return if emails.empty?
-    RemisionMailer.new_alerta_roja(
+    UserMailer.new_alerta_roja(
       alerta,
       emails
     ).deliver

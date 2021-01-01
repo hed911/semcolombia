@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 class Crue::UsuariosController < ApplicationController #ACTUALIZADA
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
   include ZoomHelper
 
   def index
@@ -64,7 +64,7 @@ class Crue::UsuariosController < ApplicationController #ACTUALIZADA
     usuario.municipio_alterno = Municipio.find_by_id params[:municipio_alterno_id]
     usuario.departamento_alterno = usuario.municipio_alterno ? usuario.municipio_alterno.departamento : nil
     usuario.save!
-    RemisionMailer.create_user_instructions(
+    UserMailer.create_user_instructions(
       usuario.primer_nombre,
       usuario.email,
       password,
@@ -245,7 +245,7 @@ class Crue::UsuariosController < ApplicationController #ACTUALIZADA
     password = (0...8).map { (65 + rand(26)).chr }.join.downcase
     usuario.password = password
     usuario.password_confirmation = password
-    RemisionMailer.create_user_instructions(
+    UserMailer.create_user_instructions(
       usuario.primer_nombre,
       usuario.email,
       password,

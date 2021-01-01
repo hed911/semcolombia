@@ -2,7 +2,7 @@
 
 class Crue::EpsUsersController < ApplicationController #REVISADO
   require 'net/http'
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
 
   def index
     @entidad_prestadora = EntidadPrestadora.find_by_id(params[:entidad_prestadora_id])
@@ -151,7 +151,7 @@ class Crue::EpsUsersController < ApplicationController #REVISADO
     password = (0...8).map { (65 + rand(26)).chr }.join.downcase
     usuario.password = password
     usuario.password_confirmation = password
-    RemisionMailer.create_user_instructions(
+    UserMailer.create_user_instructions(
       usuario.primer_nombre,
       usuario.email,
       password,

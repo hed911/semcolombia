@@ -1,0 +1,60 @@
+<%= form_with model: [@api_user], local:true do |form| %>
+<div class="panel panel-danger">
+	<div class="panel-heading">
+		<h3 class="panel-title"></h3>
+	</div>
+	<div class="panel-body">
+		<h1>Edicion cuenta</h1>
+
+		<ol class="breadcrumb">
+		  <li class="active"><%= link_to "", api_users_path %></li>
+		</ol>
+
+		<%=  render partial: 'common/error_model', :locals => { collection: @api_user.errors.full_messages } %>
+
+		<div class="col-md-12">
+			<div class="form-group">
+        <%= form.label :name %>:
+				<%= form.text_field :name, class:'form-control', required:true %>
+			</div>
+		</div>
+
+		<div class="col-md-12">
+			<div class="form-group">
+				<p class="control-label">Version</p>
+				<select id="version" class="form-control" name="version">
+					<option <%= "selected" if @api_user.version == 1 %> value="1">1</option>
+					<option <%= "selected" if @api_user.version == 2 %> value="2">2</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="col-md-12">
+			<div class="form-group">
+				<p class="control-label">Department</p>
+				<%= f.collection_select(:department_id, @departments, :id, :name) %>
+			</div>
+		</div>
+
+		<div class="col-md-12">
+			<div class="form-group">
+				<p class="control-label">City</p>
+				<%= f.collection_select(:city_id, @cities, :id, :name) %>
+			</div>
+		</div>
+
+		<%= submit_tag("Guardar Cambios") %>
+	</div>
+</div>
+<% end %>
+
+<script>
+  const departmentsSelect = document.querySelector('#departaments_select');
+  departmentsSelect.addEventListener('change', e => {
+    return $.ajax({
+			url: "/departaments/" + $('#departments option:selected').val() + "/cities",
+			type: "GET",
+			dataType: "script"
+		});
+  })
+</script>

@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 class Institucion::CasoSaludPublicasController < ApplicationController
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
   include PostgresqlDumper
 
   def index

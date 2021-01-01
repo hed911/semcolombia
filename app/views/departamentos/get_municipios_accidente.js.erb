@@ -1,5 +1,0 @@
-$('#municipios_accidente_select').empty();
-$('#municipios_accidente_select').append( $('<option value label=""></option>'));
-<% @municipios.each do |municipio| %>
-  $('#municipios_accidente_select').append($('<option value="<%= municipio.id %>"><%= "#{municipio.nombre}" %></option>'));
-<% end %>

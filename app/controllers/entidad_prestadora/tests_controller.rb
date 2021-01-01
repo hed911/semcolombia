@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 class EntidadPrestadora::TestsController < ApplicationController
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
   include PostgresqlDumper
 
   def index

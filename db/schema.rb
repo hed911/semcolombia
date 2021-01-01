@@ -1662,19 +1662,6 @@ ActiveRecord::Schema.define(version: 44998336229940) do
     t.datetime "updated_at"
   end
 
-  create_table "notificacion_emergentes", id: :serial, force: :cascade do |t|
-    t.text "titulo"
-    t.integer "estado"
-    t.integer "municipio_id"
-    t.integer "entidad_prestadora_id"
-    t.integer "institucion_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.text "descripcion"
-    t.text "url"
-    t.integer "usuario_id"
-  end
-
   create_table "notificacions", id: :serial, force: :cascade do |t|
     t.integer "ambulancia_id"
     t.integer "evento_ambulatorio_id"

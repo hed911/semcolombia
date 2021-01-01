@@ -1,6 +1,6 @@
 class Crue::OperariosController < ApplicationController #REVISADO
   require 'net/http'
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
 
   def habilitados
     operarios_ = Operario.where.not(latitude: nil, longitude: nil).order('id ASC')

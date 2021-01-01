@@ -1,6 +1,6 @@
 class DashboardController < ApplicationController
   require 'net/http'
-  before_action :authenticate_usuario!, except:[:cosa_ssl, :consulta, :do_consulta, :consulta_barranquilla, :consulta_soledad, :do_consulta_soledad, :do_consulta_barranquilla, :consulta_cartagena, :do_consulta_cartagena, :consulta_monteria, :do_consulta_monteria, :consulta_atlantico, :do_consulta_atlantico]
+  before_action :authenticate_user!, except:[:cosa_ssl, :consulta, :do_consulta, :consulta_barranquilla, :consulta_soledad, :do_consulta_soledad, :do_consulta_barranquilla, :consulta_cartagena, :do_consulta_cartagena, :consulta_monteria, :do_consulta_monteria, :consulta_atlantico, :do_consulta_atlantico]
 
   def index
     @start_date = params[:start_date]
@@ -311,19 +311,6 @@ class DashboardController < ApplicationController
   def set_institucion
     session[:institucion_id] = params[:id]
     redirect_back fallback_location: root_path
-  end
-
-  def notifications_panel
-    @notificaciones = NotificacionEmergente.where(usuario:current_usuario, municipio:current_municipio).order("created_at DESC")
-    render layout:false
-  end
-
-  def mark_as_read
-    NotificacionEmergente.where(usuario:current_usuario, municipio:current_municipio).each do |notificacion|
-      notificacion.estado = 2
-      notificacion.save!
-    end
-    render json:{}.to_json
   end
 
   def consulta

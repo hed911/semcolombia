@@ -1,6 +1,6 @@
 class Institucion::SeguimientoCasosController < ApplicationController
   require "net/http"
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
   include PostgresqlDumper
 
   def index

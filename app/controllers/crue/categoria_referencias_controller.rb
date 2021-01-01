@@ -1,6 +1,6 @@
 class Crue::CategoriaReferenciasController < ApplicationController #ACRUALIZADO
   require 'net/http'
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
 
   def index
     @categorias = CategoriaReferencia.all.order('created_at DESC')

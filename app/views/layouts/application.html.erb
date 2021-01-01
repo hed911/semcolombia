@@ -55,15 +55,6 @@
       <div class="collapse navbar-collapse" id="navbarText">
         <ul class="navbar-nav ml-auto">
 
-          <li id="notifications_panel" class="nav-item dropdown">
-            <a onclick="mark_as_read();" class="nav-link dropdown-toggle" href="#" id="navbarDropdownRecursos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Notificaciones <span id="notifications_count" class="badge badge-light">0</span>
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownRecursos">
-              <%= link_to 'Ver todos'.html_safe, notificacion_emergentes_path, class:"dropdown-item" %>
-            </div>
-          </li>
-
           <% if !current_usuario.activo %>
 
           <% elsif current_institucion.nil? && current_usuario.entidad_prestadora.nil? && current_usuario.laboratorio.nil? %>

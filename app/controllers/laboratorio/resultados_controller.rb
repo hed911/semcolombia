@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 class Laboratorio::ResultadosController < ApplicationController
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
 
   def index
   end

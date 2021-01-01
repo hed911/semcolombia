@@ -1,6 +1,6 @@
 class Institucion::ContactosController < ApplicationController
   require "net/http"
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
 
   def index
     @caso = CasoSaludPublica.find params[:caso_salud_publica_id]

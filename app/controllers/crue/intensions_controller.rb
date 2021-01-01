@@ -1,6 +1,6 @@
 class Crue::IntensionsController < ApplicationController #REVISADO
   require 'net/http'
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
 
   def index
     @intensions = Intension.where(municipio:current_municipio).order('nombre ASC')

@@ -1,0 +1,50 @@
+<%= link_to new_api_user_path, :class => "btn btn-primary btn-lg", :title => "Nueva intencion" do %>
+	Nueva cuenta API
+<% end %>
+
+<div>
+  <h1>Cuentas API</h1>
+  <div class="panel panel-danger">
+    <div class="panel-heading">
+      <h3 class="panel-title"></h3>
+    </div>
+    <div class="panel-body">
+      <div class="table-responsive">
+        <table id="table-result" class="table table-bordered table-hover table-striped tablesorter">
+          <thead>
+            <tr>
+              <th data-sort="string">Id</th>
+              <th data-sort="string">Nombre</th>
+              <th data-sort="string">Token</th>
+              <th data-sort="string">Version</th>
+              <th data-sort="string">Departamento</th>
+              <th data-sort="string">Municipio</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="table-result-body">
+            <% @api_users.each do |api_user| -%>
+              <tr class="">
+                <td><%= api_user.id %></td>
+                <td><%= api_user.nombre %></td>
+                <td><%= api_user.username %></td>
+                <td><%= api_user.version %></td>
+                <td><%= api_user.departamento.nombre if api_user.departamento %></td>
+                <td><%= api_user.municipio.nombre if api_user.municipio %></td>
+                <td>
+                  <%= link_to edit_api_user_path(api_user.id), :title => "Editar Cuenta", :class => "btn btn-xs btn-success" do %>
+                    <i class="fa fa-pencil-square-o"></i> Editar
+                  <% end %>
+                  <%= link_to api_user_path(api_user.id), class:"btn btn-xs btn-success", method: :delete, title:"Borrar Cuenta", :data => { :confirm => 'Estas seguro? Este cambio no se puede revertir' } do %>
+                    <i class="fa fa-trash-o"></i> Borrar
+                  <% end %>
+                </td>
+              </tr>
+            <% end -%>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,123 @@
+<%= form_with model: [:laboratorio, @user], local:true do |form| %>
+  <div class="container">
+    <h1>Creacion Usuario Laboratorio</h1>
+
+    <ol class="breadcrumb">
+      <li class="active"><%= link_to "Usuarios",laboratory_users_path %></li>
+    </ol>
+
+    <%=  render partial: 'common/error_model', :locals => { collection: @user.errors.full_messages } %>
+
+    <fieldset>
+      <div class="clearfix">
+        <%= form.label :first_name %>
+        <div class="input">
+          <%= form.text_field :first_name, class:'form-control', required:true %>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <div class="clearfix">
+        <%= form.label :second_name %>
+        <div class="input">
+          <%= form.text_field :second_name, class:'form-control', required:false %>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <div class="clearfix">
+        <%= form.label :first_surname %>
+        <div class="input">
+          <%= form.text_field :first_surname, class:'form-control', required:true %>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <div class="clearfix">
+        <%= form.label :second_surname %>
+        <div class="input">
+          <%= form.text_field :second_surname, class:'form-control', required:false %>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <div class="clearfix">
+        <%= form.label :phone_number %>
+        <div class="input">
+          <%= form.text_field :phone_number, class:'form-control', required:false %>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <div class="clearfix">
+        <%= form.label :email %>
+        <div class="input">
+          <%= form.email_field :email, class:'form-control', required:true %>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <div class="clearfix">
+        <%= form.label :password %>
+        <div class="input">
+          <%= form.password_field :password, class:'form-control', required:true %>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <div class="clearfix">
+        <%= form.label :password_confirmation %>
+        <div class="input">
+          <%= form.password_field :password_confirmation, class:'form-control', required:true %>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <div class="clearfix">
+        <%= form.label :id_number %>
+        <div class="input">
+          <%= form.text_field :id_number, class:'form-control', required:true %>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <div class="clearfix">
+        <%= form.label :position %>
+        <div class="input">
+          <%= form.text_field :position, class:'form-control', required:false %>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <div class="clearfix">
+        <%= form.label :validity_date %>
+        <div class="input">
+          <%= form.date_field :validity_date, class:'form-control', required:false %>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <div class="clearfix">
+        <%= form.label :active %>
+        <div class="input">
+          <%= form.check_box :active, class:'form-control', required:false %>
+        </div>
+      </div>
+    </fieldset>
+
+    <%= submit_tag("Crear") %>
+
+  </div>
+
+<% end %>

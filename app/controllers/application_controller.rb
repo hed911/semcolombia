@@ -1,11 +1,9 @@
 class ApplicationController < ActionController::Base
-  # Prevent CSRF attacks by raising an exception.
-  # For APIs, you may want to use :null_session instead.
   require 'json_web_token'
   protect_from_forgery with: :null_session
-  alias current_user current_usuario
+  alias current_user current_user
 
-  helper_method :current_institucion, :can_chenge_institucion, :recently_added_new_version, :resource_name, :resource, :send_push, :current_municipio, :current_user_name, :current_city_point, :authorize_request
+  helper_method :current_institution, :can_chenge_institution, :recently_added_new_version, :resource_name, :resource, :send_push, :current_city, :current_user_name, :authorize_request
 
   before_action :set_raven_context, :set_raven_context
 
@@ -14,78 +12,62 @@ class ApplicationController < ActionController::Base
   end
 
   def resource_name
-    :Usuario
+    :user
   end
 
   def resource
-    @usuario ||= Usuario.new
+    @user ||= User.new
   end
 
   def current_user_name
     name = ''
     suffix = ''
-    name = current_user.primer_nombre if current_user
+    name = current_user.first_name if current_user
     suffix = if current_user.departamento
-               if current_municipio
-                 "(#{current_municipio.nombre.upcase[0,1]})"
-               else
-                 "(#{current_user.departamento.nombre})"
-               end
-             elsif current_user.municipio
-               "(#{current_user.municipio.nombre.upcase[0,1]})"
-             else
-               '(ADMIN)'
-             end
+      if current_city
+        "(#{current_city.nombre.upcase[0,1]})"
+      else
+        "(#{current_user.department.nombre})"
+      end
+    elsif current_user.city
+      "(#{current_user.city.nombre.upcase[0,1]})"
+    else
+      '(ADMIN)'
+    end
     "#{name}#{suffix}"
   end
 
-  def current_municipio
-    if session[:municipio_id]
-      return Municipio.find_by_id session[:municipio_id]
+  def current_city
+    if session[:city]
+      return City.find_by_id session[:city_id]
     else
-      if current_usuario
-        if !current_usuario.municipio_alterno.nil?
-          return current_usuario.municipio_alterno
-        elsif current_usuario.municipio.nil?
-          if current_usuario.laboratorio
-            return current_usuario.laboratorio.municipio
-          elsif current_institucion
-            return current_institucion.municipio
+      if current_user
+        if !current_user.alternate_city.nil?
+          return current_user.alternate_city
+        elsif current_user.city.nil?
+          if current_user.laboratory
+            return current_user.laboratory.city
+          elsif current_institution
+            return current_institution.city
           end
         else
-          return current_usuario.municipio
+          return current_user.city
         end
       end
     end
   end
 
-  def current_city_point
-    if current_municipio
-      if current_municipio.default_latitude && current_municipio.default_longitude
-        [current_municipio.default_latitude, current_municipio.default_longitude]
-      else
-        result = Geocoder.coordinates("#{current_municipio.nombre} Colombia")
-        current_municipio.default_latitude = result[0]
-        current_municipio.default_longitude = result[1]
-        current_municipio.save!
-        result
-      end
-    else
-      [10.9638889, -74.7963889]
-    end
+  def can_chenge_institution
+    return false if current_user.nil?
+    return false if current_user.institution.nil?
+    current_user.institution.sites.count > 1
   end
 
-  def can_chenge_institucion
-    return false if current_usuario.nil?
-    return false if current_usuario.institucion.nil?
-    current_usuario.institucion.sedes.count > 1
-  end
-
-  def current_institucion
-    if session[:institucion_id]
-      return Institucion.find_by_id session[:institucion_id]
+  def current_institution
+    if session[:institution_id]
+      return Institution.find_by_id(session[:institution_id])
     else
-      current_usuario.institucion
+      current_user.institution
     end
   end
 
@@ -101,7 +83,7 @@ class ApplicationController < ActionController::Base
     header = header.split(' ').last if header
     begin
       @decoded = JsonWebToken.decode(header)
-      @current_usuario = UsuarioApi.find(@decoded[:user_id])
+      @current_user = ApiUser.find(@decoded[:user_id])
     rescue ActiveRecord::RecordNotFound => e
       render json: { errors: e.message }, status: :unauthorized
     rescue JWT::DecodeError => e

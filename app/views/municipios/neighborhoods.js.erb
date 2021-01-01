@@ -1,0 +1,5 @@
+$('#<%= @component_id %>').empty();
+$('#<%= @component_id %>').append( $('<option value label=""></option>'));
+<% @neighborhoods.each do |neighborhood| %>
+  $('#<%= @component_id %>').append($('<option value="<%= neighborhood.id %>"><%= "#{neighborhood.name}" %></option>'));
+<% end %>

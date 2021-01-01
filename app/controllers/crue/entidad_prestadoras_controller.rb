@@ -1,6 +1,6 @@
 class Crue::EntidadPrestadorasController < ApplicationController #ACTUALIZADA
   require 'net/http'
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
 
   def index
     @entidades_prestadoras = EntidadPrestadora.where(especial:false).order('created_at DESC')

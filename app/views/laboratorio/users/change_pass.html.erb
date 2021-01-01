@@ -1,0 +1,32 @@
+<%= form_with url: change_pass_laboratory_user_path(laboratory_id:@laboratorio, id:@user.id), method: :post, local:true do |form| %>
+  <div class="container">
+    <h1>Cambiar Contraseña <small><%= @user.first_name %></small></h1>
+
+    <ol class="breadcrumb">
+      <li class="active"><%= link_to @laboratory.nombre, laboratory_users_path(@laboratory.id) %></li>
+    </ol>
+
+    <div class="col-md-12">
+      <div class="form-group">
+        <p class="control-label">Contraseña</p>
+        <%= password_field_tag(:password, nil, :minlength => 8, required:true, :class =>"form-control") %>
+      </div>
+    </div>
+
+    <div class="col-md-12">
+      <div class="form-group">
+        <p class="control-label">Repita su Contraseña</p>
+        <%= password_field_tag(:password_again, nil, :minlength => 8, required:true, :class =>"form-control") %>
+      </div>
+    </div>
+
+    <div class="col-md-12">
+      <div class="form-group">
+        <%= submit_tag("Guardar Cambios", :class => "btn btn-primary form-control") %>
+      </div>
+    </div>
+
+  </div>
+
+<% end %>
+

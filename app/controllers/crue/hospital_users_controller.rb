@@ -1,7 +1,7 @@
 # encoding: UTF-8
 class Crue::HospitalUsersController < ApplicationController #ACTUALIZADA
   require 'net/http'
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
 
   def index
     @institucion = Institucion.find_by_id(params[:institucion_id])
@@ -55,7 +55,7 @@ class Crue::HospitalUsersController < ApplicationController #ACTUALIZADA
     )
     usuario.institucion = Institucion.find_by_id params[:institucion_id]
     usuario.save!
-    RemisionMailer.create_user_instructions(
+    UserMailer.create_user_instructions(
       usuario.primer_nombre,
       usuario.email,
       password,
@@ -147,7 +147,7 @@ class Crue::HospitalUsersController < ApplicationController #ACTUALIZADA
     password = (0...8).map { (65 + rand(26)).chr }.join.downcase
     usuario.password = password
     usuario.password_confirmation = password
-    RemisionMailer.create_user_instructions(
+    UserMailer.create_user_instructions(
       usuario.primer_nombre,
       usuario.email,
       password,

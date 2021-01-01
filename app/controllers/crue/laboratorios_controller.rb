@@ -1,6 +1,6 @@
 class Crue::LaboratoriosController < ApplicationController #ACTUALIZADA
   require 'net/http'
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
 
   def show
     @laboratorios = Laboratorio.find_by_id params[:id]

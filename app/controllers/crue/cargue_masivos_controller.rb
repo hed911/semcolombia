@@ -1,6 +1,6 @@
 class Crue::CargueMasivosController < ApplicationController
   require "net/http"
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
 
   def index
     @cargues_masivos = CargueMasivo.where(municipio: current_municipio).sort_by(&:created_at)

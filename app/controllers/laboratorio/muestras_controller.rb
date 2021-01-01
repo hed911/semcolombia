@@ -1,6 +1,6 @@
 class Laboratorio::MuestrasController < ApplicationController
   require 'net/http'
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
   include PdfValidationHelper
 
   def index
@@ -112,7 +112,7 @@ class Laboratorio::MuestrasController < ApplicationController
     @caso.publico = false
     @caso.save!
     if @muestra.resultado == 2
-      RemisionMailer.new_caso(
+      UserMailer.new_caso(
         @muestra,
         EMAILS_NOTIFICACION_COVID
       ).deliver

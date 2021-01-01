@@ -1,7 +1,7 @@
 class Crue::InsuranceCarriersController < ApplicationController
   require 'net/http'
-  before_action :authenticate_usuario!
-  before_action :set_model, only: [:edit, :update]
+  before_action :authenticate_user!
+  before_action :set_model, only: [:edit, :update, :destroy]
   respond_to :html, :json
 
   def index
@@ -14,31 +14,32 @@ class Crue::InsuranceCarriersController < ApplicationController
 
   def create
     @insurance_carrier = InsuranceCarrier.new(insurance_carrier_params)
-    if @insurance_carrier_params.valid?
-      @insurance_carrier_params.save!
+    if @insurance_carrier.valid?
+      @insurance_carrier.save!
       redirect_to action: 'index'
     else
-      respond_with(@insurance_carrier_params)
+      respond_with(@insurance_carrier)
     end
   end
 
   def show; end
 
   def edit
-    @insurance_carrier = InsuranceCarrier.find(params[:id])
+    
   end
 
   def update
-    insurance_carrier = InsuranceCarrier.find(params[:id])
-    insurance_carrier.codigo = params[:codigo]
-    insurance_carrier.nombre = params[:nombre]
-    insurance_carrier.save!
-    redirect_to action: 'index'
+    begin 
+      @insurance_carrier.update!(insurance_carrier_params)
+      redirect_to action: 'index'
+    rescue => e
+      @insurance_carrier.errors.add(:base, e.message)
+      respond_with(@insurance_carrier)
+    end
   end
 
   def destroy
-    insurance_carrier = InsuranceCarrier.find(params[:id])
-    insurance_carrier.destroy
+    @insurance_carrier.destroy
     redirect_to action: 'index'
   end
   

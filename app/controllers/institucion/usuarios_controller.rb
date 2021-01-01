@@ -1,7 +1,7 @@
 # encoding: UTF-8
 class Institucion::UsuariosController < ApplicationController #ACTUALIZADA
   require 'net/http'
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
 
   def index
     @institucion = current_institucion
@@ -58,7 +58,7 @@ class Institucion::UsuariosController < ApplicationController #ACTUALIZADA
     )
     usuario.institucion = @institucion
     usuario.save!
-    RemisionMailer.create_user_instructions(
+    UserMailer.create_user_instructions(
       usuario.primer_nombre,
       usuario.email,
       password,
@@ -150,7 +150,7 @@ class Institucion::UsuariosController < ApplicationController #ACTUALIZADA
     password = (0...8).map { (65 + rand(26)).chr }.join.downcase
     usuario.password = password
     usuario.password_confirmation = password
-    RemisionMailer.create_user_instructions(
+    UserMailer.create_user_instructions(
       usuario.primer_nombre,
       usuario.email,
       password,

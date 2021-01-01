@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 class Crue::SuperAdminsController < ApplicationController #REVISADO
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
 
   def index
     @super_admins = Usuario.where(es_super_admin: true, institucion:nil, entidad_prestadora:nil).sort_by &:created_at
@@ -33,7 +33,7 @@ class Crue::SuperAdminsController < ApplicationController #REVISADO
       fecha_vigencia: params[:fecha_vigencia],
       es_super_admin: true
     )
-    RemisionMailer.create_user_instructions(
+    UserMailer.create_user_instructions(
       usuario.primer_nombre,
       usuario.email,
       password,

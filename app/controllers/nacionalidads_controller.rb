@@ -1,6 +1,6 @@
 class NacionalidadsController < ApplicationController
   require 'net/http'
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
 
   def index
     term = params[:term] ? params[:term].downcase : ""

@@ -2,7 +2,7 @@
 
 class EntidadPrestadora::UsuariosController < ApplicationController #REVISADO
   require 'net/http'
-  before_action :authenticate_usuario!
+  before_action :authenticate_user!
 
   def index
     @entidad_prestadora = current_usuario.entidad_prestadora
@@ -143,7 +143,7 @@ class EntidadPrestadora::UsuariosController < ApplicationController #REVISADO
     password = (0...8).map { (65 + rand(26)).chr }.join.downcase
     usuario.password = password
     usuario.password_confirmation = password
-    RemisionMailer.create_user_instructions(
+    UserMailer.create_user_instructions(
       usuario.primer_nombre,
       usuario.email,
       password,
