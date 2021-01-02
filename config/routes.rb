@@ -11,7 +11,7 @@ Rails.application.routes.draw do
 
   resources :diagnostics, , only: [:index]
 
-  resources :departamentos, only: [] do
+  resources :departaments, only: [] do
     member do
       get "cities"
     end
@@ -23,12 +23,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :archivos do
+  resources :attachments do
     member do
       get "generate_and_download"
     end
   end
-  # RUTAS GLOBALES
 
   namespace :entidad_prestadora do
     resources :tests do
@@ -583,18 +582,6 @@ Rails.application.routes.draw do
 
   get "custom_change_pass" => "static#custom_change_pass"
   
-  put "/set_institucion/:id" => "dashboard#set_institucion", :as => "set_institucion"
-  get "/custom_route/sedes_json/:id" => "hospitals#sedes_json", as: :sedes_json
-  get "dashboard" => "dashboard#index", :as => "dashboard"
-  get "notifications_panel" => "dashboard#notifications_panel", :as => "notifications_panel"
-  post "mark_as_read" => "dashboard#mark_as_read", :as => "mark_as_read"
-  get "ambulancias_dashboard" => "dashboard#ambulancias", :as => "ambulancias_dashboard"
-  get "dashboard_por_ips" => "dashboard#dashboard_por_ips", :as => "dashboard_por_ips"
-  get "dashboard_por_ambulancia" => "dashboard#dashboard_por_ambulancia", :as => "dashboard_por_ambulancia"
-  get "dashboard_por_tipo" => "dashboard#dashboard_por_tipo", :as => "dashboard_por_tipo"
-  get "dashboard_por_ips_ambulancia" => "dashboard#dashboard_por_ips_ambulancia", :as => "dashboard_por_ips_ambulancia"
-  get "dashboard_por_ips_categoria_evento" => "dashboard#dashboard_por_ips_categoria_evento", :as => "dashboard_por_ips_categoria_evento"
-  get "dashboard_conexiones" => "dashboard#dashboard_conexiones", :as => "dashboard_conexiones"
   get "start" => "start#blank", :as => "blank"
   get "profile" => "dashboard#profile", :as => "profile"
 

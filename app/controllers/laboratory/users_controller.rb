@@ -1,5 +1,5 @@
 # encoding: UTF-8
-class Laboratorio::UsersController < ApplicationController #ACTUALIZADA
+class Laboratory::UsersController < ApplicationController #ACTUALIZADA
   require 'net/http'
   before_action :authenticate_user!
   before_action :set_model
@@ -81,6 +81,8 @@ class Laboratorio::UsersController < ApplicationController #ACTUALIZADA
     redirect_to action: 'index'
   end
 
+  private
+
   def set_model
     @laboratory = current_user.laboratory
     @user = User.find_by_id(params[:id])
@@ -102,4 +104,5 @@ class Laboratorio::UsersController < ApplicationController #ACTUALIZADA
       :password_confirmation
     )
   end
+  
 end

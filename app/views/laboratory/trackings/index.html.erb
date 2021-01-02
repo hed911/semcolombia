@@ -1,0 +1,230 @@
+<div class="modal fade" id="trackings" tabindex="-1" role="dialog" aria-labelledby="trackings" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class='col-12 modal-title text-center'>
+          Seguimientos caso <%= @event.id %>
+          <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+            <span aria-hidden='true'>&times;</span>
+          </button>
+        </h3>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+
+          <div class="container card-group">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title"><%= @parent.nil? ? "Sin predecesor" : "Datos paciente nivel #{@parent.level + 1 if @parent.level}" %></h5>
+                <div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="id_number"># Documento</label>
+                      <%= text_field_tag(:id_number, (@parent.nil? ? nil : "#{@parent.id_type}-#{@parent.id_number}"), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="full_name">Nombre completo</label>
+                      <%= text_field_tag(:full_name, (@parent.nil? ? nil : @parent.full_name), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="email">Email</label>
+                      <%= text_field_tag(:email, (@parent.nil? ? nil : @parent.email), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="phone_number">Telefono</label>
+                      <%= text_field_tag(:phone_number, (@parent.nil? ? nil : @parent.phone_number), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="contacts_count">Cantidad contactos</label>
+                      <%= text_field_tag(:contacts_count, (@parent.nil? ? nil : @parent.contacts.count), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="result">Resultado muestra</label>
+                      <%= text_field_tag(:result, (@parent.nil? ? nil : @parent.desease_status_value), :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Datos paciente level <%= @event.level + 1 if @event.level %></h5>
+                <div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="id_number"># Documento</label>
+                      <%= text_field_tag(:id_number, "#{@caso.id_type}-#{@caso.id_number}", :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="full_name">Nombre completo</label>
+                      <%= text_field_tag(:full_name, @event.full_name, :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="email">Email</label>
+                      <%= text_field_tag(:email, @event.email, :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="phone_number">Telefono</label>
+                      <%= text_field_tag(:phone_number, @event.phone_number, :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6">
+                      <label for="contacts_count">Cantidad contactos</label>
+                      <%= text_field_tag(:contacts_count, @event.contacts.count, :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="result">Resultado muestra</label>
+                      <%= text_field_tag(:result, @caso.desease_status_value, :required => false, :disabled => true, :class =>"form-control") %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="container card-group">
+
+          </div>
+        </div>
+
+        <% if @caso.trackings.where(crue:false).any? -%>
+          <div class="table-responsive" style="overflow:auto;">
+        		<table id="table-result" class="table table-hover tablesorter">
+              <thead>
+                <tr>
+                  <th data-sort="string">Dia</th>
+                  <th data-sort="string">Asintomatico</th>
+                  <th data-sort="string">Temperatura >= 38º</th>
+                  <th data-sort="string">Tos</th>
+                  <th data-sort="string">Dificultad respiratoria</th>
+                  <th data-sort="string">Odinofagia</th>
+                  <th data-sort="string">Fatiga/Adinamia</th>
+                  <th data-sort="string">Observacion</th>
+                  <th data-sort="string">Fecha</th>
+                  <th data-sort="string">Usuario</th>
+                  <th data-sort="string">Usuario</th>
+                </tr>
+              </thead>
+
+              <tbody id="table-result-body">
+                <% count = 0 -%>
+                <% first_date = @event.trackings.where(crue:false).order('created_at ASC').first.created_at.to_date if @event.trackings.where(crue:false).any? -%>
+                <% @event.trackings.where(crue:false).order('created_at DESC').each do |tracking| -%>
+                  <tr class="<%= tracking.failed_call ? 'table-danger' : '' %>">
+                    <td><%= "Dia #{TimeDifference.between(first_date, tracking.created_at.to_date).in_days.to_i + 1}" %></td>
+                    <td><%= tracking.asymptomatic ? "SI" : "NO" %></td>
+                    <td><%= tracking.temperature ? "SI" : "NO" %></td>
+                    <td><%= tracking.cough ? "SI" : "NO" %></td>
+                    <td><%= tracking.respiratory_distress ? "SI" : "NO" %></td>
+                    <td><%= tracking.odynophagia ? "SI" : "NO" %></td>
+                    <td><%= tracking.fatigue ? "SI" : "NO" %></td>
+                    <td style="word-wrap: break-word;min-width: 400px;max-width: 400px;" data-toggle="tooltip" title="<%= seguimiento.contenido %>"><%= truncate tracking.content, length: 170, separator: /\w+/ %></td>
+                    <td><%= tracking.created_at_formatted %></td>
+                    <td><%= tracking.usuario.full_name if tracking.usuario %></td>
+                    <td><%= tracking.user_type %></td>
+                  </tr>
+                <% end -%>
+              </tbody>
+        		</table>
+        	</div>
+          </br>
+          </br>
+          </br>
+          </br>
+          </br>
+          </br>
+        <% else -%>
+          <div class="jumbotron">
+            <h1>No hay datos</h1>
+            <p>Aun no se han agregado seguimientos diarios de <%= @event.primer_nombre %>.
+            <p>Una vez crees registros aqui apareceran en forma de tabla</p>
+          </div>
+        <% end -%>
+        
+        <%= form_with url: laboratory_event_trackings_path(@event.id), method: :post, local:true do |form| %>
+          <div class="container card-group">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Nuevo registro</h5>
+                <div>
+                  <%= render partial: 'common/error_model', :locals => { collection: @tracking.errors.full_messages } %>
+                  <div class="form-group row">
+                    <div class="col-sm-6 form-check">
+                      <label class="form-check-label">
+                        <%= form.check_box :asymptomatic, class:'form-control', required:false %>Asintomatico
+                      </label>
+                    </div>
+                    <div class="col-sm-6 form-check">
+                      <label class="form-check-label">
+                        <%= form.check_box :temperature, class:'form-control', required:false %>Temperatura >= 38º
+                      </label>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6 form-check">
+                      <label class="form-check-label">
+                        <%= form.check_box :cough, class:'form-control', required:false %>Tos
+                      </label>
+                    </div>
+                    <div class="col-sm-6 form-check">
+                      <label class="form-check-label">
+                        <%= form.check_box :respiratory_distress, class:'form-control', required:false %>Dificultad respiratoria
+                      </label>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-6 form-check">
+                      <label class="form-check-label">
+                        <%= form.check_box :odynophagia, class:'form-control', required:false %>Odinofagia
+                      </label>
+                    </div>
+                    <div class="col-sm-6 form-check">
+                      <label class="form-check-label">
+                        <%= form.check_box :fatigue, class:'form-control', required:false %>Fatiga/Adinamia
+                      </label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <p class="control-label">Observacion</p>
+                    <%= form.text_area :observation, class:'form-control', required:false %>
+                  </div>
+                  <div class="form-group">
+                    <p class="control-label">Fecha</p>
+                    <%= text_field_tag(:dia, "DIA #{first_date ? TimeDifference.between(first_date, Time.now.to_date).in_days.to_i + 1 : 1}", :required => false, :disabled => true, :class =>"form-control") %>
+                  </div>
+                  <div class="form-group">
+                    <p class="control-label">Estado</p>
+                    <%= form.collection_select :status, @statuses, :id, :name, prompt: true %>
+                  </div>
+                  <div class="form-group">
+                    <p class="control-label">Hubo problemas para contactar a la persona?</p>
+                    <%= form.check_box :failed_call, class:'form-control', required:false %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+
+            <div class="col-md-12">
+              <div class="text-center">
+                <%= form.submit_tag "Agregar".html_safe, :class => "btn btn-lg btn-primary" %>
+              </div>
+            </div>
+
+          </div>
+        <% end %>
+
+      </div>
+    </div>
+  </div>
+</div>
